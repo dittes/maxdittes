@@ -1,0 +1,53 @@
+{
+  "errors": [],
+  "metrics": [
+    {
+      "width": 320,
+      "height": 640,
+      "scrollWidth": 320,
+      "scrollHeight": 640,
+      "footer": 632,
+      "targets": []
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "scrollHeight": 640,
+      "footer": 632,
+      "targets": []
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "scrollWidth": 375,
+      "scrollHeight": 812,
+      "footer": 798,
+      "targets": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 844,
+      "footer": 830,
+      "targets": []
+    },
+    {
+      "width": 414,
+      "height": 896,
+      "scrollWidth": 414,
+      "scrollHeight": 896,
+      "footer": 882,
+      "targets": []
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "scrollWidth": 768,
+      "scrollHeight": 1024,
+      "footer": 1010,
+      "targets": []
+    }
+  ]
+}
