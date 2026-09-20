@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1b0f4a">
 <title>Max' Spielhalle – selbstgebaute Spiele von Max</title>
-<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
+<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack, Arch Attack und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
 <link rel="canonical" href="https://maxdittes.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Max' Spielhalle">
-<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack und bald noch mehr. Fang die Sterne!">
+<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack, Arch Attack und bald noch mehr. Fang die Sterne!">
 <meta property="og:url" content="https://maxdittes.com/">
 <meta property="og:locale" content="de_DE">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32,4 40,24 62,25 45,39 51,60 32,48 13,60 19,39 2,25 24,24' fill='%23ffd449' stroke='%23e8890c' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -134,6 +134,7 @@ h2 .hl{color:var(--butter)}
 .play{justify-self:start;margin-top:4px;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:16px;background:var(--ink);color:#fff;font-weight:900;font-size:17px;letter-spacing:.04em;box-shadow:0 4px 0 rgba(0,0,0,.35)}
 .cart.mb{--c1:#ff9a4d;--c2:#ff7a29;--cd:#a63d0c}
 .cart.aa{--c1:#6fdc8a;--c2:#3dbb5b;--cd:#1f7b37}
+.cart.ar{--c1:#7fb8ff;--c2:#4d8dff;--cd:#2346a8}
 .cart.locked{--cd:#0a0620;color:#fff;background:linear-gradient(160deg,#3a2a7a,#241650);box-shadow:0 10px 0 var(--cd),0 26px 40px rgba(0,0,0,.4);border:2px dashed rgba(255,255,255,.3)}
 .cart.locked .art{background:repeating-linear-gradient(-45deg,#2a1c60 0 18px,#1d1247 18px 36px);display:grid;place-items:center}
 .qm{font-size:clamp(70px,20vw,110px);font-weight:900;color:var(--butter);text-shadow:0 5px 0 #8a5c00,0 12px 18px rgba(0,0,0,.4);animation:qm 2.2s ease-in-out infinite}
@@ -163,6 +164,10 @@ h2 .hl{color:var(--butter)}
 .bob{animation:bob .34s ease-in-out infinite alternate}
 @keyframes bob{to{transform:translateY(-1.6px)}}
 .apple{animation:apple 5.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.archute{animation:chute 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+@keyframes chute{0%,100%{transform:translate(-6px,-4px) rotate(-6deg)}50%{transform:translate(6px,6px) rotate(6deg)}}
+.arfoe{animation:foe 2.6s infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes foe{0%,68%{transform:rotate(0)}74%{transform:rotate(18deg) translateY(-4px)}90%,100%{transform:rotate(0)}}
 @keyframes apple{0%,80%{transform:scale(1)}88%{transform:scale(1.08,.92)}96%,100%{transform:scale(1)}}
 
 /* Trophäen */
@@ -348,10 +353,44 @@ dialog p{margin:0 0 16px}
         </a>
       </li>
       <li class="rv" style="--dl:.24s">
-        <button class="cart locked" type="button" data-lock="Max baut gerade am nächsten Spiel! 🔧">
-          <div class="art"><span class="qm" aria-hidden="true">?</span><span class="ribbon">IN ARBEIT</span></div>
-          <div class="info"><h3>Nächstes Spiel</h3><p>Hier taucht bald das nächste Spiel von Max auf.</p><ul class="tags"><li>🔧 Bald verfügbar</li></ul><span class="play">BALD …</span></div>
-        </button>
+        <a class="cart ar" href="archattack/" data-game="Arch Attack" data-color="#4d8dff">
+          <div class="art">
+            <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="arsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ec8ff"/><stop offset="1" stop-color="#d9f6ff"/></linearGradient></defs>
+              <rect width="320" height="180" fill="url(#arsky)"/>
+              <circle cx="262" cy="30" r="16" fill="#fff3a0"/>
+              <g fill="#fff" opacity=".9"><circle cx="70" cy="30" r="10"/><circle cx="82" cy="26" r="12"/><circle cx="95" cy="31" r="9"/><circle cx="190" cy="44" r="8"/><circle cx="200" cy="40" r="10"/><circle cx="211" cy="45" r="7"/></g>
+              <path d="M0 138 Q60 112 120 132 T240 126 T320 130 V180 H0Z" fill="#8fd694"/>
+              <path d="M0 154 Q80 140 160 152 T320 148 V180 H0Z" fill="#4caf50"/>
+              <g fill="#ff595e"><circle cx="120" cy="156" r="3"/><circle cx="170" cy="160" r="3"/></g><g fill="#ffca3a"><circle cx="145" cy="162" r="3"/><circle cx="200" cy="157" r="3"/></g>
+              <rect x="22" y="104" width="52" height="80" fill="#9c8f86" stroke="#26263a" stroke-opacity=".5" stroke-width="2"/><rect x="18" y="100" width="60" height="8" rx="4" fill="#57c84d"/>
+              <rect x="246" y="116" width="46" height="70" fill="#9c8f86" stroke="#26263a" stroke-opacity=".5" stroke-width="2"/><rect x="242" y="112" width="54" height="8" rx="4" fill="#57c84d"/>
+              <rect x="0" y="166" width="320" height="14" fill="#2f9bff"/>
+              <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M44 100 L47 86 L50 100" stroke="#26263a" stroke-width="7"/><path d="M44 100 L47 86 L50 100" stroke="#fff4e0" stroke-width="4"/>
+                <path d="M47 86 L47 70" stroke="#26263a" stroke-width="10"/><path d="M47 86 L47 70" stroke="#6ec6ff" stroke-width="7"/>
+                <path d="M47 74 L62 70" stroke="#26263a" stroke-width="6"/><path d="M47 74 L62 70" stroke="#fff4e0" stroke-width="3.5"/>
+                <path d="M58 58 Q72 70 60 84" stroke="#26263a" stroke-width="5"/><path d="M58 58 Q72 70 60 84" stroke="#c98b4a" stroke-width="3"/>
+              </g>
+              <circle cx="48" cy="62" r="7" fill="#ffdcb5" stroke="#26263a" stroke-width="2"/>
+              <g class="arfoe" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M266 112 L269 98 L272 112" stroke="#26263a" stroke-width="7"/><path d="M266 112 L269 98 L272 112" stroke="#ff8a8d" stroke-width="4"/>
+                <path d="M269 98 L269 82" stroke="#26263a" stroke-width="10"/><path d="M269 98 L269 82" stroke="#ff5a5f" stroke-width="7"/>
+                <path d="M258 70 Q246 82 258 96" stroke="#26263a" stroke-width="5"/><path d="M258 70 Q246 82 258 96" stroke="#8b2a2d" stroke-width="3"/>
+                <circle cx="269" cy="74" r="7" fill="#ffdcb5" stroke="#26263a" stroke-width="2"/>
+              </g>
+              <g class="archute"><path d="M168 40 L160 58 M168 40 L176 58 M168 40 L152 40 M168 40 L184 40" stroke="#fff" stroke-width="1"/><path d="M146 40 A22 22 0 0 1 190 40 Z" fill="#ff4d6d" stroke="#26263a" stroke-width="1.5"/><path d="M160 40 A8 22 0 0 1 176 40" fill="#fff"/><rect x="158" y="56" width="20" height="16" rx="4" fill="#ff4d6d" stroke="#26263a" stroke-width="1.5"/><text x="168" y="68" font-size="11" text-anchor="middle" fill="#fff">&#10084;</text></g>
+              <g><line x1="-14" y1="0" x2="8" y2="0" stroke="#5b3a1e" stroke-width="2.5"/><path d="M12 0 L6 -3.5 L6 3.5Z" fill="#e8eef5" stroke="#26263a" stroke-width=".8"/><path d="M-14 0 L-18 -4 M-14 0 L-18 4" stroke="#4d8dff" stroke-width="2.5"/>
+                <animateMotion dur="2.6s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;.7;1" calcMode="linear" path="M66 70 Q160 -10 262 78"/></g>
+            </svg>
+          </div>
+          <div class="info">
+            <h3>Arch Attack</h3>
+            <p>Bogenschießen mit echter Ragdoll-Physik! Besiege Gegner und Endbosse in 10 bunten Welten.</p>
+            <ul class="tags"><li>🏹 Action</li><li>300 Level</li><li>Handy &amp; PC</li></ul>
+            <span class="play">SPIELEN ▶</span>
+          </div>
+        </a>
       </li>
       <li class="rv" style="--dl:.36s">
         <button class="cart locked" type="button" data-lock="Pssst … das ist noch geheim! 🤫">
