@@ -108,7 +108,6 @@ h1{margin:0;line-height:1}
 
 /* ---------- Sektionen ---------- */
 .sec{padding:56px 0 24px;scroll-margin-top:60px}
-.legal .glass{scroll-margin-top:60px}
 h2{margin:0 0 6px;font-size:clamp(28px,7vw,44px);font-weight:900;line-height:1.1;text-shadow:0 3px 0 rgba(0,0,0,.35)}
 h2 .hl{color:var(--butter)}
 .lead{margin:0 0 24px;color:var(--muted)}
@@ -168,11 +167,12 @@ h2 .hl{color:var(--butter)}
 
 /* Trophäen */
 .trophies{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:420px){.tro b{font-size:12.5px}.tro small{font-size:11px}.tro .ti{font-size:30px}}
 @media(min-width:700px){.trophies{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 .tro{position:relative;display:grid;justify-items:center;align-content:start;gap:4px;padding:16px 6px 12px;text-align:center;border-radius:20px;background:var(--glass);border:2px solid var(--line)}
 .tro .ti{font-size:34px;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
-.tro b{font-size:13.5px;line-height:1.2;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere}
-.tro small{font-size:11.5px;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;line-height:1.25;color:var(--muted);font-weight:600}
+.tro b{font-size:13.5px;line-height:1.2;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+.tro small{font-size:11.5px;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;line-height:1.25;color:var(--muted);font-weight:600}
 .tro.off{opacity:.62}
 .tro.off .ti{filter:grayscale(1) brightness(.7)}
 .tro.on{background:linear-gradient(160deg,rgba(255,212,73,.28),rgba(255,122,41,.2));border-color:var(--butter)}
@@ -181,16 +181,9 @@ h2 .hl{color:var(--butter)}
 .tcount{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:14px;color:var(--muted)}
 .linkbtn{background:none;border:0;padding:10px 4px;min-height:44px;color:var(--muted);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
 
-/* ---------- Rechtliches ---------- */
-.legal{padding:56px 0 calc(var(--safe-b) + 40px);display:grid;gap:22px;grid-template-columns:1fr;user-select:text;-webkit-user-select:text}
-@media(min-width:760px){.legal{grid-template-columns:1fr 1fr;align-items:start}}
-.legal .glass{padding:22px;border-radius:24px;background:var(--glass);border:2px solid var(--line);font-weight:500;font-size:15px}
-.legal h2{font-size:26px}
-.legal h3{margin:18px 0 4px;font-size:16px}
-.legal p,.legal address{margin:0 0 12px;font-style:normal}
-.legal :target{outline:3px solid var(--butter);outline-offset:4px}
-.foot{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
-.foot nav{display:flex;gap:18px}
+/* ---------- Footer ---------- */
+.foot{padding:48px 0 calc(var(--safe-b) + 28px);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.foot nav{display:flex;flex-wrap:wrap;gap:0 18px}
 .foot a{color:#fff;display:inline-flex;align-items:center;min-height:44px}
 
 /* ---------- Overlays ---------- */
@@ -377,38 +370,9 @@ dialog p{margin:0 0 16px}
   </section>
 </main>
 
-<footer class="legal wrap">
-  <section class="glass" id="impressum" aria-labelledby="hImp">
-    <h2 id="hImp">Impressum</h2>
-    <p>Diese Seite ist ein publizistisches Angebot von:</p>
-    <address>Andreas Dittes<br>Bautzener Str. 35<br>10829 Berlin</address>
-    <p>Tel. Mobil: <a href="tel:+491785549030">+49 178 554 90 30</a><br>
-    E-Mail: <a href="mailto:andreas@dittes.info">andreas@dittes.info</a><br>
-    Internet: <a href="http://dittes.info" rel="noopener">http://dittes.info</a></p>
-    <p>Inhaltlich Verantwortlicher gemäß § 10 Absatz 3 MDStV:<br>Andreas Dittes (Anschrift wie oben)</p>
-    <h3>Haftungshinweis</h3>
-    <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehme ich keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>
-  </section>
-
-  <section class="glass" id="datenschutz" aria-labelledby="hDs">
-    <h2 id="hDs">Datenschutz</h2>
-    <p><strong>Kurz gesagt:</strong> Diese Seite setzt keine Cookies, nutzt keine Tracking- oder Analyse-Dienste und zeigt keine Werbung.</p>
-    <h3>Verantwortlicher</h3>
-    <p>Andreas Dittes, Anschrift und Kontakt siehe Impressum.</p>
-    <h3>Server-Logfiles</h3>
-    <p>Beim Aufruf verarbeitet der Hosting-Anbieter technisch notwendige Verbindungsdaten (z. B. IP-Adresse, Datum und Uhrzeit, aufgerufene Seite), damit die Seite ausgeliefert werden kann (Art. 6 Abs. 1 lit. f DSGVO).</p>
-    <h3>Spielstand auf deinem Gerät</h3>
-    <p>Sterne, Level, Trophäen, Outfit und Ton-Einstellung werden ausschließlich lokal in deinem Browser (localStorage) gespeichert und nicht an einen Server gesendet. Mit „Spielstand zurücksetzen“ oder durch Löschen der Browserdaten verschwinden sie wieder.</p>
-    <h3>Die Spiele</h3>
-    <p>MaxBall lädt die Bibliothek three.js von unpkg.com. Animal Attack lädt three.js von cdn.jsdelivr.net und eine Schriftart von Google Fonts (fonts.googleapis.com, fonts.gstatic.com). Dabei wird deine IP-Adresse an diese Anbieter übertragen.</p>
-    <h3>Deine Rechte</h3>
-    <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung sowie auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde. Schreib dafür einfach an <a href="mailto:andreas@dittes.info">andreas@dittes.info</a>.</p>
-  </section>
-
-  <div class="foot">
-    <span>© 2026 Max' Spielhalle</span>
-    <nav aria-label="Rechtliches"><a href="#impressum">Impressum</a><a href="#datenschutz">Datenschutz</a><a href="#top">Nach oben ↑</a></nav>
-  </div>
+<footer class="foot wrap">
+  <span>© 2026 Max' Spielhalle</span>
+  <nav aria-label="Rechtliches"><a href="impressum/">Impressum</a><a href="impressum/#datenschutz">Datenschutz</a><a href="#top">Nach oben ↑</a></nav>
 </footer>
 
 <div id="portal" aria-hidden="true"><div class="disc"></div><div class="msg" id="portalMsg"></div></div>
@@ -461,7 +425,7 @@ const unlockedOutfits = () => OUTFITS.filter(o => o.lvl <= levelInfo(S.score).L)
 
 const TROPHIES = [
   { id: 'first', ico: '⭐', name: 'Erster Stern', hint: 'Fang einen Stern' },
-  { id: 'combo', ico: '🔥', name: 'Kombi-König', hint: '5 Sterne schnell hintereinander' },
+  { id: 'combo', ico: '🔥', name: 'Kombi-König', hint: '5 Sterne in Folge fangen' },
   { id: 'gold', ico: '🥇', name: 'Goldfund', hint: 'Fang einen goldenen Stern' },
   { id: 'max', ico: '🔤', name: 'M-A-X', hint: 'Tippe alle drei Buchstaben an' },
   { id: 'tickle', ico: '😆', name: 'Kitzelmeister', hint: 'Tippe Blobi 10-mal an' },
