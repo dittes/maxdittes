@@ -26,9 +26,6 @@ button{font-family:var(--font);cursor:pointer;border:0;color:inherit}
 .pill.coin{color:var(--y)}
 .icon-btn{pointer-events:auto;width:44px;height:44px;border-radius:14px;background:rgba(30,25,70,.5);border:2px solid rgba(255,255,255,.3);font-size:20px}
 .icon-btn:active{transform:scale(.92)}
-#btnJump{position:fixed;left:calc(12px + env(safe-area-inset-left));bottom:calc(12px + env(safe-area-inset-bottom));z-index:5;width:92px;height:62px;border-radius:18px;background:linear-gradient(#fff,#dfe6ff);color:#5b5f82;font-size:20px;box-shadow:0 5px 0 #9aa3d1,0 8px 18px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
-#btnJump small{font-size:11px;color:var(--b);margin-top:3px}
-#btnJump:active{transform:translateY(4px);box-shadow:0 1px 0 #9aa3d1}
 /* Screens */
 .screen{position:fixed;inset:0;z-index:10;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
 .screen.dim{background:linear-gradient(180deg,rgba(40,20,90,.55),rgba(20,10,50,.75))}
@@ -121,9 +118,8 @@ button{font-family:var(--font);cursor:pointer;border:0;color:inherit}
 
 <div id="hud" class="hidden">
   <div><div class="pill coin">🪙 <span class="coinVal">0</span></div><div class="pill" id="hudLevel">Level 1</div><div class="pill" id="hudWave">Welle 1/1</div></div>
-  <div><button class="icon-btn" id="btnSound" aria-label="Ton an/aus">🔊</button><button class="icon-btn" id="btnPause" aria-label="Pause">⏸</button></div>
+  <div><button class="icon-btn" id="btnFull" aria-label="Vollbild">⛶</button><button class="icon-btn" id="btnSound" aria-label="Ton an/aus">🔊</button><button class="icon-btn" id="btnPause" aria-label="Pause">⏸</button></div>
 </div>
-<button id="btnJump" class="hidden" aria-label="Springen">SPRUNG<small>6 AUSDAUER</small></button>
 <div id="rotate">📱↻ Dreh dein Handy quer!</div>
 
 <section id="scrMenu" class="screen">
@@ -135,8 +131,8 @@ button{font-family:var(--font);cursor:pointer;border:0;color:inherit}
     <button class="big b-blue" id="btnLevels">🗺️ Level wählen</button>
     <button class="big b-orange" id="btnShop">🛒 Shop &amp; Training</button>
   </div>
-  <div class="menu-row"><button class="small-btn" id="btnMenuSound">🔊 Ton an</button></div>
-  <p class="howto">Finger/Maus gedrückt halten, <b>nach hinten ziehen</b> zum Zielen, loslassen zum Schießen. Leertaste oder „Sprung“ zum Ausweichen. Triff die Fallschirm-Pakete für Leben &amp; Ausdauer!</p>
+  <div class="menu-row"><button class="small-btn" id="btnMenuSound">🔊 Ton an</button><button class="small-btn" id="btnMenuFull">⛶ Vollbild</button></div>
+  <p class="howto">Finger/Maus gedrückt halten, <b>nach hinten ziehen</b> zum Zielen, loslassen zum Schießen. Triff die Fallschirm-Pakete für Leben, Ausdauer, Waffen &amp; Upgrades – und schieß Bomben ab, bevor sie bei dir landen!</p>
   <a class="back-link" href="../">← Zurück zu Max' Spielewelt</a>
 </section>
 
@@ -177,8 +173,8 @@ button{font-family:var(--font);cursor:pointer;border:0;color:inherit}
     <p id="loseStats"></p>
     <p id="loseTip"></p>
     <div class="btns">
-      <button class="big b-green" id="btnRetry">↻ Nochmal versuchen</button>
-      <div class="row"><button class="big b-orange" id="btnLoseShop">🛒 Shop</button><button class="big b-blue" id="btnLoseLevels">🗺️ Level</button></div>
+      <button class="big b-green" id="btnRetry">↻ Runde wiederholen</button>
+      <button class="big b-purple" id="btnLoseMenu">🏠 Hauptmenü</button>
     </div>
   </div>
 </section>

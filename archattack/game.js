@@ -1,6 +1,34 @@
 /* Arch Attack — Ragdoll-Bogenschießen mit Matter.js-Physik
    (c) maxdittes.com */
 'use strict';
+// --- Kompatibilität für ältere Browser (Safari < 16.4 kennt roundRect nicht)
+(function () {
+  const rr = function (x, y, w, h, r) {
+    if (Array.isArray(r)) r = r[0];
+    r = Math.min(Math.abs(r || 0), Math.abs(w) / 2, Math.abs(h) / 2);
+    this.moveTo(x + r, y);
+    this.lineTo(x + w - r, y); this.quadraticCurveTo(x + w, y, x + w, y + r);
+    this.lineTo(x + w, y + h - r); this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    this.lineTo(x + r, y + h); this.quadraticCurveTo(x, y + h, x, y + h - r);
+    this.lineTo(x, y + r); this.quadraticCurveTo(x, y, x + r, y);
+    return this;
+  };
+  if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = rr;
+  if (typeof Path2D !== 'undefined' && !Path2D.prototype.roundRect) Path2D.prototype.roundRect = rr;
+})();
+// --- Fehler sichtbar machen statt schwarzem Bildschirm
+window.addEventListener('error', e => showFatal(e.message));
+window.addEventListener('unhandledrejection', e => showFatal(e.reason && e.reason.message));
+let fatalShown = false;
+function showFatal(msg) {
+  if (fatalShown) return; fatalShown = true;
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:auto 10px 10px 10px;z-index:99;background:rgba(200,30,50,.95);color:#fff;padding:12px 14px;border-radius:14px;font:14px system-ui;line-height:1.4';
+  d.textContent = 'Fehler: ' + (msg || 'unbekannt') + ' — bitte Seite neu laden (Strg/Cmd + Shift + R).';
+  d.onclick = () => d.remove();
+  (document.body || document.documentElement).appendChild(d);
+}
+if (typeof Matter === 'undefined') showFatal('matter.min.js wurde nicht geladen');
 const { Engine, Bodies, Body, Composite, Constraint } = Matter;
 
 // ---------------------------------------------------------------- Konstanten
@@ -299,13 +327,30 @@ function genLevel(n) {
   if (n >= 5) for (let i = 0; i < slotsN; i++) {
     if (r() < 0.45) { const s = L.slots[i]; const hgt = 1 + Math.floor(r() * Math.min(2, 1 + n / 60)); for (let k = 0; k < hgt; k++) L.crates.push({ slot: i, x: s.x - s.w / 2 + 24, k, metal: n > 60 && r() < 0.4 }); }
   }
-  if (n >= 12 && r() < 0.55) {
+  if (n >= 20 && r() < 0.55) {
     const px = Math.round(W * (0.3 + r() * 0.12)), top = Math.round(H * (0.35 + r() * 0.25));
     L.pillars.push({ x: px, top, w: 60 + Math.round(r() * 40), h: null });
     if (r() < 0.5) { const hgt = 1 + Math.floor(r() * 3); for (let k = 0; k < hgt; k++) L.crates.push({ pillar: 0, x: px, k, metal: false }); }
   }
   if (n >= 30 && r() < 0.4) {
     L.pillars.push({ x: Math.round(W * (0.36 + r() * 0.1)), top: Math.round(H * (0.18 + r() * 0.15)), w: 180, h: 34, floatMove: r() < 0.5 ? { amp: 60 + r() * 60, spd: 0.4 + r() * 0.5, ph: r() * 6 } : null });
+  }
+  // Sichtlinie: nähere Türme dürfen weiter hinten stehende Gegner nicht komplett verdecken
+  {
+    const sx = L.player.x + 10, sy = L.player.top - 84, strict = n < 60;
+    const targets = L.slots.map(sl => ({ sl, x: sl.x + 18, y: () => sl.top - 75 }));
+    if (L.bossSlot) targets.push({ sl: L.bossSlot, x: L.bossSlot.x + 30, y: () => L.bossSlot.top - 150 });
+    targets.sort((a, b) => b.x - a.x);
+    for (const t of targets) L.slots.forEach((b, i) => {
+      if (b === t.sl || b.x >= t.sl.x) return;
+      if (!strict && (i + n) % 2) return;
+      const ty = t.y(), ly = x => sy + (ty - sy) * (x - sx) / (t.x - sx);
+      const x0 = b.x - b.w / 2 - 12, x1 = b.x + b.w / 2 + 12;
+      const low = Math.max(ly(x0), ly(x1)), high = Math.min(ly(x0), ly(x1)), clear = 34;
+      const crateH = 44 * L.crates.filter(c => c.slot === i).length;
+      if (b.floating && b.top + 34 < high - clear) return;
+      if (b.top - crateH < low + clear) b.top = Math.round(Math.min(H * 0.84, low + clear + crateH));
+    });
   }
   // Dekoration
   const hill = (base, amp, step) => { const pts = []; for (let x = -800; x <= W + 800; x += step) pts.push([x, base - Math.abs(Math.sin(x * 0.0023 + r() * 0.4)) * amp - r() * amp * 0.3]); return pts; };
@@ -1169,6 +1214,8 @@ function resize() {
   view.sc = sc; view.ox = (view.w - L.W * sc) / 2; view.oy = (view.h - L.H * sc);
 }
 window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 150));
+if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 const FONT = '"Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif';
 
 function hillY(pts, x) {
@@ -1408,9 +1455,6 @@ function drawTrajectory() {
 function drawWorldHud() {
   const p = Game.player, L = Game.L;
   if (p) {
-    const tw = 150, x = L.player.x - tw / 2, y = L.player.top + 50;
-    bar(x, y, tw, 26, p.hp / p.maxHp, '#ef476f', Math.ceil(Math.max(0, p.hp)));
-    bar(x, y + 36, tw, 26, Game.sta / Game.staMax, Game.sta < SHOT_COST ? '#6c7a96' : '#4d8dff', Math.floor(Game.sta));
     if (p.alive && Game.reload > 0 && Game.state === 'playing') { const f = 1 - Game.reload / playerStats().reload; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(p.x, p.y - 150, 13, -Math.PI / 2, -Math.PI / 2 + f * Math.PI * 2); ctx.stroke(); }
   }
   for (const e of Game.enemies) {
@@ -1427,7 +1471,19 @@ function drawWorldHud() {
 function drawScreenHud() {
   const L = Game.L, W = view.w;
   if (Game.state === 'menu') return;
+  // Leben & Ausdauer oben in der Mitte
+  const p = Game.player;
   let y = 72;
+  if (p) {
+    const hud = $('hud'); let side = 0;
+    if (!hud.classList.contains('hidden')) { const l = hud.firstElementChild.getBoundingClientRect(), r = hud.lastElementChild.getBoundingClientRect(); side = Math.max(l.right, W - r.left) + 12; }
+    let bw = Math.min(360, W - side * 2), by = 10;
+    if (bw < 170) { bw = Math.min(360, W - 24); by = 62; }
+    const bx = W / 2 - bw / 2, hp = Math.ceil(Math.max(0, p.hp)), low = Game.sta < SHOT_COST;
+    bar(bx, by, bw, 22, p.hp / p.maxHp, p.hp / p.maxHp < 0.3 && Math.floor(gameTime * 4) % 2 ? '#ff8fa3' : '#ef476f', `❤ ${hp} / ${p.maxHp}`);
+    bar(bx, by + 30, bw, 16, Game.sta / Game.staMax, low ? (Math.floor(gameTime * 6) % 2 ? '#6c7a96' : '#9aa5c7') : '#4d8dff', `⚡ ${Math.floor(Game.sta)} / ${Game.staMax}`);
+    y = by + 30 + 16 + 26;
+  }
   if (L.wind) {
     const txt = `Wind ${Math.abs(L.wind)}`; ctx.font = `18px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillStyle = 'rgba(20,20,50,.45)'; ctx.beginPath(); ctx.roundRect(W / 2 - 80, y - 16, 160, 32, 16); ctx.fill();
@@ -1527,17 +1583,18 @@ const UI = {
   cur: 'scrMenu', prev: null, world: 0, shopTab: 'bows',
   show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-    if (id) { $(id).classList.remove('hidden'); $(id).scrollTop = 0; }
+    const el = id && $(id);
+    if (el) { el.classList.remove('hidden'); el.scrollTop = 0; }
     this.cur = id;
     this.hud(!id && Game.state !== 'menu');
   },
-  hud(on) { $('hud').classList.toggle('hidden', !on); },
+  hud(on) { const h = $('hud'); if (h) h.classList.toggle('hidden', !on); },
   updateHud() {
     document.querySelectorAll('.coinVal').forEach(el => el.textContent = fmt(save.coins));
     const L = Game.L; if (!L) return;
     $('hudLevel').textContent = `Level ${L.n}`;
     $('hudWave').textContent = `Welle ${Math.max(1, Game.waveIdx + 1)}/${L.waves.length}`;
-    $('btnSound').textContent = save.sound ? '🔊' : '🔇';
+    const sb = $('btnSound'); if (sb) sb.textContent = save.sound ? '🔊' : '🔇';
   },
   nextLevel() { for (let n = 1; n <= MAX_LEVEL; n++) if (!save.stars[n]) return n; return MAX_LEVEL; },
   menu() {
@@ -1548,7 +1605,7 @@ const UI = {
     $('menuStars').textContent = `⭐ ${total} / ${MAX_LEVEL * 3}`;
     this.updateHud(); this.show('scrMenu');
   },
-  play(n) { Sfx.init(); Sfx.click(); this.show(null); startLevel(n); },
+  play(n) { Sfx.init(); Sfx.click(); if (matchMedia('(pointer: coarse)').matches) enterFullscreen(); this.show(null); startLevel(n); },
   unlocked(n) { return n === 1 || !!save.stars[n - 1]; },
   levels(world) {
     Sfx.click();
@@ -1631,8 +1688,31 @@ const UI = {
   resume() { if (Game.state !== 'paused') return; Game.state = 'playing'; this.show(null); Sfx.click(); },
 };
 
+// ---------------------------------------------------------------- Vollbild
+function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+function fsSupported() { const d = document.documentElement; return !!(d.requestFullscreen || d.webkitRequestFullscreen); }
+function enterFullscreen() {
+  if (!fsSupported() || fsEl()) return;
+  const d = document.documentElement;
+  try { const r = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (r && r.catch) r.catch(() => { }); } catch (e) { }
+  try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => { }); } catch (e) { }
+}
+function exitFullscreen() {
+  try { const f = document.exitFullscreen || document.webkitExitFullscreen; if (f) { const r = f.call(document); if (r && r.catch) r.catch(() => { }); } } catch (e) { }
+}
+function toggleFullscreen() { if (fsEl()) exitFullscreen(); else enterFullscreen(); }
+function updateFsButtons() {
+  const on = !!fsEl();
+  ['btnFull', 'btnMenuFull'].forEach(id => {
+    const b = $(id); if (!b) return;
+    if (!fsSupported()) { b.style.display = 'none'; return; }
+    b.textContent = id === 'btnMenuFull' ? (on ? '⛶ Vollbild aus' : '⛶ Vollbild') : (on ? '🗗' : '⛶');
+  });
+}
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { updateFsButtons(); setTimeout(resize, 60); setTimeout(resize, 400); }));
+
 function bindUI() {
-  const on = (id, fn) => $(id).addEventListener('click', e => { Sfx.init(); e.currentTarget.blur(); fn(e); });
+  const on = (id, fn) => { const el = $(id); if (!el) return; el.addEventListener('click', e => { Sfx.init(); e.currentTarget.blur(); fn(e); }); };
   on('btnContinue', () => UI.play(UI.nextLevel()));
   on('btnLevels', () => UI.levels());
   on('btnShop', () => UI.openShop('scrMenu'));
@@ -1650,8 +1730,12 @@ function bindUI() {
   on('btnRestart', () => UI.play(Game.L.n));
   on('btnQuit', () => { persist(); UI.menu(); });
   on('btnSound', () => { save.sound = !save.sound; Sfx.on = save.sound; persist(); UI.updateHud(); });
-  on('btnMenuSound', () => { save.sound = !save.sound; Sfx.on = save.sound; persist(); $('btnMenuSound').textContent = save.sound ? '🔊 Ton an' : '🔇 Ton aus'; });
-  $('btnMenuSound').textContent = save.sound ? '🔊 Ton an' : '🔇 Ton aus';
+  const soundLabel = () => { const b = $('btnMenuSound'); if (b) b.textContent = save.sound ? '🔊 Ton an' : '🔇 Ton aus'; };
+  on('btnMenuSound', () => { save.sound = !save.sound; Sfx.on = save.sound; persist(); soundLabel(); });
+  soundLabel();
+  on('btnFull', () => toggleFullscreen());
+  on('btnMenuFull', () => toggleFullscreen());
+  updateFsButtons();
 }
 
 // ---------------------------------------------------------------- Hauptschleife
