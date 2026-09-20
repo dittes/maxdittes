@@ -886,18 +886,72 @@ const PACKS = {
   sta: { color: '#4d8dff', icon: '⚡', label: 'Ausdauer' },
   gold: { color: '#ffc300', icon: '★', label: 'Super' },
   coin: { color: '#2ec27e', icon: '🪙', label: 'Münzen' },
+  bomb: { color: '#ff4d00', icon: '💣', label: 'Bombe' },
+  weapon: { color: '#9b5de5', icon: '🏹', label: 'Neue Waffe' },
+  upgrade: { color: '#ff9f1c', icon: '⬆', label: 'Upgrade' },
 };
-function spawnPack() {
+function spawnPack(forceType, forceX) {
   const L = Game.L, r = rnd();
-  const type = r < 0.52 ? 'hp' : r < 0.77 ? 'sta' : r < 0.9 ? 'gold' : 'coin';
-  const x = lerp(L.player.x + 320, L.W * 0.86, rnd());
-  const b = Bodies.rectangle(x, -70, 46, 40, { density: 0.0012, frictionAir: 0.01, friction: 0.8, label: 'pack' });
-  b.plugin.pack = { type, chute: true, t: rnd() * 5, landT: 0, alpha: 1 };
+  let type = forceType || (r < 0.42 ? 'hp' : r < 0.6 ? 'sta' : r < 0.69 ? 'gold' : r < 0.76 ? 'coin' : r < 0.94 ? 'bomb' : r < 0.975 ? 'upgrade' : 'weapon');
+  if (type === "bomb" && L.n < 3 && !forceType) type = "hp";
+  let x = lerp(L.player.x + 320, L.W * 0.86, rnd());
+  if (type === 'bomb' && rnd() < 0.35) x = L.player.x + (rnd() - 0.5) * 80; // Bombe direkt über dir!
+  if (forceX !== undefined) x = forceX;
+  const b = type === 'bomb'
+    ? Bodies.circle(x, -70, 20, { density: 0.0015, frictionAir: 0.01, friction: 0.8, restitution: 0.2, label: 'pack' })
+    : Bodies.rectangle(x, -70, 46, 40, { density: 0.0012, frictionAir: 0.01, friction: 0.8, label: 'pack' });
+  b.plugin.pack = { type, chute: true, t: rnd() * 5, landT: 0, alpha: 1, fuse: null };
+  if (type === 'weapon' || type === 'upgrade') addText(x, 40, type === 'weapon' ? 'Waffenkiste! 🏹' : 'Upgrade-Kiste! ⬆', '#fff', 30);
   Composite.add(Game.engine.world, b); Game.packs.push(b);
+}
+function explodeBomb(b) {
+  const x = b.position.x, y = b.position.y, R = 190, L = Game.L;
+  Sfx.explode(); Game.shake = Math.max(Game.shake, 16);
+  burst(x, y, 40, ['#ff4d00', '#ffd23f', '#ff9f1c', '#fff'], 620, 9, false, 0.8);
+  burst(x, y, 18, ['#555', '#777', '#999'], 240, 14, false, 1.2, 'smoke');
+  Game.parts.push({ type: 'ring', x, y, life: 0.4, max: 0.4, r: R });
+  addText(x, y - 50, 'BUMM! 💥', '#ffd23f', 40);
+  for (const t of [Game.player, ...Game.enemies]) {
+    if (!t || !t.alive || t.dropping) continue;
+    const c = t.center(), d = dist(x, y, c.x, c.y); if (d > R) continue;
+    const k = 1 - d / R * 0.5;
+    const base = t.side === 'p' ? t.maxHp * 0.3 : t.boss ? t.maxHp * 0.12 : t.maxHp * 0.65;
+    damageArcher(t, Math.max(1, Math.round(base * k * (1 - t.armor * 0.5))), { vx: (c.x - x) * 8, vy: -600, part: 'body', x: c.x, y: c.y });
+  }
+  for (const o of Composite.allBodies(Game.engine.world)) {
+    if (o.isStatic || o === b) continue; const d = dist(x, y, o.position.x, o.position.y); if (d > R * 1.4) continue;
+    const k = (1 - d / (R * 1.4)) * 1100 * o.mass, ang = Math.atan2(o.position.y - y, o.position.x - x);
+    applyImpulse(o, o.position.x, o.position.y, Math.cos(ang) * k, Math.sin(ang) * k - 250 * o.mass);
+  }
+  removeBody(b); b.plugin.pack.gone = true;
+}
+function givePackReward(type, x, y) {
+  const p = Game.player;
+  if (type === 'weapon') {
+    const missing = BOWS.filter(bw => !save.bows.includes(bw.id));
+    if (missing.length) {
+      const bw = rnd() < 0.65 ? missing[0] : pick(missing);
+      save.bows.push(bw.id); save.bow = bw.id; p.bowColor = bw.color; p.stringColor = bw.string;
+      showBanner('Neue Waffe!', `🏹 ${bw.name} – sofort ausgerüstet!`, 2.2); addText(x, y - 30, bw.name + '!', '#e0c3ff', 32);
+      Sfx.buy(); persist(); return;
+    }
+    type = 'upgrade';
+  }
+  if (type === 'upgrade') {
+    const open = UPGRADES.filter(u => save.up[u.id] < u.max);
+    if (!open.length) { const c = 200 + Game.L.n * 10; save.coins += c; Game.earned += c; addText(x, y - 30, `+${c} 🪙`, '#ffd23f', 32); UI.updateHud(); return; }
+    const u = pick(open); save.up[u.id]++;
+    if (u.id === 'hp') { p.maxHp += 15; p.hp += 15; }
+    if (u.id === 'sta') Game.staMax += 12;
+    showBanner('Gratis-Upgrade!', `${u.icon} ${u.name} → Stufe ${save.up[u.id]}`, 2.2); addText(x, y - 30, `${u.icon} ${u.name} +1`, '#ffd166', 30);
+    Sfx.buy(); persist();
+  }
 }
 function collectPack(b) {
   const pk = b.plugin.pack, p = Game.player, ps = playerStats();
   const x = b.position.x, y = b.position.y;
+  if (pk.type === 'bomb') { explodeBomb(b); Game.packs = Game.packs.filter(q => q !== b); return; }
+  if (pk.type === 'weapon' || pk.type === 'upgrade') givePackReward(pk.type, x, y);
   if (pk.type === 'hp' || pk.type === 'gold') { const h = Math.round(p.maxHp * (pk.type === 'gold' ? 0.3 : 0.4)); p.hp = Math.min(p.maxHp, p.hp + h); addText(x, y - 30, `+${h} ❤`, '#ff4d6d', 30); addText(p.x, p.y - 150, `+${h} ❤`, '#ff4d6d', 26); }
   if (pk.type === 'sta' || pk.type === 'gold') { Game.sta = Game.staMax; addText(x, y - 60, 'Ausdauer voll! ⚡', '#6fb1ff', 26); p.freeze = 0; }
   if (pk.type === 'coin') { const c = Math.round(20 + Game.L.n * 3); save.coins += c; Game.earned += c; addText(x, y - 30, `+${c} 🪙`, '#ffd23f', 30); Sfx.coin(); UI.updateHud(); }
@@ -915,8 +969,12 @@ function updatePacks(dt) {
         Body.setVelocity(b, { x: lerp(b.velocity.x, vx, 0.1), y: 1.4 });
         Body.setAngle(b, Math.sin(pk.t * 1.3) * 0.12); Body.setAngularVelocity(b, 0);
       }
-      if (pk.t > 1.5 && b.position.y > 0 && Math.abs(b.velocity.y) < 0.15) { pk.chute = false; Sfx.pop(); }
+      if (pk.t > 1.5 && b.position.y > 0 && Math.abs(b.velocity.y) < 0.15) { pk.chute = false; Sfx.pop(); if (pk.type === 'bomb') { pk.fuse = 1.6; addText(b.position.x, b.position.y - 50, 'Achtung! 💣', '#ff4d4d', 28); } }
+    } else if (pk.type === 'bomb') {
+      pk.fuse -= dt; if (Math.floor(pk.fuse * 8) % 2 === 0 && rnd() < 0.5) Sfx.tone(1200, 0.04, 'square', 0.04);
+      if (pk.fuse <= 0 && Game.state === 'playing') { explodeBomb(b); continue; }
     } else { pk.landT += dt; if (pk.landT > 9) pk.alpha -= dt; }
+    if (pk.type === 'bomb' && b.position.y > L.hazardY + 10 && !pk.gone) { burst(b.position.x, L.hazardY, 10, [L.theme.hazard2, '#fff'], 250, 5, true, 0.6); Sfx.splash(); removeBody(b); pk.gone = true; continue; }
     if (pk.alpha <= 0 || b.position.y > L.H + 200) { removeBody(b); pk.gone = true; }
   }
   Game.packs = Game.packs.filter(b => !b.plugin.pack.gone);
@@ -1094,7 +1152,7 @@ function update(dt) {
   } else if (Game.state === 'won' || Game.state === 'lost') {
     Game.endTimer += dt;
     if (!Game.shown && Game.state === 'won' && Game.endTimer > 2.8) { Game.shown = true; UI.showWin(); }
-    if (!Game.shown && Game.state === 'lost' && Game.endTimer > 2.0) { Game.shown = true; persist(); UI.showLose(); }
+    if (!Game.shown && Game.state === 'lost' && Game.endTimer > 1.5) { Game.shown = true; persist(); UI.showLose(); }
   }
 }
 
@@ -1225,8 +1283,20 @@ function drawBodyThing(b) {
       for (let i = 0; i < 6; i++) { ctx.fillStyle = i % 2 ? '#fff' : P.color; ctx.beginPath(); ctx.moveTo(0, -80); ctx.arc(0, -80, 58, Math.PI + i * Math.PI / 6, Math.PI + (i + 1) * Math.PI / 6); ctx.closePath(); ctx.fill(); }
       ctx.strokeStyle = OUT; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(0, -80, 58, Math.PI, 0); ctx.closePath(); ctx.stroke();
     }
-    const pulse = 1 + Math.sin(gameTime * 6) * 0.05;
+    if (pk.type === 'bomb') {
+      const hot = pk.fuse !== null, blink = hot && Math.floor(pk.fuse * (pk.fuse < 0.6 ? 16 : 8)) % 2 === 0;
+      const sc = hot ? 1 + (1.6 - pk.fuse) * 0.12 : 1; ctx.scale(sc, sc);
+      ctx.fillStyle = blink ? '#ff3b3b' : '#2b2b3a'; ctx.strokeStyle = OUT; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(0, 0, 20, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(-7, -7, 6, 0, 7); ctx.fill();
+      ctx.fillStyle = '#6b7280'; ctx.fillRect(-6, -26, 12, 8);
+      ctx.strokeStyle = '#c8a26b'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, -26); ctx.quadraticCurveTo(8, -36, 4, -42); ctx.stroke();
+      ctx.fillStyle = pick(['#ffd23f', '#ff9f1c', '#fff']); ctx.beginPath(); ctx.arc(4, -43, 3 + rnd() * 3, 0, 7); ctx.fill();
+      ctx.restore(); ctx.globalAlpha = 1; return;
+    }
+    const pulse = 1 + Math.sin(gameTime * 6) * (pk.type === 'weapon' || pk.type === 'upgrade' ? 0.12 : 0.05);
     ctx.scale(pulse, pulse);
+    if (pk.type === 'weapon' || pk.type === 'upgrade') { ctx.fillStyle = 'rgba(255,230,120,.45)'; ctx.beginPath(); ctx.arc(0, 0, 36 + Math.sin(gameTime * 8) * 4, 0, 7); ctx.fill(); }
     ctx.fillStyle = P.color; ctx.strokeStyle = OUT; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(-23, -20, 46, 40, 8); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#fff'; ctx.font = `26px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(P.icon, 0, 2);
   }
@@ -1461,7 +1531,7 @@ const UI = {
     this.cur = id;
     this.hud(!id && Game.state !== 'menu');
   },
-  hud(on) { $('hud').classList.toggle('hidden', !on); $('btnJump').classList.toggle('hidden', !on); },
+  hud(on) { $('hud').classList.toggle('hidden', !on); },
   updateHud() {
     document.querySelectorAll('.coinVal').forEach(el => el.textContent = fmt(save.coins));
     const L = Game.L; if (!L) return;
@@ -1552,7 +1622,7 @@ const UI = {
     this.updateHud(); this.show('scrWin');
   },
   showLose() {
-    const tips = ['Tipp: Kauf im Shop bessere Rüstung und einen Helm!', 'Tipp: Kopftreffer machen doppelten Schaden.', 'Tipp: Triff die Fallschirm-Pakete – sie heilen dich!', 'Tipp: Mit „Sprung“ weichst du Pfeilen aus.', 'Tipp: Achte auf den Wind oben in der Mitte!', 'Tipp: Trainiere „Leben“ und „Nachladen“ im Shop.', 'Tipp: Ziehe länger – volle Spannung = mehr Schaden.'];
+    const tips = ['Tipp: Kauf im Shop bessere Rüstung und einen Helm!', 'Tipp: Kopftreffer machen doppelten Schaden.', 'Tipp: Triff die Fallschirm-Pakete – sie heilen dich!', 'Tipp: Schieß Bomben ab, bevor sie bei dir landen!', 'Tipp: Achte auf den Wind oben in der Mitte!', 'Tipp: Trainiere „Leben“ und „Nachladen“ im Shop.', 'Tipp: Ziehe länger – volle Spannung = mehr Schaden.'];
     $('loseTip').textContent = pick(tips);
     $('loseStats').innerHTML = Game.earned ? `Du behältst <b>🪙 ${fmt(Game.earned)}</b> Münzen.` : '';
     this.updateHud(); this.show('scrLose');
@@ -1574,8 +1644,7 @@ function bindUI() {
   on('btnWinShop', () => UI.openShop('scrWin'));
   on('btnWinLevels', () => UI.levels(Game.L.wi));
   on('btnRetry', () => UI.play(Game.L.n));
-  on('btnLoseShop', () => UI.openShop('scrLose'));
-  on('btnLoseLevels', () => UI.levels(Game.L.wi));
+  on('btnLoseMenu', () => { persist(); UI.menu(); });
   on('btnPause', () => UI.pause());
   on('btnResume', () => UI.resume());
   on('btnRestart', () => UI.play(Game.L.n));
@@ -1583,8 +1652,6 @@ function bindUI() {
   on('btnSound', () => { save.sound = !save.sound; Sfx.on = save.sound; persist(); UI.updateHud(); });
   on('btnMenuSound', () => { save.sound = !save.sound; Sfx.on = save.sound; persist(); $('btnMenuSound').textContent = save.sound ? '🔊 Ton an' : '🔇 Ton aus'; });
   $('btnMenuSound').textContent = save.sound ? '🔊 Ton an' : '🔇 Ton aus';
-  const jb = $('btnJump');
-  jb.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); Sfx.init(); playerJump(); });
 }
 
 // ---------------------------------------------------------------- Hauptschleife
