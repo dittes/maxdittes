@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1b0f4a">
 <title>Max' Spielhalle – selbstgebaute Spiele von Max</title>
-<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
+<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack, Arch Attack, die Ameisenuhr und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
 <link rel="canonical" href="https://maxdittes.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Max' Spielhalle">
-<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack und bald noch mehr. Fang die Sterne!">
+<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack, Arch Attack, Ameisenuhr und bald noch mehr. Fang die Sterne!">
 <meta property="og:url" content="https://maxdittes.com/">
 <meta property="og:locale" content="de_DE">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32,4 40,24 62,25 45,39 51,60 32,48 13,60 19,39 2,25 24,24' fill='%23ffd449' stroke='%23e8890c' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -134,6 +134,7 @@ h2 .hl{color:var(--butter)}
 .play{justify-self:start;margin-top:4px;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:16px;background:var(--ink);color:#fff;font-weight:900;font-size:17px;letter-spacing:.04em;box-shadow:0 4px 0 rgba(0,0,0,.35)}
 .cart.mb{--c1:#ff9a4d;--c2:#ff7a29;--cd:#a63d0c}
 .cart.aa{--c1:#6fdc8a;--c2:#3dbb5b;--cd:#1f7b37}
+.cart.ar{--c1:#7fb8ff;--c2:#4d8dff;--cd:#2346a8}
 .cart.locked{--cd:#0a0620;color:#fff;background:linear-gradient(160deg,#3a2a7a,#241650);box-shadow:0 10px 0 var(--cd),0 26px 40px rgba(0,0,0,.4);border:2px dashed rgba(255,255,255,.3)}
 .cart.locked .art{background:repeating-linear-gradient(-45deg,#2a1c60 0 18px,#1d1247 18px 36px);display:grid;place-items:center}
 .qm{font-size:clamp(70px,20vw,110px);font-weight:900;color:var(--butter);text-shadow:0 5px 0 #8a5c00,0 12px 18px rgba(0,0,0,.4);animation:qm 2.2s ease-in-out infinite}
@@ -163,6 +164,10 @@ h2 .hl{color:var(--butter)}
 .bob{animation:bob .34s ease-in-out infinite alternate}
 @keyframes bob{to{transform:translateY(-1.6px)}}
 .apple{animation:apple 5.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.archute{animation:chute 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+@keyframes chute{0%,100%{transform:translate(-6px,-4px) rotate(-6deg)}50%{transform:translate(6px,6px) rotate(6deg)}}
+.arfoe{animation:foe 2.6s infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes foe{0%,68%{transform:rotate(0)}74%{transform:rotate(18deg) translateY(-4px)}90%,100%{transform:rotate(0)}}
 @keyframes apple{0%,80%{transform:scale(1)}88%{transform:scale(1.08,.92)}96%,100%{transform:scale(1)}}
 
 /* Trophäen */
@@ -180,6 +185,25 @@ h2 .hl{color:var(--butter)}
 .tro .lk{position:absolute;top:6px;right:8px;font-size:13px}
 .tcount{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:14px;color:var(--muted)}
 .linkbtn{background:none;border:0;padding:10px 4px;min-height:44px;color:var(--muted);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
+
+.sub{cursor:pointer}
+.cart.ac{--c1:#f6f2e6;--c2:#ddd5bd;--cd:#948a6c}
+.art.clockart{background:#fff}
+#clockArt{position:absolute;inset:0;display:block;width:100%;height:100%}
+.miniant{position:absolute;bottom:3px;left:-14%;width:44px;height:30px;display:grid;place-items:center;animation:mwalk 11s linear infinite;cursor:pointer}
+.miniant svg{width:34px;height:20px;overflow:visible}
+@keyframes mwalk{to{left:108%}}
+.ml{transform-box:fill-box;transform-origin:50% 0;animation:legs .3s ease-in-out infinite alternate}
+.ml.b{animation-direction:alternate-reverse}
+.cart.locked .qm.sm{font-size:clamp(56px,16vw,88px)}
+.subh{margin:34px 0 12px;font-size:clamp(20px,5vw,26px);font-weight:900;line-height:1.2;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px}
+.subh small{font-size:13px;font-weight:700;color:var(--muted)}
+.tro.sec.on{background:linear-gradient(160deg,rgba(138,91,255,.4),rgba(255,95,162,.28));border-color:var(--pink)}
+.zz .eye{transform:scaleY(.1)}
+.blobi-btn{-webkit-touch-callout:none}
+.efx{position:fixed;z-index:31;left:0;top:0;margin:-24px 0 0 -24px;font-size:44px;line-height:1;pointer-events:none;will-change:transform,opacity}
+.o2{transition:background .4s}
+.o2.cheese{background:radial-gradient(circle at 28% 42%,#c9950f 0 8%,transparent 9%),radial-gradient(circle at 62% 64%,#c9950f 0 11%,transparent 12%),radial-gradient(circle at 68% 24%,#c9950f 0 6%,transparent 7%),radial-gradient(circle at 35% 30%,#fff3a0,#ffd449 60%,#e0a91a)}
 
 /* ---------- Footer ---------- */
 .foot{padding:48px 0 calc(var(--safe-b) + 28px);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
@@ -348,12 +372,66 @@ dialog p{margin:0 0 16px}
         </a>
       </li>
       <li class="rv" style="--dl:.24s">
-        <button class="cart locked" type="button" data-lock="Max baut gerade am nächsten Spiel! 🔧">
-          <div class="art"><span class="qm" aria-hidden="true">?</span><span class="ribbon">IN ARBEIT</span></div>
-          <div class="info"><h3>Nächstes Spiel</h3><p>Hier taucht bald das nächste Spiel von Max auf.</p><ul class="tags"><li>🔧 Bald verfügbar</li></ul><span class="play">BALD …</span></div>
-        </button>
+        <a class="cart ar" href="archattack/" data-game="Arch Attack" data-color="#4d8dff">
+          <div class="art">
+            <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="arsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ec8ff"/><stop offset="1" stop-color="#d9f6ff"/></linearGradient></defs>
+              <rect width="320" height="180" fill="url(#arsky)"/>
+              <circle cx="262" cy="30" r="16" fill="#fff3a0"/>
+              <g fill="#fff" opacity=".9"><circle cx="70" cy="30" r="10"/><circle cx="82" cy="26" r="12"/><circle cx="95" cy="31" r="9"/><circle cx="190" cy="44" r="8"/><circle cx="200" cy="40" r="10"/><circle cx="211" cy="45" r="7"/></g>
+              <path d="M0 138 Q60 112 120 132 T240 126 T320 130 V180 H0Z" fill="#8fd694"/>
+              <path d="M0 154 Q80 140 160 152 T320 148 V180 H0Z" fill="#4caf50"/>
+              <g fill="#ff595e"><circle cx="120" cy="156" r="3"/><circle cx="170" cy="160" r="3"/></g><g fill="#ffca3a"><circle cx="145" cy="162" r="3"/><circle cx="200" cy="157" r="3"/></g>
+              <rect x="22" y="104" width="52" height="80" fill="#9c8f86" stroke="#26263a" stroke-opacity=".5" stroke-width="2"/><rect x="18" y="100" width="60" height="8" rx="4" fill="#57c84d"/>
+              <rect x="246" y="116" width="46" height="70" fill="#9c8f86" stroke="#26263a" stroke-opacity=".5" stroke-width="2"/><rect x="242" y="112" width="54" height="8" rx="4" fill="#57c84d"/>
+              <rect x="0" y="166" width="320" height="14" fill="#2f9bff"/>
+              <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M44 100 L47 86 L50 100" stroke="#26263a" stroke-width="7"/><path d="M44 100 L47 86 L50 100" stroke="#fff4e0" stroke-width="4"/>
+                <path d="M47 86 L47 70" stroke="#26263a" stroke-width="10"/><path d="M47 86 L47 70" stroke="#6ec6ff" stroke-width="7"/>
+                <path d="M47 74 L62 70" stroke="#26263a" stroke-width="6"/><path d="M47 74 L62 70" stroke="#fff4e0" stroke-width="3.5"/>
+                <path d="M58 58 Q72 70 60 84" stroke="#26263a" stroke-width="5"/><path d="M58 58 Q72 70 60 84" stroke="#c98b4a" stroke-width="3"/>
+              </g>
+              <circle cx="48" cy="62" r="7" fill="#ffdcb5" stroke="#26263a" stroke-width="2"/>
+              <g class="arfoe" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M266 112 L269 98 L272 112" stroke="#26263a" stroke-width="7"/><path d="M266 112 L269 98 L272 112" stroke="#ff8a8d" stroke-width="4"/>
+                <path d="M269 98 L269 82" stroke="#26263a" stroke-width="10"/><path d="M269 98 L269 82" stroke="#ff5a5f" stroke-width="7"/>
+                <path d="M258 70 Q246 82 258 96" stroke="#26263a" stroke-width="5"/><path d="M258 70 Q246 82 258 96" stroke="#8b2a2d" stroke-width="3"/>
+                <circle cx="269" cy="74" r="7" fill="#ffdcb5" stroke="#26263a" stroke-width="2"/>
+              </g>
+              <g class="archute"><path d="M168 40 L160 58 M168 40 L176 58 M168 40 L152 40 M168 40 L184 40" stroke="#fff" stroke-width="1"/><path d="M146 40 A22 22 0 0 1 190 40 Z" fill="#ff4d6d" stroke="#26263a" stroke-width="1.5"/><path d="M160 40 A8 22 0 0 1 176 40" fill="#fff"/><rect x="158" y="56" width="20" height="16" rx="4" fill="#ff4d6d" stroke="#26263a" stroke-width="1.5"/><text x="168" y="68" font-size="11" text-anchor="middle" fill="#fff">&#10084;</text></g>
+              <g><line x1="-14" y1="0" x2="8" y2="0" stroke="#5b3a1e" stroke-width="2.5"/><path d="M12 0 L6 -3.5 L6 3.5Z" fill="#e8eef5" stroke="#26263a" stroke-width=".8"/><path d="M-14 0 L-18 -4 M-14 0 L-18 4" stroke="#4d8dff" stroke-width="2.5"/>
+                <animateMotion dur="2.6s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;.7;1" calcMode="linear" path="M66 70 Q160 -10 262 78"/></g>
+            </svg>
+          </div>
+          <div class="info">
+            <h3>Arch Attack</h3>
+            <p>Bogenschießen mit echter Ragdoll-Physik! Besiege Gegner und Endbosse in 10 bunten Welten.</p>
+            <ul class="tags"><li>🏹 Action</li><li>300 Level</li><li>Handy &amp; PC</li></ul>
+            <span class="play">SPIELEN ▶</span>
+          </div>
+        </a>
       </li>
       <li class="rv" style="--dl:.36s">
+        <a class="cart ac" href="antclock/" data-game="Ameisenuhr" data-color="#f4f1e8">
+          <div class="art clockart">
+            <canvas id="clockArt" aria-hidden="true"></canvas>
+            <span class="miniant" id="miniant" aria-hidden="true"><svg viewBox="0 0 34 20"><g stroke="#1c1c21" stroke-width="1.8" stroke-linecap="round" fill="none"><path class="ml" d="M12 12l-4 6M17 12v6M22 12l4 6"/><path class="ml b" d="M13 12l-1 6M18 12l3 6M23 12l5 4"/><path d="M28 5q3-4 6-3M27 4q1-4 4-5"/></g><ellipse cx="7" cy="9" rx="6" ry="4.4" fill="#1c1c21"/><ellipse cx="17" cy="9" rx="4" ry="3.4" fill="#1c1c21"/><circle cx="26" cy="8" r="4" fill="#1c1c21"/></svg></span>
+          </div>
+          <div class="info">
+            <h3>Ameisenuhr</h3>
+            <p>Die Uhrzeit aus 1000 winzigen Ameisen. Fahr mit dem Finger durch – sie krabbeln davon!</p>
+            <ul class="tags"><li>🐜 Uhr</li><li>1000 Ameisen</li><li>Handy &amp; PC</li></ul>
+            <span class="play">ANSEHEN ▶</span>
+          </div>
+        </a>
+      </li>
+      <li class="rv" style="--dl:.48s">
+        <button class="cart locked" type="button" data-lock="Bald! Max tüftelt schon am nächsten Spiel 🛠️">
+          <div class="art"><span class="qm sm" aria-hidden="true">🛠️</span><span class="ribbon">IN ARBEIT</span></div>
+          <div class="info"><h3>Nächstes Spiel</h3><p>Max programmiert schon fleißig weiter …</p><ul class="tags"><li>🔧 In Arbeit</li></ul><span class="play">BALD …</span></div>
+        </button>
+      </li>
+      <li class="rv" style="--dl:.6s">
         <button class="cart locked" type="button" data-lock="Pssst … das ist noch geheim! 🤫">
           <div class="art"><span class="qm" aria-hidden="true" style="animation-delay:-1s">?</span><span class="ribbon">TOP SECRET</span></div>
           <div class="info"><h3>Geheimes Spiel</h3><p>Da baut jemand heimlich etwas richtig Großes …</p><ul class="tags"><li>🤫 Geheim</li></ul><span class="play">BALD …</span></div>
@@ -366,6 +444,8 @@ dialog p{margin:0 0 16px}
     <h2 id="hTro">Dein <span class="hl">Trophäenschrank</span></h2>
     <p class="lead">Sammle Sterne, steig im Level auf und knack alle Trophäen.</p>
     <ul class="trophies" id="trophyGrid"></ul>
+    <h3 class="subh">Geheime Trophäen 🤫 <small id="secCount"></small></h3>
+    <ul class="trophies" id="secretGrid"></ul>
     <div class="tcount"><span id="tCount"></span><button class="linkbtn" id="resetBtn" type="button">Spielstand zurücksetzen</button></div>
   </section>
 </main>
@@ -408,8 +488,16 @@ const S = {
   ach: store.get('ach', {}) || {},
   sound: store.get('sound', true) !== false,
   outfit: +store.get('outfit', 0) || 0,
-  tickles: +store.get('tickles', 0) || 0
+  tickles: +store.get('tickles', 0) || 0,
+  caught: +store.get('caught', 0) || 0,
+  golds: +store.get('golds', 0) || 0,
+  ltr: +store.get('ltr', 0) || 0,
+  seen: +store.get('seen', 0) || 0,
+  opened: Array.isArray(store.get('opened', [])) ? store.get('opened', []) : [],
+  lastDay: String(store.get('lastDay', '') || ''),
+  dayCount: +store.get('dayCount', 0) || 0
 };
+let lastInput = performance.now(), asleep = false, dizzyT = 0;
 
 /* ===== Level & Outfits ===== */
 function levelInfo(score) {
@@ -425,16 +513,49 @@ const unlockedOutfits = () => OUTFITS.filter(o => o.lvl <= levelInfo(S.score).L)
 
 const TROPHIES = [
   { id: 'first', ico: '⭐', name: 'Erster Stern', hint: 'Fang einen Stern' },
-  { id: 'combo', ico: '🔥', name: 'Kombi-König', hint: '5 Sterne in Folge fangen' },
   { id: 'gold', ico: '🥇', name: 'Goldfund', hint: 'Fang einen goldenen Stern' },
+  { id: 'combo', ico: '🔥', name: 'Kombi-König', hint: '5 Sterne in Folge fangen' },
   { id: 'max', ico: '🔤', name: 'M-A-X', hint: 'Tippe alle drei Buchstaben an' },
   { id: 'tickle', ico: '😆', name: 'Kitzelmeister', hint: 'Tippe Blobi 10-mal an' },
+  { id: 'play', ico: '🎮', name: 'Spieler', hint: 'Starte ein Spiel' },
   { id: 'lvl3', ico: '🚀', name: 'Level 3', hint: 'Erreiche Level 3' },
   { id: 'hunt', ico: '⏱️', name: 'Sternenjäger', hint: '25 Punkte in der Sternenjagd' },
-  { id: 'play', ico: '🎮', name: 'Spieler', hint: 'Starte ein Spiel' },
-  { id: 'secret', ico: '🎉', name: 'Geheimcode', hint: 'Blobi weiß mehr …', secret: true }
+  { id: 'stars50', ico: '✨', name: 'Sternensammler', hint: 'Fang 50 Sterne' },
+  { id: 'combo10', ico: '⚡', name: 'Kombi-Blitz', hint: '10 Sterne in Folge' },
+  { id: 'golds5', ico: '💰', name: 'Goldrausch', hint: '5 goldene Sterne fangen' },
+  { id: 'ant', ico: '🐜', name: 'Ameisenfreund', hint: 'Öffne die Ameisenuhr' },
+  { id: 'bounce', ico: '🤸', name: 'Hüpfer', hint: 'Tippe die Buchstaben 20-mal' },
+  { id: 'wardrobe', ico: '👗', name: 'Modenschau', hint: 'Probiere alle Outfits' },
+  { id: 'pts100', ico: '💯', name: 'Hunderter', hint: 'Sammle 100 Punkte' },
+  { id: 'lvl5', ico: '🌈', name: 'Level 5', hint: 'Erreiche Level 5' },
+  { id: 'x4', ico: '💥', name: 'Vierfach-Kombi', hint: 'Erreiche Kombi x4' },
+  { id: 'hunt40', ico: '🌠', name: 'Jagdfieber', hint: '40 Punkte in der Sternenjagd' },
+  { id: 'tickle50', ico: '🤣', name: 'Kitzel-Profi', hint: 'Tippe Blobi 50-mal an' },
+  { id: 'bottom', ico: '🕳️', name: 'Ganz unten', hint: 'Scrolle bis zum Ende' },
+  { id: 'loyal', ico: '📅', name: 'Stammgast', hint: 'Komm an 3 Tagen vorbei' },
+  { id: 'allgames', ico: '🎯', name: 'Spielhallen-Profi', hint: 'Öffne alle Spiele' },
+  { id: 'stars200', ico: '🌌', name: 'Sternenmeer', hint: 'Fang 200 Sterne' },
+  { id: 'pts500', ico: '💎', name: 'Diamant', hint: 'Sammle 500 Punkte' },
+  { id: 'lvl10', ico: '🏔️', name: 'Level 10', hint: 'Erreiche Level 10' },
+  { id: 'loyal7', ico: '🗓️', name: 'Dauergast', hint: 'Komm an 7 Tagen vorbei' },
+  { id: 'all', ico: '🏆', name: 'Trophäen-Meister', hint: 'Sammle alle Trophäen' },
+  { id: 'secret', ico: '🎉', name: 'Geheimcode', hint: 'Blobi weiß mehr …', secret: true },
+  { id: 'moon', ico: '🧀', name: 'Käsemond', hint: 'Der Mond hat Hunger …', secret: true },
+  { id: 'planet', ico: '🪐', name: 'Ringplanet', hint: 'Der Große dreht gern', secret: true },
+  { id: 'alien', ico: '👽', name: 'Grüner Besuch', hint: 'Jemand wohnt auf Grün', secret: true },
+  { id: 'parade', ico: '🎪', name: 'Ameisenparade', hint: 'Stups die kleine Ameise', secret: true },
+  { id: 'rain', ico: '🌧️', name: 'Sternenregen', hint: 'Deine Punkte sind tippbar', secret: true },
+  { id: 'disco', ico: '🪩', name: 'Disco-DJ', hint: 'Der Ton-Knopf kann mehr', secret: true },
+  { id: 'pop', ico: '🎈', name: 'Ballon-Blobi', hint: 'Halt Blobi fest …', secret: true },
+  { id: 'dizzy', ico: '🥴', name: 'Schwindelig', hint: 'Kitzle Blobi im Turbo', secret: true },
+  { id: 'sleep', ico: '😴', name: 'Nickerchen', hint: 'Lass Blobi mal in Ruhe', secret: true },
+  { id: 'night', ico: '🌙', name: 'Nachteule', hint: 'Nur nachts zu finden', secret: true },
+  { id: 'early', ico: '🌅', name: 'Frühaufsteher', hint: 'Nur früh am Morgen', secret: true },
+  { id: 'konami', ico: '👾', name: 'Retro-Held', hint: 'Ein uralter Tastencode', secret: true },
+  { id: 'curious', ico: '🔐', name: 'Neugierig', hint: 'Was ist da wohl drin?', secret: true },
+  { id: 'arcade', ico: '🕹️', name: 'Hallen-Fan', hint: 'Tipp den Untertitel an', secret: true },
+  { id: 'pizza', ico: '🍕', name: 'Pizzabäcker', hint: 'Tipp was Leckeres', secret: true }
 ];
-if (levelInfo(S.score).L >= 3) S.ach.lvl3 = 1;
 
 /* ===== Elemente ===== */
 const scoreV = $('#scoreV'), lvlV = $('#lvlV'), xpEl = $('#xp'), sndBtn = $('#snd');
@@ -490,21 +611,51 @@ function toast(html, cls) {
   while (toasts.children.length > 3) toasts.firstChild.remove();
   setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 3200);
 }
-function renderTrophies() {
-  let n = 0;
-  $('#trophyGrid').innerHTML = TROPHIES.map(t => {
-    const on = !!S.ach[t.id]; if (on) n++;
-    const name = (t.secret && !on) ? '???' : t.name;
-    return '<li class="tro ' + (on ? 'on' : 'off') + '"><span class="ti" aria-hidden="true">' + (on || !t.secret ? t.ico : '❓') + '</span><b>' + name + '</b><small>' + t.hint + '</small>' + (on ? '' : '<span class="lk" aria-hidden="true">🔒</span>') + '<span hidden>' + (on ? 'freigeschaltet' : 'gesperrt') + '</span></li>';
-  }).join('');
-  $('#tCount').textContent = n + ' von ' + TROPHIES.length + ' Trophäen';
+function trophyHtml(t) {
+  const on = !!S.ach[t.id], hide = t.secret && !on;
+  return '<li class="tro ' + (t.secret ? 'sec ' : '') + (on ? 'on' : 'off') + '"><span class="ti" aria-hidden="true">' + (hide ? '❓' : t.ico) + '</span><b>' + (hide ? '???' : t.name) + '</b><small>' + t.hint + '</small>' + (on ? '' : '<span class="lk" aria-hidden="true">🔒</span>') + '<span hidden>' + (on ? 'freigeschaltet' : 'gesperrt') + '</span></li>';
 }
-function unlock(id) {
+function renderTrophies() {
+  let n = 0, ns = 0, nt = 0;
+  const a = [], b = [];
+  TROPHIES.forEach(t => {
+    const on = !!S.ach[t.id]; if (on) n++;
+    if (t.secret) { nt++; if (on) ns++; b.push(trophyHtml(t)); } else a.push(trophyHtml(t));
+  });
+  $('#trophyGrid').innerHTML = a.join(''); $('#secretGrid').innerHTML = b.join('');
+  $('#tCount').textContent = n + ' von ' + TROPHIES.length + ' Trophäen';
+  $('#secCount').textContent = ns + ' von ' + nt + ' gefunden';
+}
+function unlock(id, silent) {
   if (S.ach[id]) return;
+  const t = TROPHIES.find(x => x.id === id); if (!t) return;
   S.ach[id] = 1; store.set('ach', S.ach);
-  const t = TROPHIES.find(x => x.id === id);
-  toast('<span class="ti" aria-hidden="true">' + t.ico + '</span><span><b>Neue Trophäe!</b><br>' + t.name + '</span>', 'trophy');
-  sfx.trophy(); renderTrophies();
+  if (!silent) {
+    toast('<span class="ti" aria-hidden="true">' + t.ico + '</span><span><b>Neue Trophäe!</b><br>' + t.name + '</span>', 'trophy');
+    sfx.trophy();
+  }
+  renderTrophies();
+  if (id !== 'all' && TROPHIES.every(x => x.id === 'all' || S.ach[x.id])) setTimeout(() => unlock('all'), 900);
+}
+// Blobi-Sprechblase, wenn sichtbar – sonst als Hinweis unten
+function say(t, ico, ms) {
+  if (heroVisible) blobi.say(t, ms || 3200);
+  else toast('<span class="ti" aria-hidden="true">' + (ico || '💬') + '</span><span>' + t + '</span>');
+}
+function checkScore(silent) {
+  const L = levelInfo(S.score).L;
+  if (L >= 3) unlock('lvl3', silent); if (L >= 5) unlock('lvl5', silent); if (L >= 10) unlock('lvl10', silent);
+  if (S.score >= 100) unlock('pts100', silent); if (S.score >= 500) unlock('pts500', silent);
+}
+function retro() {
+  checkScore(true);
+  if (S.caught >= 50) unlock('stars50', true); if (S.caught >= 200) unlock('stars200', true);
+  if (S.golds >= 5) unlock('golds5', true);
+  if (S.tickles >= 10) unlock('tickle', true); if (S.tickles >= 50) unlock('tickle50', true);
+  if (S.ltr >= 20) unlock('bounce', true);
+  if (S.seen === 31) unlock('wardrobe', true);
+  if (S.opened.length >= $$('a.cart').length) unlock('allgames', true);
+  if (S.opened.indexOf('Ameisenuhr') > -1) unlock('ant', true);
 }
 
 /* ===== Blobi ===== */
@@ -530,21 +681,29 @@ const blobi = {
     clearTimeout(blobi._m); blobi._m = setTimeout(() => { mouthEl.setAttribute('d', M.smile); mouthEl.setAttribute('fill', 'none'); }, ms);
   }
 };
-const LINES = ['Hihi, das kitzelt! 😄', 'Boing! 🟢', 'Fang die Sterne! ⭐', 'Goldene Sterne zählen fünffach!', 'Level-Ups bringen neue Outfits 👕', 'Psst … tipp mal M-A-X rückwärts 🤫', 'Such dir unten ein Spiel aus! 🎮', 'Ich hab Hunger auf Sterne!', 'Kannst du 25 Punkte in der Sternenjagd holen? ⏱️'];
-let lineIdx = -1;
+const LINES = ['Hihi, das kitzelt! 😄', 'Boing! 🟢', 'Fang die Sterne! ⭐', 'Goldene Sterne zählen fünffach!', 'Level-Ups bringen neue Outfits 👕', 'Psst … tipp mal M-A-X rückwärts 🤫', 'Such dir unten ein Spiel aus! 🎮', 'Ich hab Hunger auf Sterne!', 'Kannst du 25 Punkte in der Sternenjagd holen? ⏱️',
+  'Schau mal zum Mond … sieht der nicht lecker aus? 🧀', 'Hast du die kleine Ameise auf der Ameisenuhr gesehen? 🐜', 'Halt mich mal ganz lange fest … 🎈', 'Wenn du mich richtig schnell kitzelst, wird mir schwindelig 🥴', 'Ob auf den Planeten wohl jemand wohnt? 👽', 'Tipp mal 7-mal auf deine Punkte … ⭐', 'Der Ton-Knopf kann mehr, als man denkt 🎧', 'Tipp mal „regen“ auf der Tastatur 🌧️'];
+let lineIdx = -1, taps = [], suppress = false;
 blobiBtn.addEventListener('click', () => {
+  if (suppress) return;
   S.tickles++; store.set('tickles', S.tickles);
+  const nowT = performance.now(); taps.push(nowT); taps = taps.filter(t => nowT - t < 3000);
   blobi.jump(); blobi.mouth(Math.random() < .5 ? 'open' : 'o'); sfx.boing(); vib(12);
   let i; do { i = (Math.random() * LINES.length) | 0; } while (i === lineIdx); lineIdx = i;
   blobi.say(LINES[i]);
   const r = blobiBtn.getBoundingClientRect();
   burst(r.left + r.width / 2, r.top + r.height * .45, 10, COLORS.bright, 220);
   addScore(1);
-  if (S.tickles >= 10) unlock('tickle');
+  if (S.tickles >= 10) unlock('tickle'); if (S.tickles >= 50) unlock('tickle50');
+  if (taps.length >= 9) { taps = []; dizzy(); }
 });
+blobiBtn.addEventListener('contextmenu', e => e.preventDefault());
 function applyOutfit() {
   const n = Math.min(S.outfit, unlockedOutfits() - 1);
   S.outfit = n;
+  const seen = S.seen | (1 << n);
+  if (seen !== S.seen) { S.seen = seen; store.set('seen', seen); }
+  if (S.seen === 31) unlock('wardrobe');
   $$('.fit', blobiSvg).forEach(g => { g.style.display = (+g.dataset.fit === n) ? '' : 'none'; });
   blobiBtn.classList.toggle('aura', n === 4);
   const un = unlockedOutfits();
@@ -570,6 +729,7 @@ function addScore(pts) {
   const after = levelInfo(S.score).L;
   renderHud(true);
   if (after > before) levelUp(after);
+  checkScore();
 }
 function levelUp(L) {
   const fresh = OUTFITS.filter(o => o.lvl === L)[0];
@@ -654,7 +814,10 @@ function collect(s) {
   sfx.collect(combo, s.gold); vib(s.gold ? 30 : 8);
   if (!REDUCE && s.gold) main.animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-5px,3px)' }, { transform: 'translate(4px,-3px)' }, { transform: 'translate(0,0)' }], { duration: 220 });
   if (chal) chal.score += pts;
-  unlock('first'); if (combo >= 5) unlock('combo'); if (s.gold) unlock('gold');
+  S.caught++; store.set('caught', S.caught);
+  if (s.gold) { S.golds++; store.set('golds', S.golds); }
+  unlock('first'); if (combo >= 5) unlock('combo'); if (combo >= 10) unlock('combo10'); if (mult >= 4) unlock('x4'); if (s.gold) unlock('gold');
+  if (S.golds >= 5) unlock('golds5'); if (S.caught >= 50) unlock('stars50'); if (S.caught >= 200) unlock('stars200');
   addScore(pts);
 }
 function tryCollect(x, y, extra) {
@@ -681,13 +844,15 @@ function text(x, y, s, c, size) { texts.push({ x, y, s, c, size: size || 22, t: 
 const ptr = { x: innerWidth / 2, y: innerHeight * .45, down: false, type: 'mouse', has: false };
 let px = 0, py = 0, pxT = 0, pyT = 0, trailT = 0;
 const isInteractive = el => !!(el && el.closest && el.closest('a,button,dialog,summary'));
-function setPtr(e) { ptr.x = e.clientX; ptr.y = e.clientY; ptr.type = e.pointerType || 'mouse'; ptr.has = true; }
+function setPtr(e) { ptr.x = e.clientX; ptr.y = e.clientY; ptr.type = e.pointerType || 'mouse'; ptr.has = true; touch(); }
 addEventListener('pointerdown', e => {
   gesture = true; setPtr(e); ptr.down = true;
   if ($('dialog[open]')) return;
   if (isInteractive(e.target)) return;
-  const got = tryCollect(e.clientX, e.clientY, e.pointerType === 'mouse' ? 10 : 26);
-  if (!got) burst(e.clientX, e.clientY, 5, COLORS.bright, 140, 'spark');
+  if (tryCollect(e.clientX, e.clientY, e.pointerType === 'mouse' ? 10 : 26)) return;
+  if (antHit(e.clientX, e.clientY)) return;
+  if (orbTap(e.clientX, e.clientY)) return;
+  burst(e.clientX, e.clientY, 5, COLORS.bright, 140, 'spark');
 }, { passive: true });
 addEventListener('pointermove', e => {
   setPtr(e);
@@ -713,10 +878,10 @@ letters.forEach((l, i) => {
     kickLetter(l); sfx.jump(); vib(10);
     const b = l.slot.getBoundingClientRect();
     burst(b.left + b.width / 2, b.top + b.height / 2, 12, COLORS.bright, 300);
-    addScore(2);
+    addScore(2); S.ltr++; store.set('ltr', S.ltr); if (S.ltr >= 20) unlock('bounce');
     tapped.add(l.ch); seq.push(l.ch); seq = seq.slice(-3);
     if (tapped.size === 3) unlock('max');
-    if (seq.join('') === 'XAM') party();
+    if (seq.join('') === 'XAM') party(8, 'secret');
   });
 });
 function updateLetters(dt) {
@@ -742,6 +907,7 @@ setTimeout(() => letters.forEach((l, i) => setTimeout(() => kickLetter(l, .5), i
 const eyes = ['#eyeL', '#eyeR'].map(s => { const g = $(s); return { g, p: $('.pupil', g) }; });
 function updateEyes() {
   for (const e of eyes) {
+    if (dizzyT > 0) { const a = performance.now() / 70 + (e === eyes[0] ? 0 : 1.6); e.p.setAttribute('transform', 'translate(' + (Math.cos(a) * 7).toFixed(2) + ' ' + (Math.sin(a) * 7).toFixed(2) + ')'); continue; }
     const r = e.g.getBoundingClientRect(); if (!r.width) continue;
     const dx = ptr.x - (r.left + r.width / 2), dy = ptr.y - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, m = Math.min(7, d / 28);
     e.p.setAttribute('transform', 'translate(' + (dx / d * m).toFixed(2) + ' ' + (dy / d * m).toFixed(2) + ')');
@@ -767,7 +933,7 @@ function endChal() {
   const sc = chal.score, rec = sc > S.best;
   if (rec) { S.best = sc; store.set('best', sc); }
   chal = null; chalEl.hidden = true; chalBtn.disabled = false; chalBtn.textContent = '⭐ Sternenjagd · 20 s';
-  if (sc >= 25) unlock('hunt');
+  if (sc >= 25) unlock('hunt'); if (sc >= 40) unlock('hunt40');
   sfx.end(); burst(W / 2, H * .35, sc >= 25 ? 90 : 30, COLORS.all, 500, 'confetti');
   $('#resScore').textContent = sc;
   $('#resMsg').textContent = rec ? (sc ? 'Neuer Rekord! 🏆' : '') : 'Dein Rekord: ' + S.best + ' Punkte';
@@ -777,20 +943,219 @@ function endChal() {
 chalBtn.addEventListener('click', startChal);
 result.addEventListener('close', () => { if (result.returnValue === 'again') startChal(); result.returnValue = ''; });
 
-/* ===== Party-Modus (Geheimcode) ===== */
+/* ===== Party-Modus ===== */
 let partyT = 0, partyB = 0;
-function party() {
+function party(dur, id) {
+  unlock(id || 'secret');
   if (partyT > 0) return;
-  partyT = 8; root.classList.add('party'); unlock('secret');
-  blobi.say('PARTY!!! 🎉🎉🎉', 4000); sfx.level(); blobi.jump();
+  partyT = dur || 8; root.classList.add('party');
+  say('PARTY!!! 🎉🎉🎉', '🎉', 4000); sfx.level(); blobi.jump();
 }
-const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
-let keys = [];
-addEventListener('keydown', e => {
-  gesture = true;
-  keys.push(String(e.key).toLowerCase()); keys = keys.slice(-10);
-  if (keys.join() === KONAMI.join() || keys.slice(-5).join('') === 'party') party();
+
+/* ===== Easter Eggs ===== */
+function touch() { lastInput = performance.now(); if (asleep) wake(); }
+function popEmoji(ch, x, y, dx, dy, ms, rot, size) {
+  const el = doc.createElement('span'); el.className = 'efx'; el.textContent = ch; el.setAttribute('aria-hidden', 'true');
+  if (size) el.style.fontSize = size + 'px';
+  doc.body.appendChild(el);
+  const T = (px, py, sc, r) => 'translate(' + px.toFixed(0) + 'px,' + py.toFixed(0) + 'px) scale(' + sc + ') rotate(' + r + 'deg)';
+  const a = el.animate([
+    { transform: T(x, y, .3, 0), opacity: 0 },
+    { transform: T(x + dx * .3, y + dy * .3 - 40, 1.2, (rot || 0) * .3), opacity: 1, offset: .25 },
+    { transform: T(x + dx, y + dy, 1, rot || 0), opacity: 1, offset: .85 },
+    { transform: T(x + dx, y + dy, .6, rot || 0), opacity: 0 }
+  ], { duration: REDUCE ? Math.min(ms, 1200) : ms, easing: 'ease-in-out' });
+  a.onfinish = () => el.remove();
+}
+function emojiRain(list, n) {
+  const cnt = REDUCE ? Math.ceil(n * .4) : n;
+  for (let i = 0; i < cnt; i++) parts.push({ x: rand(20, W - 20), y: rand(-260, -20), vx: rand(-30, 30), vy: rand(80, 200), g: 260, life: rand(2.8, 4), t: 0, s: rand(26, 44), e: pick(list), c: '#fff', rot: 0, vr: rand(-2, 2), shape: 'emo' });
+}
+// Orbs im Hintergrund antippen
+const orbEl = { o1: $('.o1'), o2: $('.o2'), o3: $('.o3') };
+let o1n = 0, o1T = 0, cheeseT = 0;
+function orbTap(x, y) {
+  for (const k in orbEl) {
+    const el = orbEl[k], r = el.getBoundingClientRect(), rad = r.width / 2, cx = r.left + rad, cy = r.top + r.height / 2;
+    if (Math.hypot(x - cx, y - cy) > rad) continue;
+    if (k === 'o1') {
+      const t = performance.now(); o1n = (t - o1T < 1800) ? o1n + 1 : 1; o1T = t;
+      sfx.boing(); burst(x, y, 10, ['#ffb066', '#ffe0a0', '#fff'], 260); text(x, y - 20, 'Wusch!', '#ffb066', 24);
+      if (!REDUCE) el.animate([{ rotate: '0deg', scale: 1 }, { rotate: '-14deg', scale: 1.08 }, { rotate: '10deg', scale: .96 }, { rotate: '0deg', scale: 1 }], { duration: 420 });
+      if (o1n >= 3) {
+        o1n = 0; unlock('planet'); say('Der Ringplanet dreht sich für dich! 🪐', '🪐');
+        if (!REDUCE) el.animate([{ rotate: '0deg' }, { rotate: '720deg' }], { duration: 1500, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+        burst(cx, cy, 40, COLORS.gold, 420);
+      }
+    } else if (k === 'o2') {
+      el.classList.add('cheese'); clearTimeout(cheeseT); cheeseT = setTimeout(() => el.classList.remove('cheese'), 4500);
+      sfx.boing(); popEmoji('🐭', cx, cy, -140, 90, 2200, -20, 40); text(x, y - 20, 'Käse!', '#ffe98f', 26);
+      unlock('moon'); say('Der Mond ist aus Käse! 🧀 Ich hab’s immer gewusst.', '🧀');
+    } else {
+      sfx.whoosh(); popEmoji('👽', cx, cy, rand(-60, 60), -200, 1800, 24, 50); popEmoji('🛸', -60, Math.max(120, H * .3), W + 140, 0, 2800, 0, 46);
+      unlock('alien'); say('Grüße von einem fremden Planeten! 👽', '👽');
+    }
+    return true;
+  }
+  return false;
+}
+// Ameisenparade (Karte "Ameisenuhr" anstupsen oder „ameise“ tippen)
+const ants = [];
+function antParade() {
+  if (ants.length) return;
+  unlock('parade'); say('Ameisenparade! 🐜🐜🐜', '🐜', 3600); sfx.whoosh();
+  const n = REDUCE ? 6 : 18;
+  for (let i = 0; i < n; i++) ants.push({ x: -30 - i * rand(60, 90), y: rand(H * .3, H - 34), v: rand(95, 150), k: rand(.85, 1.4), t: rand(0, 6), carry: Math.random() < .35 ? pick(['⭐', '🍎', '🍕', '🍪']) : '' });
+}
+function drawAnt(a) {
+  const w = Math.sin(a.t * 18);
+  ctx.save(); ctx.translate(a.x, a.y + Math.sin(a.t * 18) * .8); ctx.scale(a.k, a.k);
+  ctx.strokeStyle = '#ffd0b8'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath();
+  for (let i = 0; i < 3; i++) { const o = (i - 1) * 6, sw = Math.sin(a.t * 18 + i * 2.1) * 4; ctx.moveTo(o, 2); ctx.lineTo(o + sw, 11); ctx.moveTo(o, 2); ctx.lineTo(o - sw, -7); }
+  ctx.stroke();
+  ctx.fillStyle = '#e8552f';
+  ctx.beginPath(); ctx.ellipse(-13, 0, 9, 6.5, 0, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-1, 0, 6, 5, 0, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(10, -1, 5.6, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(12, -3, 2, 0, TAU); ctx.fill(); ctx.fillStyle = '#1b1340'; ctx.beginPath(); ctx.arc(12.6, -3, .9, 0, TAU); ctx.fill();
+  ctx.strokeStyle = '#ffd0b8'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(13, -6); ctx.quadraticCurveTo(17, -12 + w, 22, -11); ctx.stroke();
+  if (a.carry) { ctx.font = '18px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillText(a.carry, -12, -9); }
+  ctx.restore();
+}
+function stepAnts(dt) {
+  for (let i = ants.length - 1; i >= 0; i--) {
+    const a = ants[i]; a.t += dt; a.x += a.v * dt;
+    if (a.x > W + 60) { ants.splice(i, 1); continue; }
+    if (a.x > -40) drawAnt(a);
+  }
+}
+function antHit(x, y) {
+  for (let i = ants.length - 1; i >= 0; i--) {
+    const a = ants[i]; if (Math.hypot(a.x - x, a.y - y) > 28 * a.k) continue;
+    ants.splice(i, 1); burst(a.x, a.y, 12, ['#e8552f', '#ffd0b8', '#fff'], 240); text(a.x, a.y - 16, '+3', '#ff9a4d', 24); sfx.collect(1, false); addScore(3);
+    return true;
+  }
+  return false;
+}
+const miniAnt = $('#miniant');
+let pokes = 0, pokeT = 0;
+if (miniAnt) miniAnt.addEventListener('click', e => {
+  e.preventDefault(); e.stopPropagation(); gesture = true;
+  pokes++; clearTimeout(pokeT); pokeT = setTimeout(() => { pokes = 0; }, 6000);
+  sfx.jump(); vib(10);
+  if (!REDUCE) miniAnt.firstElementChild.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-18px) rotate(-12deg)' }, { transform: 'translateY(0)' }], { duration: 300 });
+  const r = miniAnt.getBoundingClientRect();
+  text(r.left + r.width / 2, r.top - 4, ['Hihi!', 'Kitzelig!', 'Ey!', 'Lass mich!'][pokes % 4], '#fff', 22);
+  if (pokes >= 5) { pokes = 0; antParade(); }
 });
+// Sternenregen (7× auf die Punkte tippen oder „regen“ tippen)
+function starRain() {
+  unlock('rain'); say('Sternenregen! ⭐🌧️', '🌧️'); sfx.level();
+  const n = REDUCE ? 10 : 34;
+  for (let i = 0; i < n; i++) stars.push({ x: rand(30, W - 30), y: -30 - rand(0, 520), vx: rand(-16, 16), vy: rand(180, 260), r: i % 9 === 4 ? 27 : 22, t: 0, life: 12, ph: rand(0, TAU), gold: i % 9 === 4, rain: true });
+}
+let scoreTaps = 0, scoreTapT = 0;
+$('#score').addEventListener('click', () => {
+  gesture = true; scoreTaps++; clearTimeout(scoreTapT); scoreTapT = setTimeout(() => { scoreTaps = 0; }, 2200);
+  sfx.tick();
+  if (scoreTaps >= 7) { scoreTaps = 0; starRain(); }
+});
+// Disco-DJ (5× auf den Ton-Knopf oder „disco“ tippen)
+function dj() {
+  S.sound = true; store.set('sound', true); renderSnd();
+  unlock('disco'); party(10, 'disco'); say('DJ Max legt auf! 🎧', '🪩', 3600);
+  const bass = [131, 131, 165, 131, 196, 165, 147, 175];
+  bass.concat(bass).forEach((f, i) => { tone(f * 2, .16, 'square', .05, 0, i * .27); if (i % 2 === 0) tone(90, .13, 'sine', .14, -50, i * .27); });
+}
+let sndTaps = 0, sndTapT = 0;
+sndBtn.addEventListener('click', () => {
+  sndTaps++; clearTimeout(sndTapT); sndTapT = setTimeout(() => { sndTaps = 0; }, 2200);
+  if (sndTaps >= 5) { sndTaps = 0; setTimeout(dj, 0); }
+});
+// Pizza-Regen
+function pizza() { unlock('pizza'); say('Pizza-Regen! 🍕 Mmmh!', '🍕'); emojiRain(['🍕'], 40); sfx.boing(); }
+// Titel „Spielhalle“ 3× antippen
+let subN = 0, subT = 0;
+$('.sub').addEventListener('click', () => {
+  gesture = true; const t = performance.now(); subN = (t - subT < 2000) ? subN + 1 : 1; subT = t;
+  sfx.tick();
+  if (subN >= 3) { subN = 0; unlock('arcade'); say('Willkommen in der Spielhalle! 🕹️', '🕹️'); emojiRain(['🎮', '🕹️', '👾', '🏀', '🐜', '🏹', '⭐'], 36); sfx.level(); }
+});
+// Blobi: lange festhalten -> aufblasen -> PLOPP
+let inf = null;
+blobiBtn.addEventListener('pointerdown', () => { inf = { t0: performance.now(), on: false, done: false, k: 1, snd: 0 }; });
+function popBlobi() {
+  const r = blobiBtn.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+  burst(x, y, 90, COLORS.all, 640, 'confetti'); burst(x, y, 30, ['#2fd6a0', '#8dffbd', '#fff'], 520);
+  tone(130, .28, 'sawtooth', .12, -80); tone(900, .08, 'square', .08, -600); vib([40, 30, 40]);
+  blobiBtn.style.scale = '';
+  if (!REDUCE) blobiBtn.animate([{ scale: '.15', opacity: .2 }, { scale: '1.12', opacity: 1, offset: .6 }, { scale: '1' }], { duration: 650, easing: 'cubic-bezier(.2,1.6,.4,1)' });
+  unlock('pop'); say('PLOPP! Ich bin wieder da! 🎈', '🎈', 3400);
+}
+function infRelease() {
+  if (!inf) return;
+  if (inf.on && !inf.done) {
+    const k = inf.k; blobiBtn.style.scale = '';
+    if (!REDUCE) blobiBtn.animate([{ scale: String(k) }, { scale: '1' }], { duration: 450, easing: 'cubic-bezier(.3,1.7,.5,1)' });
+    blobi.mouth('o', 500);
+  }
+  if (inf.on) { suppress = true; setTimeout(() => { suppress = false; }, 80); }
+  inf = null;
+}
+addEventListener('pointerup', infRelease, { passive: true });
+addEventListener('pointercancel', infRelease, { passive: true });
+// Schwindelig
+function dizzy() {
+  dizzyT = 3; unlock('dizzy'); sfx.boing();
+  if (!REDUCE) blobiBtn.animate([{ rotate: '0deg' }, { rotate: '-14deg' }, { rotate: '14deg' }, { rotate: '-10deg' }, { rotate: '8deg' }, { rotate: '0deg' }], { duration: 1600 });
+  blobi.mouth('o', 2600); say('Uiii … mir wird schwindelig! 🥴', '🥴', 3200);
+  const r = blobiBtn.getBoundingClientRect();
+  for (let i = 0; i < 5; i++) text(r.left + r.width / 2 + Math.cos(i * 1.26) * 60, r.top + 10 + Math.sin(i * 1.26) * 26, '✨', '#ffd449', 26);
+}
+// Nickerchen: lange nichts getippt -> Blobi schläft
+const IDLE_MS = 45000; let zT = 0;
+function sleep() {
+  asleep = true; blobiBtn.classList.add('zz'); blobi.mouth('o', 6e6); blobi.say('Zzz … 💤', 6e6);
+}
+function wake() {
+  asleep = false; blobiBtn.classList.remove('zz'); lastInput = performance.now();
+  blobi.mouth('smile', 10); unlock('sleep'); say('Huch! Bin ich eingenickt? 😅', '😴', 3200);
+}
+doc.addEventListener('visibilitychange', () => { lastInput = performance.now(); });
+function eggsTick(dt, now) {
+  if (inf && !inf.done) {
+    const held = now - inf.t0;
+    if (held > 500) {
+      inf.on = true; inf.k = Math.min(2, 1 + (held - 500) / 1300); blobiBtn.style.scale = inf.k.toFixed(3);
+      if (now - inf.snd > 220) { inf.snd = now; tone(220 + (inf.k - 1) * 420, .12, 'triangle', .05); }
+      if (inf.k >= 2) { inf.done = true; popBlobi(); }
+    }
+  }
+  if (dizzyT > 0) dizzyT -= dt;
+  if (asleep) {
+    zT -= dt;
+    if (zT <= 0 && heroVisible) { zT = 1.5; const r = blobiBtn.getBoundingClientRect(); text(r.left + r.width * .78, r.top + r.height * .22, pick(['Z', 'z', 'Zzz']), '#8fd8ff', 26); }
+  } else if (heroVisible && !chal && !doc.hidden && now - lastInput > IDLE_MS) sleep();
+}
+// Tastatur: Konami-Code und Zauberwörter
+const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+const WORDS = { party: () => party(8, 'secret'), ameise: antParade, ants: antParade, regen: starRain, disco: dj, pizza: pizza };
+let keys = [], typed = '';
+addEventListener('keydown', e => {
+  gesture = true; touch();
+  const k = String(e.key).toLowerCase();
+  keys.push(k); keys = keys.slice(-10);
+  if (keys.join() === KONAMI.join()) { keys = []; party(8, 'konami'); }
+  if (k.length === 1) {
+    typed = (typed + k).slice(-10);
+    for (const w in WORDS) if (typed.endsWith(w)) { typed = ''; WORDS[w](); break; }
+  }
+});
+// Ganz nach unten scrollen
+addEventListener('scroll', () => {
+  touch();
+  if (innerHeight + scrollY >= doc.documentElement.scrollHeight - 6) unlock('bottom');
+}, { passive: true });
 
 /* ===== Hauptschleife ===== */
 let last = performance.now();
@@ -809,11 +1174,11 @@ function frame(now) {
   for (let i = stars.length - 1; i >= 0; i--) {
     const s = stars[i]; s.t += dt;
     s.x += s.vx * dt; s.y += (s.vy + Math.sin(s.t * 2.2 + s.ph) * 14) * dt;
-    if (!s.gold) {
+    if (!s.gold && !s.rain) {
       if (s.x < s.r) { s.x = s.r; s.vx = Math.abs(s.vx); } else if (s.x > W - s.r) { s.x = W - s.r; s.vx = -Math.abs(s.vx); }
       if (s.y < 90) { s.y = 90; s.vy = Math.abs(s.vy); } else if (s.y > H - s.r) { s.y = H - s.r; s.vy = -Math.abs(s.vy); }
     }
-    if (s.t > s.life || (s.gold && (s.x < -80 || s.x > W + 80))) stars.splice(i, 1);
+    if (s.t > s.life || (s.gold && (s.x < -80 || s.x > W + 80)) || (s.rain && s.y > H + 60)) stars.splice(i, 1);
   }
   // Partikel / Texte
   for (let i = parts.length - 1; i >= 0; i--) {
@@ -838,6 +1203,7 @@ function frame(now) {
     if (partyB <= 0) { partyB = .16; burst(rand(40, W - 40), rand(100, H * .6), 26, COLORS.all, 420, 'confetti'); }
     if (partyT <= 0) root.classList.remove('party');
   }
+  eggsTick(dt, now);
   // Parallax
   px += (pxT - px) * Math.min(1, dt * 5); py += (pyT - py) * Math.min(1, dt * 5);
   if (!REDUCE) { root.style.setProperty('--px', px.toFixed(3)); root.style.setProperty('--py', py.toFixed(3)); }
@@ -854,9 +1220,11 @@ function frame(now) {
   }
   for (const p of parts) {
     ctx.globalAlpha = Math.max(0, 1 - (p.t / p.life) ** 2); ctx.fillStyle = p.c;
-    if (p.shape === 'rect') { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .66); ctx.restore(); }
+    if (p.shape === 'emo') { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.font = p.s + 'px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.e, 0, 0); ctx.restore(); }
+    else if (p.shape === 'rect') { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .66); ctx.restore(); }
     else { ctx.beginPath(); ctx.arc(p.x, p.y, p.s / 2, 0, TAU); ctx.fill(); }
   }
+  stepAnts(dt);
   ctx.globalAlpha = 1; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
   for (const t of texts) {
     ctx.globalAlpha = Math.min(1, (t.life - t.t) * 3); ctx.font = '900 ' + t.size + 'px ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif';
@@ -880,6 +1248,10 @@ $$('a.cart').forEach(a => a.addEventListener('click', e => {
   if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault(); gesture = true;
   unlock('play'); sfx.whoosh(); vib(20);
+  const gName = a.dataset.game;
+  if (gName === 'Ameisenuhr') unlock('ant');
+  if (S.opened.indexOf(gName) < 0) { S.opened.push(gName); store.set('opened', S.opened); }
+  if (S.opened.length >= $$('a.cart').length) unlock('allgames');
   const r = a.getBoundingClientRect();
   const x = e.detail ? e.clientX : r.left + r.width / 2, y = e.detail ? e.clientY : r.top + r.height / 2;
   portal.style.setProperty('--ox', x + 'px'); portal.style.setProperty('--oy', y + 'px'); portal.style.setProperty('--pc', a.dataset.color);
@@ -888,9 +1260,12 @@ $$('a.cart').forEach(a => a.addEventListener('click', e => {
   setTimeout(() => { location.href = a.getAttribute('href'); }, REDUCE ? 50 : 620);
 }));
 addEventListener('pageshow', e => { if (e.persisted) portal.classList.remove('go'); });
+let lockTaps = 0;
 $$('.cart.locked').forEach(b => b.addEventListener('click', () => {
   b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
-  sfx.lock(); vib(20); blobi.say(b.dataset.lock, 3000); blobi.mouth('o', 900);
+  lockTaps++;
+  sfx.lock(); vib(20); blobi.mouth('o', 900);
+  if (lockTaps === 6) { unlock('curious'); say('Na gut, ein Tipp: Tipp mal M-A-X rückwärts an … 🤫', '🔐', 3800); } else say(b.dataset.lock, '🔒', 3000);
   const r = b.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height * .3, 10, ['#ffd449', '#fff'], 200, 'spark');
 }));
 
@@ -902,19 +1277,97 @@ const resetBtn = $('#resetBtn');
 resetBtn.addEventListener('click', () => {
   if (!armed) { armed = true; resetBtn.textContent = 'Wirklich löschen? Nochmal tippen'; setTimeout(() => { armed = false; resetBtn.textContent = 'Spielstand zurücksetzen'; }, 3200); return; }
   armed = false; resetBtn.textContent = 'Spielstand zurücksetzen';
-  S.score = 0; S.best = 0; S.ach = {}; S.outfit = 0; S.tickles = 0; tapped.clear();
-  ['score', 'best', 'ach', 'outfit', 'tickles'].forEach(k => store.set(k, k === 'ach' ? {} : 0));
-  renderHud(); renderTrophies(); applyOutfit(); blobi.say('Alles auf Anfang! 🔄');
+  S.score = 0; S.best = 0; S.ach = {}; S.outfit = 0; S.tickles = 0; S.caught = 0; S.golds = 0; S.ltr = 0; S.seen = 0; S.opened = []; S.dayCount = 1; tapped.clear();
+  ['score', 'best', 'outfit', 'tickles', 'caught', 'golds', 'ltr', 'seen'].forEach(k => store.set(k, 0));
+  store.set('ach', {}); store.set('opened', []); store.set('dayCount', 1);
+  renderHud(); renderTrophies(); applyOutfit(); say('Alles auf Anfang! 🔄', '🔄');
 });
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
   $$('.rv').forEach(el => io.observe(el));
 } else $$('.rv').forEach(el => el.classList.add('in'));
 
+/* ===== Ameisenuhr-Karte: die Uhrzeit aus kleinen Ameisen ===== */
+(function clockArt() {
+  const c = $('#clockArt'); if (!c || !c.getContext) return;
+  const g = c.getContext('2d');
+  const F = { '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001', '5': '111100111001111', '6': '111100111101111', '7': '111001001001001', '8': '111101111101111', '9': '111101111001111' };
+  let w = 0, h = 0, u = 1, cur = [], key = '', vis = true, running = false, lastT = 0, chk = 0, mx = -999, my = -999;
+  function size() {
+    const d = Math.min(window.devicePixelRatio || 1, 2); w = c.clientWidth; h = c.clientHeight;
+    if (!w || !h) return false;
+    c.width = Math.round(w * d); c.height = Math.round(h * d); g.setTransform(d, 0, 0, d, 0, 0); return true;
+  }
+  function layout(snap) {
+    const t = new Date(), hh = String(t.getHours()).padStart(2, '0'), mm = String(t.getMinutes()).padStart(2, '0');
+    key = hh + mm; u = Math.min(w * .86 / 17, h * .66 / 5);
+    const x0 = (w - 17 * u) / 2, y0 = (h - 5 * u) / 2, tg = [];
+    const put = (cx, cy) => { for (let k = 0; k < 2; k++) tg.push({ x: x0 + (cx + (k ? .72 : .28) + rand(-.08, .08)) * u, y: y0 + (cy + (k ? .3 : .7) + rand(-.08, .08)) * u }); };
+    [[hh[0], 0], [hh[1], 4], [':', 8], [mm[0], 10], [mm[1], 14]].forEach(p => {
+      if (p[0] === ':') { put(p[1], 1); put(p[1], 3); return; }
+      const bits = F[p[0]]; for (let i = 0; i < 15; i++) if (bits[i] === '1') put(p[1] + i % 3, (i / 3) | 0);
+    });
+    tg.sort((a, b) => a.x - b.x);
+    cur.sort((a, b) => a.x - b.x);
+    while (cur.length < tg.length) { const e = Math.random() < .5; cur.push({ x: rand(0, w), y: e ? -10 : h + 10, hd: rand(0, TAU), ph: rand(0, TAU), t: 0, tx: 0, ty: 0 }); }
+    cur.length = tg.length;
+    cur.forEach((a, i) => { a.tx = tg[i].x; a.ty = tg[i].y; if (snap) { a.x = a.tx; a.y = a.ty; } });
+  }
+  function draw(dt) {
+    g.clearRect(0, 0, w, h); g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
+    const s = Math.max(2.6, u * .3);
+    g.lineCap = 'round';
+    for (const a of cur) {
+      a.t += dt;
+      let dx = a.tx - a.x, dy = a.ty - a.y, dist = Math.hypot(dx, dy), moving = false;
+      if (dist > 1.2) { const sp = Math.min(50 + dist * 3, 240) * dt; a.x += dx / dist * Math.min(sp, dist); a.y += dy / dist * Math.min(sp, dist); moving = true; const th = Math.atan2(dy, dx); let dh = th - a.hd; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); a.hd += dh * Math.min(1, dt * 9); }
+      else a.hd += Math.sin(a.t * .7 + a.ph) * dt * .8;
+      const px = mx - a.x, py = my - a.y, pd = Math.hypot(px, py);
+      if (pd < 38 && pd > .1) { a.x -= px / pd * (38 - pd) * dt * 9; a.y -= py / pd * (38 - pd) * dt * 9; moving = true; }
+      g.save(); g.translate(a.x, a.y); g.rotate(a.hd);
+      g.strokeStyle = '#1c1c21'; g.lineWidth = Math.max(.8, s * .16);
+      if (moving) { g.beginPath(); for (let i = 0; i < 3; i++) { const o = (i - 1) * s * .5, sw = Math.sin(a.t * 22 + i * 2.1) * s * .35; g.moveTo(o, 0); g.lineTo(o + sw, s * .9); g.moveTo(o, 0); g.lineTo(o - sw, -s * .9); } g.stroke(); }
+      g.fillStyle = '#1c1c21';
+      g.beginPath(); g.ellipse(-s * .95, 0, s * .7, s * .5, 0, 0, TAU); g.fill();
+      g.beginPath(); g.ellipse(-s * .2, 0, s * .45, s * .38, 0, 0, TAU); g.fill();
+      g.beginPath(); g.arc(s * .55, 0, s * .36, 0, TAU); g.fill();
+      g.restore();
+    }
+  }
+  function loop(now) {
+    if (!vis || doc.hidden) { running = false; return; }
+    const dt = Math.min(.05, (now - lastT) / 1000 || .016); lastT = now;
+    if (now - chk > 1000) { chk = now; const t = new Date(); if (String(t.getHours()).padStart(2, '0') + String(t.getMinutes()).padStart(2, '0') !== key) layout(false); }
+    draw(dt); requestAnimationFrame(loop);
+  }
+  function start() { if (running || REDUCE) return; if (!w && !size()) return; running = true; lastT = performance.now(); requestAnimationFrame(loop); }
+  function still() { if (!size()) return; cur = []; layout(true); draw(0); }
+  c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+  ['pointerleave', 'pointercancel'].forEach(ev => c.addEventListener(ev, () => { mx = my = -999; }));
+  let rt = 0;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (size()) { layout(true); if (REDUCE) draw(0); } }, 150); });
+  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) start(); });
+  if (size()) layout(true);
+  if (REDUCE) { still(); setInterval(() => { const t = new Date(); if (String(t.getHours()).padStart(2, '0') + String(t.getMinutes()).padStart(2, '0') !== key) still(); }, 15000); return; }
+  if ('IntersectionObserver' in window) new IntersectionObserver(en => { vis = en[0].isIntersecting; if (vis) { if (!w) { size(); layout(true); } start(); } }).observe(c);
+  else start();
+})();
+
 /* ===== Start ===== */
+function visitDay() {
+  let d; try { d = new Date().toLocaleDateString('sv-SE'); } catch (e) { d = new Date().toISOString().slice(0, 10); }
+  if (S.lastDay !== d) { S.lastDay = d; S.dayCount++; store.set('lastDay', d); store.set('dayCount', S.dayCount); }
+  setTimeout(() => { if (S.dayCount >= 3) unlock('loyal'); if (S.dayCount >= 7) unlock('loyal7'); }, 2600);
+  const hr = new Date().getHours();
+  if (hr >= 21 || hr < 5) setTimeout(() => { unlock('night'); say('Noch wach? 🌙', '🌙'); }, 3000);
+  else if (hr >= 5 && hr < 7) setTimeout(() => { unlock('early'); say('Schon so früh wach? 🌅', '🌅'); }, 3000);
+}
+visitDay(); retro();
 renderSnd(); renderHud(); renderTrophies(); applyOutfit();
+try { console.log('%cHallo, Entwickler! 🕵️', 'font:900 16px system-ui;color:#ff7a29'); console.log('Max\' Spielhalle hat versteckte Trophäen. Tipp: Probier mal ein paar Wörter auf der Tastatur …'); } catch (e) {}
 setTimeout(() => blobi.say('Hallo! Tippe mich an 👆', 3400), 1300);
 requestAnimationFrame(frame);
+
 })();
 </script>
 </body>
