@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Ant Clock</title>
+<style>
+  :root {
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #ffffff;
+    --link: #8b8b93;
+    --link-hover: #2b2b33;
+  }
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--bg); }
+  *, *::before, *::after { box-sizing: inherit; }
+  body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  #c {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+  }
+  .impressum {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+    pointer-events: none;
+  }
+  .impressum a {
+    pointer-events: auto;
+    padding: 10px 16px;
+    font-size: 13px;
+    letter-spacing: .02em;
+    color: var(--link);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color .2s;
+  }
+  .impressum a:hover,
+  .impressum a:focus-visible { color: var(--link-hover); text-decoration: underline; }
+  .impressum a:focus-visible { outline: 2px solid #3a86ff; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<canvas id="c" role="img" aria-label="Die aktuelle Uhrzeit, dargestellt aus 1000 kleinen Ameisen."></canvas>
+<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;margin:0">Diese Uhr braucht JavaScript.</p></noscript>
+<nav class="impressum"><a href="https://andreasdittes.com/imprint" target="_blank" rel="noopener">Impressum</a></nav>
+
+<script>
+(() => {
+'use strict';
+
+/* ------------------------------------------------------------------ *
+ *  Konfiguration
+ * ------------------------------------------------------------------ */
+const N        = 1000;                      // Anzahl Ameisen
+const TILT     = 58 * Math.PI / 180;        // Kamerawinkel (Blick schräg von oben)
+const SIN      = Math.sin(TILT), COS = Math.cos(TILT);
+const CAM_D    = 32;                        // Kameraabstand (Perspektive)
+const AS       = 0.36;                      // Ameisen-Grundgröße (Welt-Einheiten)
+const BODY     = '#1c1c21';                 // alle Ameisen schwarz
+const DW       = 3;                         // Breite einer Ziffer
+const CW       = 1;                         // Breite eines Doppelpunkts
+const GAP      = 1.1;                       // Abstand zwischen Zeichen
+const LGAP     = 1.6;                       // Abstand zwischen Zeilen (Hochkant-Layout)
+const LH       = 5;                         // Ziffernhöhe
+const COLON_N  = 44;                        // Ameisen je Doppelpunkt (2 Punkte)
+const HOVER_IN  = 60;                       // Mauszeiger: Ausweich-Radius (px)
+const HOVER_OUT = 100;                      // ab hier laufen ausgewichene Ameisen zurück (px)
+const DODGE_MAX = 75;                       // maximale Ausweichstrecke vom Platz weg (px)
+const BURST_RINGS = [1, 0.8, 0.6, 0.4, 0.2, 0.1];   // Anteil flüchtender Ameisen je Ring (100 px, dann je 50 px)
+const BURST_DIST  = [0, 220, 170, 130, 100, 70];    // Fluchtweite (px) der äußeren Ringe
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W = 0, H = 0, dpr = 1, S = 40, cx = 0, cy = 0, mode = -1;   // mode 0 = eine Zeile, 1 = drei Zeilen (Hochkant)
+
+/* ------------------------------------------------------------------ *
+ *  Hilfsfunktionen
+ * ------------------------------------------------------------------ */
+const rand  = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp  = (a, b, t) => a + (b - a) * t;
+const angDiff = (a, b) => { let d = a - b; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function hexToRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function shade(h, amt) {
+  const [r, g, b] = hexToRgb(h), t = amt < 0 ? 0 : 255, k = Math.abs(amt);
+  return `rgb(${Math.round(r + (t - r) * k)},${Math.round(g + (t - g) * k)},${Math.round(b + (t - b) * k)})`;
+}
+
+/* ------------------------------------------------------------------ *
+ *  3D-Projektion (Boden = x/y-Ebene, z = Höhe)
+ * ------------------------------------------------------------------ */
+let PX = 0, PY = 0, PP = 1;
+function project(gx, gy, z) {
+  const p = CAM_D / (CAM_D + gy * COS - z * SIN);
+  PX = cx + gx * p * S;
+  PY = cy - (gy * SIN + z * COS) * p * S;
+  PP = p;
+}
+function unproject(sx, sy) {
+  const u = (cy - sy) / S;
+  let den = CAM_D * SIN - u * COS; if (den < 3) den = 3;
+  const gy = u * CAM_D / den;
+  const p = CAM_D / (CAM_D + gy * COS);
+  return [(sx - cx) / (p * S), gy];
+}
+
+/* ------------------------------------------------------------------ *
+ *  Ziffern als Linienzüge (Box: 3 breit, 5 hoch)
+ * ------------------------------------------------------------------ */
+function arc(cx_, cy_, rx, ry, a0, a1, steps) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const a = (a0 + (a1 - a0) * i / steps) * Math.PI / 180;
+    pts.push([cx_ + rx * Math.cos(a), cy_ + ry * Math.sin(a)]);
+  }
+  return pts;
+}
+const SIX = arc(1.5, 3.3, 1.4, 1.7, 45, 180, 20).concat(arc(1.5, 1.5, 1.4, 1.5, 180, 530, 46));
+const DIG_RAW = {
+  '0': [{ pts: arc(1.5, 2.5, 1.4, 2.4, 90, 450, 72).slice(0, 72), closed: true }],
+  '1': [{ pts: [[0.55, 3.95], [1.7, 5], [1.7, 0]] }],
+  '2': [{ pts: arc(1.5, 3.65, 1.35, 1.3, 165, -35, 30).concat([[0.1, 0], [2.9, 0]]) }],
+  '3': [{ pts: arc(1.45, 3.75, 1.3, 1.25, 150, -90, 28).concat(arc(1.45, 1.25, 1.4, 1.25, 90, -150, 32).slice(1)) }],
+  '4': [{ pts: [[2.2, 0], [2.2, 5], [0.1, 1.7], [2.95, 1.7]] }],
+  '5': [{ pts: [[2.7, 5], [0.6, 5], [0.47, 3.0]].concat(arc(1.4, 1.7, 1.45, 1.7, 130, -150, 36).slice(1)) }],
+  '6': [{ pts: SIX }],
+  '7': [{ pts: [[0.1, 5], [2.9, 5], [1.0, 0]] }],
+  '8': [{ pts: arc(1.5, 3.75, 1.25, 1.25, 90, 450, 48).slice(0, 48), closed: true },
+        { pts: arc(1.5, 1.25, 1.4, 1.25, 90, 450, 52).slice(0, 52), closed: true }],
+  '9': [{ pts: SIX.map(([x, y]) => [3 - x, 5 - y]) }]
+};
+const DIG = {};
+Object.keys(DIG_RAW).forEach(ch => {
+  const strokes = DIG_RAW[ch].map(s => {
+    const pts = s.closed ? s.pts.concat([s.pts[0]]) : s.pts;
+    const cum = [0];
+    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    return { pts, cum, len: cum[cum.length - 1], closed: !!s.closed };
+  });
+  DIG[ch] = { strokes, len: strokes.reduce((a, s) => a + s.len, 0) };
+});
+
+/* Ameisen leicht auseinanderschieben, damit sie sich nicht stapeln */
+function relax(pts, MIN) {
+  for (let it = 0; it < 10; it++) {
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const p = pts[i], q = pts[j];
+        const dx = q.x - p.x, dy = q.y - p.y, d2 = dx * dx + dy * dy;
+        if (d2 < MIN * MIN) {
+          const d = Math.sqrt(d2) || 0.001, push = (MIN - d) / 2 / d;
+          p.x -= dx * push; p.y -= dy * push; q.x += dx * push; q.y += dy * push;
+        }
+      }
+    }
+  }
+}
+
+/* n Ameisen entlang der Striche einer Ziffer – 2–3 nebeneinander, leicht chaotisch */
+function genDigit(ch, n, rnd) {
+  const sh = DIG[ch], out = [];
+  const ex = sh.strokes.map(s => s.len / sh.len * n), cnt = ex.map(Math.floor);
+  let rest = n - cnt.reduce((a, b) => a + b, 0);
+  ex.map((e, i) => [e - Math.floor(e), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (rest > 0) { cnt[i]++; rest--; } });
+  sh.strokes.forEach((s, si) => {
+    const m = cnt[si];
+    for (let k = 0; k < m; k++) {
+      const d = s.closed ? (k + rnd()) / m * s.len
+                         : clamp((k + 0.5 + (rnd() - 0.5) * 0.9) / m * s.len, 0, s.len);
+      let j = 1; while (j < s.cum.length - 1 && s.cum[j] < d) j++;
+      const [x0, y0] = s.pts[j - 1], [x1, y1] = s.pts[j];
+      const f = (d - s.cum[j - 1]) / ((s.cum[j] - s.cum[j - 1]) || 1);
+      const dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1;
+      const off = (rnd() + rnd() - 1) * 0.26;
+      out.push({
+        x: x0 + dx * f - dy / l * off,
+        y: y0 + dy * f + dx / l * off,
+        h: Math.atan2(dy, dx) + (rnd() < 0.5 ? 0 : Math.PI)
+           + (rnd() < 0.2 ? (rnd() * 2 - 1) * Math.PI : (rnd() - 0.5) * 1.1)
+      });
+    }
+  });
+  relax(out, 0.1);
+  return out;
+}
+function genColon(rnd) {
+  const out = [];
+  [1.5, 3.5].forEach(yc => {
+    for (let k = 0; k < COLON_N / 2; k++) {
+      const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 0.42;
+      out.push({ x: 0.5 + Math.cos(a) * r, y: yc + Math.sin(a) * r, h: rnd() * 6.283 });
+    }
+  });
+  relax(out, 0.1);
+  return out;
+}
+const tplCache = new Map();
+function getTemplate(idx, ch, n) {
+  const key = idx + '|' + ch + '|' + n;
+  let t = tplCache.get(key);
+  if (t) return t;
+  const rnd = mulberry32((idx * 7919 + ch.charCodeAt(0) * 104729 + n * 1299709) >>> 0);
+  t = ch === ':' ? genColon(rnd) : genDigit(ch, n, rnd);
+  if (tplCache.size > 1500) tplCache.clear();
+  tplCache.set(key, t);
+  return t;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Layout: eine Zeile HH:MM:SS (Desktop/Querformat), drei Zeilen HH / MM / SS (Hochkant)
+ * ------------------------------------------------------------------ */
+let offs = [];
+function computeLayout() {
+  const wLine = 6 * DW + 2 * CW + 7 * GAP, hLine = LH;
+  const wStack = 2 * DW + GAP, hStack = 3 * LH + 2 * LGAP;
+  const sLine  = Math.min(W * 0.9 / wLine,  H * 0.74 / (hLine  * SIN));
+  const sStack = Math.min(W * 0.9 / wStack, H * 0.74 / (hStack * SIN));
+  const m = sLine * 1.6 >= sStack ? 0 : 1;
+  S = Math.min(m === 0 ? sLine : sStack, 140);
+  cx = W / 2; cy = H * 0.46;
+  offs = [];
+  if (m === 0) {
+    let x = -wLine / 2;
+    [DW, DW, CW, DW, DW, CW, DW, DW].forEach(w => { offs.push({ x, y: -LH / 2 }); x += w + GAP; });
+  } else {
+    for (let r = 0; r < 3; r++) {
+      const y = hStack / 2 - LH - r * (LH + LGAP);
+      offs.push({ x: -wStack / 2, y });
+      offs.push({ x: -wStack / 2 + DW + GAP, y });
+    }
+  }
+  const changed = m !== mode;
+  mode = m;
+  return changed;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Sprites (schattierte schwarze Kugel)
+ * ------------------------------------------------------------------ */
+const SPRITE = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  const grad = g.createRadialGradient(23, 19, 2, 32, 32, 31);
+  grad.addColorStop(0, shade(BODY, 0.62));
+  grad.addColorStop(0.42, BODY);
+  grad.addColorStop(1, shade(BODY, -0.6));
+  g.fillStyle = grad;
+  g.beginPath(); g.arc(32, 32, 31, 0, Math.PI * 2); g.fill();
+  return c;
+})();
+const LEGCOL = shade(BODY, -0.7);
+
+/* ------------------------------------------------------------------ *
+ *  Ameisen
+ * ------------------------------------------------------------------ */
+const ants = [];
+function homeFrom(a) {
+  const o = offs[a.slot];
+  a.hx = o.x + a.lx; a.hy = o.y + a.ly; a.hh = a.lh;
+}
+
+function createAnts() {
+  const R = Math.max(W, H) * 0.75;
+  for (let i = 0; i < N; i++) {
+    const th = Math.random() * Math.PI * 2;
+    const [gx, gy] = unproject(W / 2 + Math.cos(th) * R, H / 2 + Math.sin(th) * R);
+    ants.push({
+      i, slot: 0, lx: 0, ly: 0, lh: 0,
+      size: AS * rand(0.92, 1.08),
+      seed: Math.random() * 100,
+      x: gx, y: gy, h: 0, speed: 0, phase: Math.random() * 6.28,
+      state: 'home', stateT: 0, stateDur: 0,
+      path: null, pi: 0, waitT: 0, curWave: false, retV: 5,
+      pending: null, pendDelay: 0,
+      dodgeK: 1, dodgeP: 1, lookAng: 0, jumpU: 0, jumpDir: 1, waveAmt: 0,
+      waveSide: Math.random() < 0.5 ? -1 : 1,
+      hx: 0, hy: 0, hh: 0
+    });
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Uhrzeit → Ziele → Zuordnung der Ameisen
+ * ------------------------------------------------------------------ */
+let slots = [];              // je Zeichen: { ch, n, key, ants: [] }
+let curStr = '';
+
+function timeStr() {
+  const d = new Date(), p = v => String(v).padStart(2, '0');
+  return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+}
+
+/* Greedy: jede Ameise bekommt das nächstgelegene freie Ziel (Raster-Suche) */
+function matchAnts(pool, tg) {
+  const cs = 0.5, grid = new Map();
+  const keyOf = (gx, gy) => (gx + 2048) * 4096 + (gy + 2048);
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  tg.forEach((t, i) => {
+    if (t.wx < x0) x0 = t.wx; if (t.wx > x1) x1 = t.wx;
+    if (t.wy < y0) y0 = t.wy; if (t.wy > y1) y1 = t.wy;
+    const k = keyOf(Math.floor(t.wx / cs), Math.floor(t.wy / cs));
+    let arr = grid.get(k); if (!arr) { arr = []; grid.set(k, arr); }
+    arr.push(i);
+  });
+  const res = new Array(pool.length);
+  const idx = pool.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [idx[i], idx[j]] = [idx[j], idx[i]]; }
+
+  for (const pi of idx) {
+    const a = pool[pi];
+    const ox = clamp(a.x, x0, x1), oy = clamp(a.y, y0, y1);
+    const gx = Math.floor(ox / cs), gy = Math.floor(oy / cs);
+    let best = -1, bestD = 1e18, bestR = -1;
+    const scan = (cxx, cyy, r) => {
+      const arr = grid.get(keyOf(cxx, cyy));
+      if (!arr) return;
+      for (let q = 0; q < arr.length; q++) {
+        const t = tg[arr[q]], d = (t.wx - ox) * (t.wx - ox) + (t.wy - oy) * (t.wy - oy);
+        if (d < bestD) { bestD = d; best = arr[q]; if (bestR < 0) bestR = r; }
+      }
+    };
+    for (let r = 0; r < 240; r++) {
+      if (best >= 0 && r > bestR + 1) break;
+      if (r === 0) scan(gx, gy, 0);
+      else {
+        for (let dx = -r; dx <= r; dx++) { scan(gx + dx, gy - r, r); scan(gx + dx, gy + r, r); }
+        for (let dy = -r + 1; dy <= r - 1; dy++) { scan(gx - r, gy + dy, r); scan(gx + r, gy + dy, r); }
+      }
+    }
+    if (best < 0) {                                  // Sicherheitsnetz
+      for (const arr of grid.values()) if (arr.length) { best = arr[0]; break; }
+    }
+    const t = tg[best];
+    const arr = grid.get(keyOf(Math.floor(t.wx / cs), Math.floor(t.wy / cs)));
+    arr.splice(arr.indexOf(best), 1);
+    res[pi] = best;
+  }
+  return res;
+}
+
+function setDisplay(str, force, initial) {
+  const chars = mode === 0 ? str.split('') : str.replace(/:/g, '').split('');
+  if (slots.length !== chars.length) force = true;
+  const isCol = chars.map(c => c === ':');
+  const target = N - isCol.filter(Boolean).length * COLON_N;         // Ameisen für Ziffern
+  const sumLen = chars.reduce((a, c, i) => a + (isCol[i] ? 0 : DIG[c].len), 0);
+  const rho = target / sumLen;
+  const ideal = chars.map((c, i) => isCol[i] ? COLON_N : DIG[c].len * rho);
+
+  function counts(allowKeep) {
+    const cnt = new Array(chars.length).fill(0), free = [];
+    let kept = 0;
+    chars.forEach((c, i) => {
+      if (isCol[i]) { cnt[i] = COLON_N; return; }
+      const old = slots[i];
+      if (allowKeep && !force && old && old.ch === c && Math.abs(old.n - ideal[i]) <= 0.1 * ideal[i]) { cnt[i] = old.n; kept += old.n; }
+      else free.push(i);
+    });
+    const freeIdeal = free.reduce((a, i) => a + ideal[i], 0);
+    const rest = target - kept;
+    if (free.length) {
+      const scale = rest / freeIdeal, fl = free.map(i => ideal[i] * scale);
+      free.forEach((i, q) => { cnt[i] = Math.floor(fl[q]); });
+      let left = rest - free.reduce((a, i) => a + cnt[i], 0);
+      free.map((i, q) => [fl[q] - Math.floor(fl[q]), i]).sort((a, b) => b[0] - a[0]).forEach(([, i]) => { if (left > 0) { cnt[i]++; left--; } });
+      const bad = free.some(i => cnt[i] < 0.5 * ideal[i] || cnt[i] > 1.6 * ideal[i]);
+      if (bad && allowKeep) return null;
+    } else if (rest !== 0) return null;
+    return cnt;
+  }
+  const cnt = counts(true) || counts(false);
+
+  const oldSlots = slots;
+  const newSlots = chars.map((c, i) => {
+    const key = i + '|' + c + '|' + cnt[i];
+    const same = !force && oldSlots[i] && oldSlots[i].key === key;
+    return { ch: c, n: cnt[i], key, ants: same ? oldSlots[i].ants : [], same };
+  });
+  const changed = [];
+  newSlots.forEach((s, i) => { if (!s.same) changed.push(i); });
+
+  let pool;
+  if (force) pool = ants.slice();
+  else { pool = []; changed.forEach(i => { if (oldSlots[i]) pool.push(...oldSlots[i].ants); }); }
+
+  const tg = [];
+  changed.forEach(i => {
+    const tpl = getTemplate(i, chars[i], cnt[i]), o = offs[i];
+    tpl.forEach(t => tg.push({ slot: i, x: t.x, y: t.y, h: t.h, wx: o.x + t.x, wy: o.y + t.y }));
+  });
+  if (pool.length !== tg.length) {
+    if (!force) return setDisplay(str, true, initial);
+    return;
+  }
+
+  const res = matchAnts(pool, tg);
+  pool.forEach((a, pi) => {
+    const t = tg[res[pi]];
+    a.slot = t.slot; a.lx = t.x; a.ly = t.y; a.lh = t.h;
+    homeFrom(a);
+    newSlots[t.slot].ants.push(a);
+    if (!initial && !a.pending && (a.state === 'home' || a.state === 'wave' || a.state === 'look')) {
+      a.state = 'walk'; a.path = []; a.pi = 0; a.waitT = 0; a.retV = rand(3, 6);   // neu orientieren
+    }
+  });
+  slots = newSlots;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Verhalten
+ * ------------------------------------------------------------------ */
+/* Klick: Ameisen im Umkreis rennen weg – bis 100 px alle und weit,
+   danach je 50 px Ring immer weniger (und kürzer). */
+function burst(sx, sy) {
+  ants.forEach(a => {
+    project(a.x, a.y, 0);
+    let ux = PX - sx, uy = PY - sy;
+    const dpx = Math.hypot(ux, uy);
+    if (dpx < 0.5) { const r = Math.random() * 6.283; ux = Math.cos(r); uy = Math.sin(r); }
+    else { ux /= dpx; uy /= dpx; }
+    const ring = dpx < 100 ? 0 : 1 + Math.floor((dpx - 100) / 50);
+    if (ring >= BURST_RINGS.length || Math.random() > BURST_RINGS[ring]) return;
+
+    const far = ring === 0;
+    const path = [], n = far && Math.random() < 0.4 ? 2 : 1;
+    let tx = PX, ty = PY, ang = Math.atan2(uy, ux);
+    for (let j = 0; j < n; j++) {
+      ang += rand(-0.7, 0.7);
+      const len = far ? (j === 0 ? rand(280, 620) : rand(100, 300)) : BURST_DIST[ring] * rand(0.7, 1.2);
+      tx += Math.cos(ang) * len; ty += Math.sin(ang) * len;
+      const [gx, gy] = unproject(tx, ty);
+      path.push({ x: gx, y: gy, v: far ? rand(7, 12) : rand(5, 9), wait: rand(0.05, 0.7), wave: Math.random() < 0.3 });
+    }
+    a.pending = path;
+    a.pendDelay = Math.min(dpx, 400) * 0.0008 + rand(0, 0.12);
+    a.retV = rand(4.5, 7.5);
+  });
+}
+
+function startEvent(a) {
+  const r = Math.random();
+  if (r < 0.10) {                                   // hochspringen + Salto
+    a.state = 'jump'; a.stateT = 0; a.stateDur = rand(1.1, 1.5); a.jumpU = 0;
+    a.jumpDir = Math.random() < 0.5 ? 1 : -1;
+  } else if (r < 0.35) {                            // winken
+    a.state = 'wave'; a.stateT = 0; a.stateDur = rand(1.6, 3.0);
+    a.waveSide = Math.random() < 0.5 ? -1 : 1;
+  } else if (r < 0.45) {                            // umschauen
+    a.state = 'look'; a.stateT = 0; a.stateDur = rand(1.2, 2.0);
+    a.lookAng = (Math.random() < 0.5 ? -1 : 1) * rand(0.7, 1.5);
+  } else {                                          // Umweg / kurz weglaufen
+    const a0 = Math.random() * 6.283, r1 = rand(0.8, 2.4);
+    const w1 = { x: a.hx + Math.cos(a0) * r1, y: a.hy + Math.sin(a0) * r1, v: rand(1.0, 1.6),
+                 wait: Math.random() < 0.4 ? rand(0.7, 1.3) : rand(0.05, 0.25), wave: Math.random() < 0.6 };
+    const a1 = a0 + (Math.random() < 0.5 ? -1 : 1) * rand(0.9, 2.1);
+    const w2 = { x: w1.x + Math.cos(a1) * r1 * 0.8, y: w1.y + Math.sin(a1) * r1 * 0.8, v: rand(1.0, 1.6), wait: 0.05, wave: false };
+    a.path = Math.random() < 0.7 ? [w1, w2] : [w1];
+    a.pi = 0; a.waitT = 0; a.retV = rand(1.1, 1.7); a.state = 'walk';
+  }
+}
+
+function endDodge(a) {
+  a.state = 'walk'; a.path = []; a.pi = 0; a.waitT = 0; a.retV = rand(2.5, 3.5);
+}
+
+function updateAnt(a, dt, t) {
+  if (a.pending) {
+    a.pendDelay -= dt;
+    if (a.pendDelay <= 0) {
+      a.path = a.pending; a.pending = null; a.pi = 0; a.waitT = 0; a.state = 'walk'; a.jumpU = 0;
+    }
+  }
+  let waveTarget = 0;
+
+  /* Mauszeiger: Ameisen weichen ein Stück aus und kommen danach zurück */
+  if (hoverOn && !a.pending) {
+    const st = a.state;
+    if (st === 'dodge' || st === 'home' || st === 'wave' || st === 'look' ||
+        (st === 'walk' && a.path && a.pi >= a.path.length)) {
+      project(a.x, a.y, 0);
+      const dpx = Math.hypot(PX - mx, PY - my);
+      if (dpx < (st === 'dodge' ? HOVER_OUT : HOVER_IN)) {
+        if (st !== 'dodge') { a.state = 'dodge'; a.waitT = 0; a.dodgeK = rand(1, 1.35); }
+        a.dodgeP = PP;
+      } else if (st === 'dodge') endDodge(a);
+    }
+  } else if (a.state === 'dodge') endDodge(a);
+
+  if (a.state === 'dodge') {
+    const cdx = a.x - HGX, cdy = a.y - HGY, cd = Math.hypot(cdx, cdy) || 0.001;
+    const kpx = S * a.dodgeP, R = HOVER_IN * a.dodgeK / kpx;
+    let moved = false;
+    if (cd < R) {
+      let tx = HGX + cdx / cd * R, ty = HGY + cdy / cd * R;
+      const ox = tx - a.hx, oy = ty - a.hy, od = Math.hypot(ox, oy), mp = DODGE_MAX / kpx;
+      if (od > mp) { tx = a.hx + ox / od * mp; ty = a.hy + oy / od * mp; }
+      const dx = tx - a.x, dy = ty - a.y, dist = Math.hypot(dx, dy);
+      if (dist > 0.03) {
+        const diff = angDiff(Math.atan2(dy, dx), a.h);
+        a.h += clamp(diff, -14 * dt, 14 * dt);
+        const ts = Math.min(6, dist * 8 + 0.2) * Math.max(0.2, Math.cos(Math.min(Math.abs(diff), Math.PI / 2)));
+        a.speed += (ts - a.speed) * (1 - Math.exp(-12 * dt));
+        a.x += Math.cos(a.h) * a.speed * dt;
+        a.y += Math.sin(a.h) * a.speed * dt;
+        a.phase += Math.min(a.speed, 2.2) * dt * 45;
+        moved = true;
+      }
+    }
+    if (!moved) a.speed *= Math.exp(-12 * dt);
+  } else if (a.state === 'walk') {
+    if (a.waitT > 0) {
+      a.waitT -= dt;
+      a.speed *= Math.exp(-10 * dt);
+      if (a.curWave) waveTarget = 1;
+    } else {
+      let tx, ty, vmax, wpt = null;
+      if (a.pi < a.path.length) { wpt = a.path[a.pi]; tx = wpt.x; ty = wpt.y; vmax = wpt.v; }
+      else { tx = a.hx; ty = a.hy; vmax = a.retV; }
+      const dx = tx - a.x, dy = ty - a.y, dist = Math.hypot(dx, dy);
+      const arrive = wpt ? 0.14 : 0.03;
+      if (dist < arrive) {
+        if (wpt) { a.pi++; a.waitT = wpt.wait || 0; a.curWave = !!wpt.wave; }
+        else { a.x = a.hx; a.y = a.hy; a.speed = 0; a.state = 'home'; a.path = null; }
+      } else {
+        const want = Math.atan2(dy, dx), diff = angDiff(want, a.h);
+        let turn = 3 + a.speed * 1.2 + (vmax > 5 ? 6 : 0) + (dist < 0.45 ? 22 : 0);
+        a.h += clamp(diff, -turn * dt, turn * dt);
+        a.h += Math.sin(t * 6 + a.seed) * 0.9 * dt * Math.min(1, a.speed / 3);
+        const ts = Math.min(vmax, dist * 5 + 0.15) * Math.max(0.15, Math.cos(Math.min(Math.abs(diff), Math.PI / 2)));
+        a.speed += (ts - a.speed) * (1 - Math.exp(-8 * dt));
+        a.x += Math.cos(a.h) * a.speed * dt;
+        a.y += Math.sin(a.h) * a.speed * dt;
+        a.phase += Math.min(a.speed, 2.2) * dt * 45;
+      }
+    }
+  } else {
+    a.speed *= Math.exp(-12 * dt);
+    if (a.state === 'wave') {
+      a.stateT += dt; waveTarget = 1;
+      a.h += angDiff(a.hh, a.h) * (1 - Math.exp(-8 * dt));
+      if (a.stateT > a.stateDur) a.state = 'home';
+    } else if (a.state === 'jump') {
+      a.stateT += dt;
+      a.jumpU = Math.min(1, a.stateT / a.stateDur);
+      if (a.jumpU >= 1) { a.state = 'home'; a.jumpU = 0; }
+    } else if (a.state === 'look') {
+      a.stateT += dt;
+      const u = Math.min(1, a.stateT / a.stateDur);
+      a.h = a.hh + a.lookAng * Math.sin(Math.PI * u);
+      if (u >= 1) a.state = 'home';
+    } else if (!a.pending && Math.hypot(a.hx - a.x, a.hy - a.y) > 0.06) {
+      // Platz hat sich geändert (neue Ziffer): zum neuen Platz laufen
+      a.state = 'walk'; a.path = []; a.pi = 0; a.waitT = 0; a.retV = rand(3, 6);
+    } else {
+      a.h += angDiff(a.hh + 0.1 * Math.sin(t * 0.6 + a.seed), a.h) * (1 - Math.exp(-8 * dt));
+    }
+  }
+  a.waveAmt += (waveTarget - a.waveAmt) * (1 - Math.exp(-9 * dt));
+}
+
+/* Nur ganz wenige Ameisen sind gleichzeitig „unterwegs“ */
+let evT = 1.5;
+function scheduleEvents(dt) {
+  if (reduceMotion) return;
+  evT -= dt;
+  if (evT > 0) return;
+  evT = rand(0.4, 1.0);
+  for (let tries = 0; tries < 8; tries++) {
+    const a = ants[(Math.random() * N) | 0];
+    if (a.state === 'home' && !a.pending) { startEvent(a); break; }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Zeichnen
+ * ------------------------------------------------------------------ */
+let cX = 0, cY = 0, cC = 1, cS = 0;                 // aktuelle Ameise (Position + Richtung)
+let cP = 1, cPs = 0, cZc = 0, cLift = 0;            // Salto: Drehung um die Querachse + Sprunghöhe
+function wp(f, l, z) {
+  let f2 = f, z2 = z + cLift;
+  if (cPs !== 0) {
+    const dz = z - cZc;
+    f2 = f * cP - dz * cPs;
+    z2 = cZc + f * cPs + dz * cP + cLift;
+  }
+  project(cX + cC * f2 - cS * l, cY + cS * f2 + cC * l, z2);
+}
+
+const order = ants;                                 // wird pro Frame sortiert (Referenzen bleiben gleich)
+
+function drawAnt(a, t) {
+  const k = a.size, w = a.waveAmt;
+  cX = a.x; cY = a.y; cC = Math.cos(a.h); cS = Math.sin(a.h);
+
+  project(a.x, a.y, 0.12 * k);
+  if (PX < -90 || PX > W + 90 || PY < -90 || PY > H + 90) return;
+  const base = PP * S;
+  const small = 0.44 * k * base < 9;               // sehr kleine Ameisen: vereinfacht zeichnen
+
+  /* Sprung + Salto */
+  cP = 1; cPs = 0; cLift = 0; cZc = 0.115 * k;
+  if (a.state === 'jump') {
+    const v = clamp((a.jumpU - 0.1) / 0.8, 0, 1);
+    cLift = 0.85 * 4 * v * (1 - v);
+    const th = a.jumpDir * Math.PI * 2 * (v * v * (3 - 2 * v));
+    cP = Math.cos(th); cPs = Math.sin(th);
+  }
+
+  /* Beine */
+  const mv = Math.min(1, a.speed / 0.7);
+  ctx.strokeStyle = LEGCOL;
+  ctx.lineWidth = Math.max(0.7, 0.032 * k * base);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  for (let side = -1; side <= 1; side += 2) {
+    for (let i = 0; i < 3; i++) {
+      const grp = ((i + (side > 0 ? 1 : 0)) & 1) * Math.PI;
+      const sw = Math.sin(a.phase + grp) * 0.07 * k * mv;
+      const lift = Math.max(0, Math.cos(a.phase + grp)) * 0.06 * k * mv;
+      const af = (0.055 - 0.055 * i) * k, al = side * 0.03 * k, az = (0.10 + 0.04 * w) * k;
+      let ff = (0.17 - 0.16 * i) * k + sw;
+      let fl = side * (i === 1 ? 0.25 : 0.21) * k;
+      let fz = lift;
+      if (i === 0 && side === a.waveSide && w > 0.02) {
+        const o = Math.sin(t * 15 + a.seed);
+        ff = lerp(ff, (0.2 + 0.04 * o) * k, w);
+        fl = lerp(fl, side * (0.16 + 0.05 * o) * k, w);
+        fz = lerp(fz, (0.27 + 0.06 * o) * k, w);
+      }
+      wp(af, al, az); ctx.moveTo(PX, PY);
+      if (!small) { wp((af + ff) / 2, (al + fl) / 2 * 1.25, Math.max(az, fz) + 0.1 * k); ctx.lineTo(PX, PY); }
+      wp(ff, fl, fz); ctx.lineTo(PX, PY);
+    }
+  }
+  ctx.stroke();
+
+  /* Körper: abdomen, thorax, kopf – von hinten (fern) nach vorne (nah) */
+  const br = 1 + 0.03 * Math.sin(t * 2.2 + a.seed);
+  const parts = [
+    { f: -0.16 * k, l: 0.012 * k * Math.sin(t * 1.7 + a.seed), z: 0.13 * k, r: 0.10 * k * br },
+    { f: 0,          l: 0, z: (0.115 + 0.04 * w) * k, r: 0.062 * k },
+    { f: (0.135 - 0.03 * w) * k, l: 0, z: (0.115 + 0.13 * w) * k, r: 0.07 * k }
+  ];
+  const seq = cS >= 0 ? [2, 1, 0] : [0, 1, 2];
+  for (let q = 0; q < 3; q++) {
+    const p = parts[seq[q]];
+    wp(p.f, p.l, p.z);
+    const R = p.r * PP * S;
+    ctx.drawImage(SPRITE, PX - R, PY - R, R * 2, R * 2);
+  }
+
+  /* Fühler */
+  if (small) return;
+  const hd = parts[2];
+  ctx.lineWidth = Math.max(0.6, 0.02 * k * base);
+  ctx.beginPath();
+  for (let side = -1; side <= 1; side += 2) {
+    const wig = Math.sin(t * (3.2 + w * 6) + a.seed + side * 1.7) * 0.05 * k;
+    wp(hd.f + 0.04 * k, side * 0.025 * k, hd.z + 0.03 * k); ctx.moveTo(PX, PY);
+    wp(hd.f + 0.11 * k, side * 0.07 * k + wig, hd.z + 0.07 * k); ctx.lineTo(PX, PY);
+    wp(hd.f + 0.19 * k, side * 0.11 * k + wig * 1.6, hd.z + 0.05 * k); ctx.lineTo(PX, PY);
+  }
+  ctx.stroke();
+}
+
+function drawShadows() {
+  ctx.fillStyle = 'rgba(30,30,44,0.13)';
+  ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const a = order[i], c = Math.cos(a.h), s = Math.sin(a.h);
+    project(a.x + 0.05, a.y - 0.04, 0);
+    if (PX < -90 || PX > W + 90 || PY < -90 || PY > H + 90) continue;
+    const b = PP * S * a.size;
+    const rx = 0.27 * b * Math.hypot(c, s * SIN);
+    const ry = 0.13 * b * Math.hypot(s, c * SIN);
+    const rot = Math.atan2(-s * SIN, c);
+    ctx.moveTo(PX + rx * Math.cos(rot), PY + rx * Math.sin(rot));
+    ctx.ellipse(PX, PY, rx, ry, rot, 0, 6.2832);
+  }
+  ctx.fill();
+}
+
+function draw(t) {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+  order.sort((p, q) => q.y - p.y);                  // fern zuerst
+  drawShadows();
+  for (let i = 0; i < N; i++) drawAnt(order[i], t);
+}
+
+/* ------------------------------------------------------------------ *
+ *  Größe / Eingabe / Loop
+ * ------------------------------------------------------------------ */
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  const changed = computeLayout();
+  if (changed && ants.length && curStr) setDisplay(curStr, true, false);   // Hochkant <-> Querformat
+}
+
+let hoverOn = false, mx = 0, my = 0, HGX = 0, HGY = 0;
+function onPointer(e) {
+  if (e.pointerType === 'touch') hoverOn = false;
+  else { hoverOn = true; mx = e.clientX; my = e.clientY; }
+  burst(e.clientX, e.clientY);
+}
+canvas.addEventListener('pointerdown', onPointer);
+window.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch') { hoverOn = false; return; }
+  hoverOn = true; mx = e.clientX; my = e.clientY;
+});
+document.addEventListener('mouseleave', () => { hoverOn = false; });
+document.documentElement.addEventListener('pointerleave', () => { hoverOn = false; });
+window.addEventListener('blur', () => { hoverOn = false; });
+window.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); burst(W / 2, cy); }
+});
+window.addEventListener('resize', resize);
+
+resize();
+createAnts();
+curStr = timeStr();
+setDisplay(curStr, true, true);
+ants.forEach(a => {
+  if (reduceMotion) { a.x = a.hx; a.y = a.hy; a.h = a.hh; }
+  else {
+    a.h = Math.atan2(a.hy - a.y, a.hx - a.x);
+    a.pending = []; a.pendDelay = rand(0, 1.8); a.retV = rand(5, 8);      // Einlauf von außen
+  }
+});
+canvas.setAttribute('aria-label', 'Uhrzeit ' + curStr + ', dargestellt aus 1000 kleinen Ameisen.');
+
+let last = performance.now(), time = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now; time += dt;
+
+  const s = timeStr();
+  if (s !== curStr) {                                // Uhrzeit hat sich geändert -> Ameisen orientieren sich neu
+    curStr = s;
+    setDisplay(s, false, false);
+    canvas.setAttribute('aria-label', 'Uhrzeit ' + s + ', dargestellt aus 1000 kleinen Ameisen.');
+  }
+  if (hoverOn) { const g = unproject(mx, my); HGX = g[0]; HGY = g[1]; }
+  scheduleEvents(dt);
+  for (let i = 0; i < N; i++) updateAnt(ants[i], dt, time);
+  draw(time);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
