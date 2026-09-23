@@ -579,7 +579,7 @@ function startLevel(n, preview = false) {
   Game.L = L; Game.state = 'playing';
   Game.engine = Engine.create({ gravity: { x: 0, y: 1 } });
   Game.enemies = []; Game.arrows = []; Game.parts = []; Game.texts = []; Game.ragdolls = []; Game.packs = []; Game.crates = []; Game.platforms = []; Game.confetti = []; Game.ambient = [];
-  Game.pending = []; Game.waveIdx = -1; Game.waveTimer = 1.2; Game.time = 0; Game.packTimer = 7 + rnd() * 5; Game.shake = 0; Game.earned = 0; Game.endTimer = 0; Game.bossRef = null; Game.input = null; Game.shots = 0; Game.hits = 0;
+  Game.pending = []; Game.shown = false; Game.waveIdx = -1; Game.waveTimer = 1.2; Game.time = 0; Game.packTimer = 7 + rnd() * 5; Game.shake = 0; Game.earned = 0; Game.endTimer = 0; Game.bossRef = null; Game.input = null; Game.shots = 0; Game.hits = 0;
   const ps = playerStats();
   // Spielerturm
   makePlatform({ x: L.player.x, top: L.player.top, w: L.player.w, floating: false }, L).isPlayer = true;
@@ -1198,6 +1198,8 @@ function update(dt) {
     Game.endTimer += dt;
     if (!Game.shown && Game.state === 'won' && Game.endTimer > 2.8) { Game.shown = true; UI.showWin(); }
     if (!Game.shown && Game.state === 'lost' && Game.endTimer > 1.5) { Game.shown = true; persist(); UI.showLose(); }
+    // Notbremse: falls das Menü aus irgendeinem Grund nicht kam, nie hängen bleiben
+    if (Game.endTimer > 4 && UI.cur === null) { Game.shown = true; persist(); if (Game.state === 'lost') UI.showLose(); else UI.showWin(); }
   }
 }
 
@@ -1547,6 +1549,7 @@ function render() {
 // ---------------------------------------------------------------- Eingabe
 canvas.addEventListener('pointerdown', e => {
   Sfx.init();
+  if ((Game.state === 'lost' || Game.state === 'won') && Game.endTimer > 0.6 && UI.cur === null) { Game.shown = true; persist(); if (Game.state === 'lost') UI.showLose(); else UI.showWin(); return; }
   if (Game.state !== 'playing') return;
   const p = Game.player; if (!p || !p.alive) return;
   e.preventDefault();
@@ -1670,6 +1673,7 @@ const UI = {
   },
   showWin() {
     const r = Game.result, L = Game.L;
+    if (!$('scrWin') || !r) { this.menu(); return; }
     $('winTitle').textContent = L.bigBoss ? 'ENDBOSS BESIEGT!' : L.boss ? 'BOSS BESIEGT!' : 'SIEG!';
     const st = $('winStars'); st.innerHTML = '';
     for (let i = 0; i < 3; i++) { const s = document.createElement('span'); s.textContent = '★'; s.className = i < r.stars ? 'on' : ''; s.style.animationDelay = (0.25 + i * 0.25) + 's'; st.appendChild(s); if (i < r.stars) setTimeout(() => Sfx.tone(660 + i * 220, 0.2, 'square', 0.08), 250 + i * 250); }
@@ -1679,9 +1683,10 @@ const UI = {
     this.updateHud(); this.show('scrWin');
   },
   showLose() {
+    if (!$('scrLose')) { this.menu(); return; }
     const tips = ['Tipp: Kauf im Shop bessere Rüstung und einen Helm!', 'Tipp: Kopftreffer machen doppelten Schaden.', 'Tipp: Triff die Fallschirm-Pakete – sie heilen dich!', 'Tipp: Schieß Bomben ab, bevor sie bei dir landen!', 'Tipp: Achte auf den Wind oben in der Mitte!', 'Tipp: Trainiere „Leben“ und „Nachladen“ im Shop.', 'Tipp: Ziehe länger – volle Spannung = mehr Schaden.'];
-    $('loseTip').textContent = pick(tips);
-    $('loseStats').innerHTML = Game.earned ? `Du behältst <b>🪙 ${fmt(Game.earned)}</b> Münzen.` : '';
+    const lt = $('loseTip'); if (lt) lt.textContent = pick(tips);
+    const ls = $('loseStats'); if (ls) ls.innerHTML = Game.earned ? `Du behältst <b>🪙 ${fmt(Game.earned)}</b> Münzen.` : '';
     this.updateHud(); this.show('scrLose');
   },
   pause() { if (Game.state !== 'playing') return; Game.state = 'paused'; Game.input = null; if (Game.player) Game.player.draw = 0; this.show('scrPause'); },
