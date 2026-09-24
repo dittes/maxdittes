@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1b0f4a">
 <title>Max' Spielhalle – selbstgebaute Spiele von Max</title>
-<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack, Arch Attack, die Ameisenuhr und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
+<meta name="description" content="Max' Spielhalle: Hier veröffentlicht Max seine eigenen Spiele – MaxBall, Animal Attack, Arch Attack, die Ameisenuhr, Maxcraft und bald noch mehr. Direkt im Browser spielen, auf Handy und PC.">
 <link rel="canonical" href="https://maxdittes.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Max' Spielhalle">
-<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack, Arch Attack, Ameisenuhr und bald noch mehr. Fang die Sterne!">
+<meta property="og:description" content="Selbstgebaute Spiele von Max – MaxBall, Animal Attack, Arch Attack, Ameisenuhr, Maxcraft und bald noch mehr. Fang die Sterne!">
 <meta property="og:url" content="https://maxdittes.com/">
 <meta property="og:locale" content="de_DE">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32,4 40,24 62,25 45,39 51,60 32,48 13,60 19,39 2,25 24,24' fill='%23ffd449' stroke='%23e8890c' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -176,8 +176,8 @@ h2 .hl{color:var(--butter)}
 @media(min-width:700px){.trophies{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 .tro{position:relative;display:grid;justify-items:center;align-content:start;gap:4px;padding:16px 6px 12px;text-align:center;border-radius:20px;background:var(--glass);border:2px solid var(--line)}
 .tro .ti{font-size:34px;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
-.tro b{font-size:13.5px;line-height:1.2;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
-.tro small{font-size:11.5px;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;line-height:1.25;color:var(--muted);font-weight:600}
+.tro b{font-size:13.5px;line-height:1.2;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;word-break:break-word}
+.tro small{font-size:11.5px;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:anywhere;word-break:break-word;line-height:1.25;color:var(--muted);font-weight:600}
 .tro.off{opacity:.62}
 .tro.off .ti{filter:grayscale(1) brightness(.7)}
 .tro.on{background:linear-gradient(160deg,rgba(255,212,73,.28),rgba(255,122,41,.2));border-color:var(--butter)}
@@ -204,6 +204,21 @@ h2 .hl{color:var(--butter)}
 .efx{position:fixed;z-index:31;left:0;top:0;margin:-24px 0 0 -24px;font-size:44px;line-height:1;pointer-events:none;will-change:transform,opacity}
 .o2{transition:background .4s}
 .o2.cheese{background:radial-gradient(circle at 28% 42%,#c9950f 0 8%,transparent 9%),radial-gradient(circle at 62% 64%,#c9950f 0 11%,transparent 12%),radial-gradient(circle at 68% 24%,#c9950f 0 6%,transparent 7%),radial-gradient(circle at 35% 30%,#fff3a0,#ffd449 60%,#e0a91a)}
+
+.cart.mc{--c1:#7bc36a;--c2:#4a9a3b;--cd:#2c5e22}
+.subh{cursor:pointer}
+/* Challenges */
+.chals{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.chal{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:var(--glass);border:2px solid var(--line)}
+.chal .cb{min-width:0}
+.chal .ci{font-size:26px;line-height:1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.3))}
+.chal .cb b{display:block;font-size:14.5px;font-weight:800;margin-bottom:6px}
+.chal .cbar{height:9px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.chal .cbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--butter),var(--orange));transition:width .3s}
+.chal .cb small{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.chal.done{border-color:var(--butter);background:linear-gradient(160deg,rgba(255,212,73,.24),rgba(255,122,41,.16))}
+.chal.done .cbar i{background:linear-gradient(90deg,#3dbb5b,#8dffbd)}
+.chalfoot{margin-top:14px;font-size:13px;color:var(--muted)}
 
 /* ---------- Footer ---------- */
 .foot{padding:48px 0 calc(var(--safe-b) + 28px);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
@@ -426,10 +441,44 @@ dialog p{margin:0 0 16px}
         </a>
       </li>
       <li class="rv" style="--dl:.48s">
-        <button class="cart locked" type="button" data-lock="Bald! Max tüftelt schon am nächsten Spiel 🛠️">
-          <div class="art"><span class="qm sm" aria-hidden="true">🛠️</span><span class="ribbon">IN ARBEIT</span></div>
-          <div class="info"><h3>Nächstes Spiel</h3><p>Max programmiert schon fleißig weiter …</p><ul class="tags"><li>🔧 In Arbeit</li></ul><span class="play">BALD …</span></div>
-        </button>
+        <a class="cart mc" href="maxcraft/" data-game="Maxcraft" data-color="#4a9a3b">
+          <div class="art">
+            <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="mcsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ec8f2"/><stop offset="1" stop-color="#cdeeff"/></linearGradient></defs>
+              <rect width="320" height="180" fill="url(#mcsky)"/>
+              <circle cx="256" cy="34" r="18" fill="#fff8d8"/>
+              <g fill="#fff" opacity=".85"><rect x="46" y="26" width="34" height="12"/><rect x="58" y="16" width="20" height="10"/><rect x="150" y="40" width="30" height="10"/></g>
+              <g shape-rendering="crispEdges">
+                <rect x="0" y="118" width="320" height="14" fill="#6fbf4a"/>
+                <rect x="0" y="132" width="320" height="48" fill="#8a5a34"/>
+                <rect x="0" y="132" width="320" height="6" fill="#734a2a"/>
+                <g fill="#5a3b21" opacity=".5"><rect x="16" y="140" width="8" height="8"/><rect x="60" y="152" width="8" height="8"/><rect x="120" y="144" width="8" height="8"/><rect x="200" y="156" width="8" height="8"/><rect x="260" y="146" width="8" height="8"/></g>
+                <g fill="#4a341f"><rect x="70" y="96" width="18" height="18"/><rect x="88" y="96" width="18" height="18"/><rect x="70" y="78" width="18" height="18"/><rect x="88" y="78" width="18" height="18"/></g>
+                <g fill="#6a4a2b"><rect x="70" y="96" width="16" height="16"/><rect x="88" y="96" width="16" height="16"/><rect x="70" y="78" width="16" height="16"/><rect x="88" y="78" width="16" height="16"/></g>
+                <rect x="94" y="98" width="10" height="20" fill="#5a3b21"/>
+                <g fill="#3d8a2e"><rect x="220" y="70" width="16" height="16"/><rect x="236" y="70" width="16" height="16"/><rect x="220" y="86" width="16" height="16"/><rect x="236" y="86" width="16" height="16"/><rect x="204" y="86" width="16" height="16"/><rect x="252" y="86" width="16" height="16"/></g>
+                <rect x="224" y="102" width="10" height="30" fill="#8a5a34"/>
+              </g>
+              <g transform="translate(150 150)">
+                <rect x="-9" y="-30" width="18" height="18" fill="#c99368"/>
+                <rect x="-9" y="-30" width="18" height="7" fill="#3a2a1c"/>
+                <rect x="-3" y="-25" width="3" height="3" fill="#2a2a2a"/><rect x="3" y="-25" width="3" height="3" fill="#2a2a2a"/>
+                <rect x="-10" y="-12" width="20" height="16" fill="#3d8dff"/>
+                <rect x="-10" y="4" width="8" height="14" fill="#5a3b21"/><rect x="2" y="4" width="8" height="14" fill="#5a3b21"/>
+                <rect x="-18" y="-11" width="8" height="16" fill="#c99368" class="mcarm"/>
+                <rect x="10" y="-11" width="8" height="16" fill="#c99368"/>
+                <rect x="-20" y="-22" width="12" height="4" fill="#8a8a8a" class="mcpick"/>
+                <rect x="-26" y="-26" width="8" height="4" fill="#8a8a8a" class="mcpick"/>
+              </g>
+            </svg>
+          </div>
+          <div class="info">
+            <h3>Maxcraft</h3>
+            <p>Bau deine eigene Blockwelt! Bäume fällen, Blöcke setzen und die Landschaft erkunden.</p>
+            <ul class="tags"><li>🧱 Sandbox</li><li>3D</li><li>Handy &amp; PC</li></ul>
+            <span class="play">SPIELEN ▶</span>
+          </div>
+        </a>
       </li>
       <li class="rv" style="--dl:.6s">
         <button class="cart locked" type="button" data-lock="Pssst … das ist noch geheim! 🤫">
@@ -438,6 +487,13 @@ dialog p{margin:0 0 16px}
         </button>
       </li>
     </ul>
+  </section>
+
+  <section class="sec wrap" id="challenges" aria-labelledby="hChal">
+    <h2 id="hChal">Tages-<span class="hl">Challenges</span></h2>
+    <p class="lead">Jeden Tag 3 neue Aufgaben. Schaff alle drei für einen dicken Bonus!</p>
+    <ul class="chals" id="chalList"></ul>
+    <p class="chalfoot" id="chalFoot"></p>
   </section>
 
   <section class="sec wrap" id="trophaeen" aria-labelledby="hTro">
@@ -495,7 +551,12 @@ const S = {
   seen: +store.get('seen', 0) || 0,
   opened: Array.isArray(store.get('opened', [])) ? store.get('opened', []) : [],
   lastDay: String(store.get('lastDay', '') || ''),
-  dayCount: +store.get('dayCount', 0) || 0
+  dayCount: +store.get('dayCount', 0) || 0,
+  chalDay: String(store.get('chalDay', '') || ''),
+  chalProg: store.get('chalProg', {}) || {},
+  chalDone: Array.isArray(store.get('chalDone', [])) ? store.get('chalDone', []) : [],
+  chalAllToday: store.get('chalAllToday', false) === true,
+  chalAllDays: +store.get('chalAllDays', 0) || 0
 };
 let lastInput = performance.now(), asleep = false, dizzyT = 0;
 
@@ -554,7 +615,17 @@ const TROPHIES = [
   { id: 'konami', ico: '👾', name: 'Retro-Held', hint: 'Ein uralter Tastencode', secret: true },
   { id: 'curious', ico: '🔐', name: 'Neugierig', hint: 'Was ist da wohl drin?', secret: true },
   { id: 'arcade', ico: '🕹️', name: 'Hallen-Fan', hint: 'Tipp den Untertitel an', secret: true },
-  { id: 'pizza', ico: '🍕', name: 'Pizzabäcker', hint: 'Tipp was Leckeres', secret: true }
+  { id: 'pizza', ico: '🍕', name: 'Pizzabäcker', hint: 'Tipp was Leckeres', secret: true },
+  { id: 'mc', ico: '🧱', name: 'Baumeister', hint: 'Öffne Maxcraft' },
+  { id: 'chal1', ico: '✅', name: 'Erledigt!', hint: 'Schließe eine Tages-Challenge ab' },
+  { id: 'chalAll', ico: '🌟', name: 'Perfekter Tag', hint: 'Schaff alle 3 Tages-Challenges an einem Tag' },
+  { id: 'chalStreak', ico: '🔥', name: 'Challenge-Serie', hint: 'Schaff an 3 verschiedenen Tagen alle Challenges', secret: true },
+  { id: 'shake', ico: '📳', name: 'Schüttelmeister', hint: 'Schüttle dein Handy oder die Maus wild', secret: true },
+  { id: 'creeper', ico: '💥', name: 'Sssss …', hint: 'Tipp ein gefährliches Wort', secret: true },
+  { id: 'orbit', ico: '🛰️', name: 'Orbit-Meister', hint: 'Besuch schnell alle drei Himmelskörper', secret: true },
+  { id: 'lvlpeek', ico: '📊', name: 'Level-Spicker', hint: 'Doppeltipp auf dein Level', secret: true },
+  { id: 'fineprint', ico: '🔎', name: 'Kleingedrucktes', hint: 'Das Copyright hat mehr zu bieten', secret: true },
+  { id: 'dig', ico: '⛏️', name: 'Grabungsfund', hint: 'Halt Maxcraft lange gedrückt', secret: true }
 ];
 
 /* ===== Elemente ===== */
@@ -656,6 +727,7 @@ function retro() {
   if (S.seen === 31) unlock('wardrobe', true);
   if (S.opened.length >= $$('a.cart').length) unlock('allgames', true);
   if (S.opened.indexOf('Ameisenuhr') > -1) unlock('ant', true);
+  if (S.opened.indexOf('Maxcraft') > -1) unlock('mc', true);
 }
 
 /* ===== Blobi ===== */
@@ -694,7 +766,7 @@ blobiBtn.addEventListener('click', () => {
   const r = blobiBtn.getBoundingClientRect();
   burst(r.left + r.width / 2, r.top + r.height * .45, 10, COLORS.bright, 220);
   addScore(1);
-  if (S.tickles >= 10) unlock('tickle'); if (S.tickles >= 50) unlock('tickle50');
+  if (S.tickles >= 10) unlock('tickle'); if (S.tickles >= 50) unlock('tickle50'); bumpChal('tickle', 1);
   if (taps.length >= 9) { taps = []; dizzy(); }
 });
 blobiBtn.addEventListener('contextmenu', e => e.preventDefault());
@@ -730,6 +802,7 @@ function addScore(pts) {
   renderHud(true);
   if (after > before) levelUp(after);
   checkScore();
+  if (pts > 0) bumpChal('earn', pts);
 }
 function levelUp(L) {
   const fresh = OUTFITS.filter(o => o.lvl === L)[0];
@@ -818,6 +891,7 @@ function collect(s) {
   if (s.gold) { S.golds++; store.set('golds', S.golds); }
   unlock('first'); if (combo >= 5) unlock('combo'); if (combo >= 10) unlock('combo10'); if (mult >= 4) unlock('x4'); if (s.gold) unlock('gold');
   if (S.golds >= 5) unlock('golds5'); if (S.caught >= 50) unlock('stars50'); if (S.caught >= 200) unlock('stars200');
+  bumpChal('catch', 1); if (s.gold) bumpChal('gold', 1); bumpChal('combo', combo, true);
   addScore(pts);
 }
 function tryCollect(x, y, extra) {
@@ -844,7 +918,7 @@ function text(x, y, s, c, size) { texts.push({ x, y, s, c, size: size || 22, t: 
 const ptr = { x: innerWidth / 2, y: innerHeight * .45, down: false, type: 'mouse', has: false };
 let px = 0, py = 0, pxT = 0, pyT = 0, trailT = 0;
 const isInteractive = el => !!(el && el.closest && el.closest('a,button,dialog,summary'));
-function setPtr(e) { ptr.x = e.clientX; ptr.y = e.clientY; ptr.type = e.pointerType || 'mouse'; ptr.has = true; touch(); }
+function setPtr(e) { ptr.x = e.clientX; ptr.y = e.clientY; ptr.type = e.pointerType || 'mouse'; ptr.has = true; touch(); shakeCheck(e.clientX, e.clientY, performance.now()); }
 addEventListener('pointerdown', e => {
   gesture = true; setPtr(e); ptr.down = true;
   if ($('dialog[open]')) return;
@@ -878,7 +952,7 @@ letters.forEach((l, i) => {
     kickLetter(l); sfx.jump(); vib(10);
     const b = l.slot.getBoundingClientRect();
     burst(b.left + b.width / 2, b.top + b.height / 2, 12, COLORS.bright, 300);
-    addScore(2); S.ltr++; store.set('ltr', S.ltr); if (S.ltr >= 20) unlock('bounce');
+    addScore(2); S.ltr++; store.set('ltr', S.ltr); if (S.ltr >= 20) unlock('bounce'); bumpChal('ltr', 1);
     tapped.add(l.ch); seq.push(l.ch); seq = seq.slice(-3);
     if (tapped.size === 3) unlock('max');
     if (seq.join('') === 'XAM') party(8, 'secret');
@@ -933,7 +1007,7 @@ function endChal() {
   const sc = chal.score, rec = sc > S.best;
   if (rec) { S.best = sc; store.set('best', sc); }
   chal = null; chalEl.hidden = true; chalBtn.disabled = false; chalBtn.textContent = '⭐ Sternenjagd · 20 s';
-  if (sc >= 25) unlock('hunt'); if (sc >= 40) unlock('hunt40');
+  if (sc >= 25) unlock('hunt'); if (sc >= 40) unlock('hunt40'); bumpChal('hunt', sc, true);
   sfx.end(); burst(W / 2, H * .35, sc >= 25 ? 90 : 30, COLORS.all, 500, 'confetti');
   $('#resScore').textContent = sc;
   $('#resMsg').textContent = rec ? (sc ? 'Neuer Rekord! 🏆' : '') : 'Dein Rekord: ' + S.best + ' Punkte';
@@ -942,6 +1016,63 @@ function endChal() {
 }
 chalBtn.addEventListener('click', startChal);
 result.addEventListener('close', () => { if (result.returnValue === 'again') startChal(); result.returnValue = ''; });
+
+/* ===== Tages-Challenges ===== */
+const CHALLENGES = [
+  { id: 'c_catch', text: 'Fange 12 Sterne', metric: 'catch', target: 12, ico: '⭐' },
+  { id: 'c_gold', text: 'Fange 2 goldene Sterne', metric: 'gold', target: 2, ico: '🥇' },
+  { id: 'c_combo', text: 'Erreiche eine 6er-Kombo', metric: 'combo', target: 6, ico: '🔥' },
+  { id: 'c_tickle', text: 'Kitzle Blobi 8-mal', metric: 'tickle', target: 8, ico: '😆' },
+  { id: 'c_hunt', text: 'Hol 15 Punkte in der Sternenjagd', metric: 'hunt', target: 15, ico: '⏱️' },
+  { id: 'c_letters', text: 'Tippe die Buchstaben 8-mal an', metric: 'ltr', target: 8, ico: '🔤' },
+  { id: 'c_score', text: 'Verdiene heute 40 Punkte', metric: 'earn', target: 40, ico: '💰' },
+  { id: 'c_game', text: 'Starte ein Spiel', metric: 'game', target: 1, ico: '🎮' },
+  { id: 'c_ant', text: 'Stups die kleine Ameise an', metric: 'antpoke', target: 1, ico: '🐜' }
+];
+function dayIndex() {
+  const t = new Date(), start = new Date(t.getFullYear(), 0, 0);
+  return Math.floor((t - start) / 86400000);
+}
+function todaysChallenges() {
+  const n = CHALLENGES.length, i0 = dayIndex() % n;
+  return [0, 1, 2].map(k => CHALLENGES[(i0 + k) % n]);
+}
+function chalHtml(c) {
+  const done = S.chalDone.indexOf(c.id) > -1;
+  const cur = Math.min(c.target, S.chalProg[c.metric] || 0);
+  const pct = Math.round(cur / c.target * 100);
+  return '<li class="chal ' + (done ? 'done' : '') + '"><span class="ci" aria-hidden="true">' + (done ? '✅' : c.ico) + '</span><div class="cb"><b>' + c.text + '</b><div class="cbar"><i style="width:' + pct + '%"></i></div><small>' + cur + ' / ' + c.target + '</small></div></li>';
+}
+function renderChallenges() {
+  const list = todaysChallenges();
+  $('#chalList').innerHTML = list.map(chalHtml).join('');
+  const n = list.filter(c => S.chalDone.indexOf(c.id) > -1).length;
+  $('#chalFoot').textContent = n + ' von 3 heute geschafft' + (S.chalAllDays ? ' · ' + S.chalAllDays + '× alle drei an einem Tag' : '');
+}
+function checkChallenges() {
+  const list = todaysChallenges();
+  list.forEach(c => {
+    if (S.chalDone.indexOf(c.id) > -1) return;
+    if ((S.chalProg[c.metric] || 0) >= c.target) {
+      S.chalDone.push(c.id); store.set('chalDone', S.chalDone);
+      toast('<span class="ti" aria-hidden="true">' + c.ico + '</span><span><b>Challenge geschafft!</b><br>' + c.text + '</span>', 'trophy');
+      sfx.trophy(); unlock('chal1'); addScore(5);
+    }
+  });
+  renderChallenges();
+  if (!S.chalAllToday && list.every(c => S.chalDone.indexOf(c.id) > -1)) {
+    S.chalAllToday = true; store.set('chalAllToday', true);
+    S.chalAllDays = (S.chalAllDays || 0) + 1; store.set('chalAllDays', S.chalAllDays);
+    unlock('chalAll'); addScore(20); say('Alle Tages-Challenges geschafft! 🌟', '🌟', 3600);
+    burst(W / 2, H * .4, 60, COLORS.gold, 480, 'confetti'); sfx.level();
+    if (S.chalAllDays >= 3) unlock('chalStreak');
+  }
+}
+function bumpChal(metric, val, isMax) {
+  S.chalProg[metric] = isMax ? Math.max(S.chalProg[metric] || 0, val) : (S.chalProg[metric] || 0) + val;
+  store.set('chalProg', S.chalProg);
+  checkChallenges();
+}
 
 /* ===== Party-Modus ===== */
 let partyT = 0, partyB = 0;
@@ -983,21 +1114,80 @@ function orbTap(x, y) {
       sfx.boing(); burst(x, y, 10, ['#ffb066', '#ffe0a0', '#fff'], 260); text(x, y - 20, 'Wusch!', '#ffb066', 24);
       if (!REDUCE) el.animate([{ rotate: '0deg', scale: 1 }, { rotate: '-14deg', scale: 1.08 }, { rotate: '10deg', scale: .96 }, { rotate: '0deg', scale: 1 }], { duration: 420 });
       if (o1n >= 3) {
-        o1n = 0; unlock('planet'); say('Der Ringplanet dreht sich für dich! 🪐', '🪐');
+        o1n = 0; unlock('planet'); orbitCheck('planet'); say('Der Ringplanet dreht sich für dich! 🪐', '🪐');
         if (!REDUCE) el.animate([{ rotate: '0deg' }, { rotate: '720deg' }], { duration: 1500, easing: 'cubic-bezier(.3,1.4,.5,1)' });
         burst(cx, cy, 40, COLORS.gold, 420);
       }
     } else if (k === 'o2') {
       el.classList.add('cheese'); clearTimeout(cheeseT); cheeseT = setTimeout(() => el.classList.remove('cheese'), 4500);
       sfx.boing(); popEmoji('🐭', cx, cy, -140, 90, 2200, -20, 40); text(x, y - 20, 'Käse!', '#ffe98f', 26);
-      unlock('moon'); say('Der Mond ist aus Käse! 🧀 Ich hab’s immer gewusst.', '🧀');
+      unlock('moon'); orbitCheck('moon'); say('Der Mond ist aus Käse! 🧀 Ich hab’s immer gewusst.', '🧀');
     } else {
       sfx.whoosh(); popEmoji('👽', cx, cy, rand(-60, 60), -200, 1800, 24, 50); popEmoji('🛸', -60, Math.max(120, H * .3), W + 140, 0, 2800, 0, 46);
-      unlock('alien'); say('Grüße von einem fremden Planeten! 👽', '👽');
+      unlock('alien'); orbitCheck('alien'); say('Grüße von einem fremden Planeten! 👽', '👽');
     }
     return true;
   }
   return false;
+}
+// Orbit-Meister: alle drei Himmelskörper innerhalb von 20s
+let orbitSeen = {};
+function orbitCheck(which) {
+  orbitSeen[which] = performance.now();
+  const vals = Object.values(orbitSeen);
+  if (orbitSeen.moon && orbitSeen.planet && orbitSeen.alien && Math.max(...vals) - Math.min(...vals) < 20000) {
+    unlock('orbit'); say('Du hast das ganze Sonnensystem besucht! 🛰️', '🛰️');
+  }
+}
+// Schütteln (Maus wild hin und her, oder Handy schütteln)
+let shakeHist = [], lastShakeX = null, lastShakeY = null;
+function shakeCheck(x, y, t) {
+  if (lastShakeX !== null) {
+    const d = Math.hypot(x - lastShakeX, y - lastShakeY);
+    if (d > 26) { shakeHist.push(t); shakeHist = shakeHist.filter(ts => t - ts < 1200); }
+  }
+  lastShakeX = x; lastShakeY = y;
+  if (shakeHist.length >= 14) { shakeHist = []; shakeIt(); }
+}
+function shakeIt() {
+  unlock('shake'); sfx.whoosh(); vib([20, 30, 20, 30]);
+  say('Waaas für ein Beben! 📳', '📳'); burst(W / 2, H / 2, 40, COLORS.all, 460, 'confetti');
+  if (!REDUCE) doc.body.animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-6px,4px)' }, { transform: 'translate(6px,-4px)' }, { transform: 'translate(-4px,-4px)' }, { transform: 'translate(0,0)' }], { duration: 380 });
+}
+if (window.DeviceMotionEvent) {
+  let lastDM = 0;
+  addEventListener('devicemotion', e => {
+    const a = e.accelerationIncludingGravity; if (!a) return;
+    const mag = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
+    const now = performance.now();
+    if (mag > 42 && now - lastDM > 1200) { lastDM = now; shakeHist.push(now, now, now, now, now, now, now, now, now, now, now, now, now, now); shakeCheck(0, 0, now); }
+  });
+}
+// Kleingedrucktes: Copyright im Footer 3× antippen
+let copyN = 0, copyT = 0;
+const copyEl = $('.foot span');
+if (copyEl) copyEl.addEventListener('click', () => {
+  gesture = true; const t = performance.now(); copyN = (t - copyT < 2000) ? copyN + 1 : 1; copyT = t;
+  sfx.tick();
+  if (copyN >= 3) { copyN = 0; unlock('fineprint'); say('Du liest sogar das Kleingedruckte? Respekt! 🔎', '🔎'); popEmoji('🔍', innerWidth / 2, innerHeight - 60, 0, -80, 1400, 0, 34); }
+});
+// Level-Pill Doppeltipp
+let lvlN = 0, lvlT2 = 0;
+const lvlPill = $('#lvlpill');
+if (lvlPill) lvlPill.addEventListener('click', () => {
+  gesture = true; const t = performance.now(); lvlN = (t - lvlT2 < 500) ? lvlN + 1 : 1; lvlT2 = t;
+  if (lvlN >= 2) {
+    lvlN = 0; unlock('lvlpeek'); sfx.tick();
+    const li = levelInfo(S.score); const need = li.cost - li.rem;
+    say('Noch ' + need + ' Punkte bis Level ' + (li.L + 1) + '! 📊', '📊');
+    const r = lvlPill.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 14, COLORS.gold, 220);
+  }
+});
+// Creeper: gefährliches Wort tippen
+function creeper() {
+  unlock('creeper'); say('Sssss … BOOM! 💥', '💥'); sfx.whoosh(); vib([10, 60, 10]);
+  burst(W / 2, H * .5, 70, ['#3dbb5b', '#1c9a80', '#fff'], 520, 'confetti');
+  popEmoji('💥', W / 2, H * .5, 0, 0, 900, 0, 60);
 }
 // Ameisenparade (Karte "Ameisenuhr" anstupsen oder „ameise“ tippen)
 const ants = [];
@@ -1046,7 +1236,7 @@ if (miniAnt) miniAnt.addEventListener('click', e => {
   if (!REDUCE) miniAnt.firstElementChild.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-18px) rotate(-12deg)' }, { transform: 'translateY(0)' }], { duration: 300 });
   const r = miniAnt.getBoundingClientRect();
   text(r.left + r.width / 2, r.top - 4, ['Hihi!', 'Kitzelig!', 'Ey!', 'Lass mich!'][pokes % 4], '#fff', 22);
-  if (pokes >= 5) { pokes = 0; antParade(); }
+  bumpChal('antpoke', 1); if (pokes >= 5) { pokes = 0; antParade(); }
 });
 // Sternenregen (7× auf die Punkte tippen oder „regen“ tippen)
 function starRain() {
@@ -1139,7 +1329,7 @@ function eggsTick(dt, now) {
 }
 // Tastatur: Konami-Code und Zauberwörter
 const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
-const WORDS = { party: () => party(8, 'secret'), ameise: antParade, ants: antParade, regen: starRain, disco: dj, pizza: pizza };
+const WORDS = { party: () => party(8, 'secret'), ameise: antParade, ants: antParade, regen: starRain, disco: dj, pizza: pizza, creeper: creeper, maxcraft: () => { unlock('mc'); say('Maxcraft wartet auf dich! 🧱', '🧱'); } };
 let keys = [], typed = '';
 addEventListener('keydown', e => {
   gesture = true; touch();
@@ -1236,6 +1426,13 @@ function frame(now) {
 
 /* ===== Spielkarten: Neigung, Portal-Start, gesperrte Spiele ===== */
 const portal = $('#portal'), portalMsg = $('#portalMsg');
+let digT = null, digFired = false;
+const mcCart = $('a.cart.mc');
+if (mcCart) {
+  mcCart.addEventListener('pointerdown', e => { digFired = false; digT = setTimeout(() => { digT = null; digFired = true; unlock('dig'); sfx.boing(); vib(24); say('Ein Diamant! ⛏️💎', '⛏️'); const r = mcCart.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 30, ['#7bc36a', '#4a9a3b', '#fff'], 380, 'confetti'); }, 900); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => mcCart.addEventListener(ev, () => { if (digT) { clearTimeout(digT); digT = null; } }));
+  mcCart.addEventListener('click', e => { if (digFired) { digFired = false; e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+}
 $$('.cart').forEach(c => {
   c.addEventListener('pointermove', e => {
     const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
@@ -1250,8 +1447,10 @@ $$('a.cart').forEach(a => a.addEventListener('click', e => {
   unlock('play'); sfx.whoosh(); vib(20);
   const gName = a.dataset.game;
   if (gName === 'Ameisenuhr') unlock('ant');
+  if (gName === 'Maxcraft') unlock('mc');
   if (S.opened.indexOf(gName) < 0) { S.opened.push(gName); store.set('opened', S.opened); }
   if (S.opened.length >= $$('a.cart').length) unlock('allgames');
+  bumpChal('game', 1);
   const r = a.getBoundingClientRect();
   const x = e.detail ? e.clientX : r.left + r.width / 2, y = e.detail ? e.clientY : r.top + r.height / 2;
   portal.style.setProperty('--ox', x + 'px'); portal.style.setProperty('--oy', y + 'px'); portal.style.setProperty('--pc', a.dataset.color);
@@ -1277,10 +1476,10 @@ const resetBtn = $('#resetBtn');
 resetBtn.addEventListener('click', () => {
   if (!armed) { armed = true; resetBtn.textContent = 'Wirklich löschen? Nochmal tippen'; setTimeout(() => { armed = false; resetBtn.textContent = 'Spielstand zurücksetzen'; }, 3200); return; }
   armed = false; resetBtn.textContent = 'Spielstand zurücksetzen';
-  S.score = 0; S.best = 0; S.ach = {}; S.outfit = 0; S.tickles = 0; S.caught = 0; S.golds = 0; S.ltr = 0; S.seen = 0; S.opened = []; S.dayCount = 1; tapped.clear();
-  ['score', 'best', 'outfit', 'tickles', 'caught', 'golds', 'ltr', 'seen'].forEach(k => store.set(k, 0));
-  store.set('ach', {}); store.set('opened', []); store.set('dayCount', 1);
-  renderHud(); renderTrophies(); applyOutfit(); say('Alles auf Anfang! 🔄', '🔄');
+  S.score = 0; S.best = 0; S.ach = {}; S.outfit = 0; S.tickles = 0; S.caught = 0; S.golds = 0; S.ltr = 0; S.seen = 0; S.opened = []; S.dayCount = 1; S.chalProg = {}; S.chalDone = []; S.chalAllToday = false; S.chalAllDays = 0; tapped.clear();
+  ['score', 'best', 'outfit', 'tickles', 'caught', 'golds', 'ltr', 'seen', 'chalAllDays'].forEach(k => store.set(k, 0));
+  store.set('ach', {}); store.set('opened', []); store.set('dayCount', 1); store.set('chalProg', {}); store.set('chalDone', []); store.set('chalAllToday', false); store.set('chalDay', '');
+  renderHud(); renderTrophies(); renderChallenges(); applyOutfit(); say('Alles auf Anfang! 🔄', '🔄');
 });
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
@@ -1357,13 +1556,17 @@ if ('IntersectionObserver' in window) {
 function visitDay() {
   let d; try { d = new Date().toLocaleDateString('sv-SE'); } catch (e) { d = new Date().toISOString().slice(0, 10); }
   if (S.lastDay !== d) { S.lastDay = d; S.dayCount++; store.set('lastDay', d); store.set('dayCount', S.dayCount); }
+  if (S.chalDay !== d) {
+    S.chalDay = d; S.chalProg = {}; S.chalDone = []; S.chalAllToday = false;
+    store.set('chalDay', d); store.set('chalProg', {}); store.set('chalDone', []); store.set('chalAllToday', false);
+  }
   setTimeout(() => { if (S.dayCount >= 3) unlock('loyal'); if (S.dayCount >= 7) unlock('loyal7'); }, 2600);
   const hr = new Date().getHours();
   if (hr >= 21 || hr < 5) setTimeout(() => { unlock('night'); say('Noch wach? 🌙', '🌙'); }, 3000);
   else if (hr >= 5 && hr < 7) setTimeout(() => { unlock('early'); say('Schon so früh wach? 🌅', '🌅'); }, 3000);
 }
 visitDay(); retro();
-renderSnd(); renderHud(); renderTrophies(); applyOutfit();
+renderSnd(); renderHud(); renderTrophies(); renderChallenges(); applyOutfit();
 try { console.log('%cHallo, Entwickler! 🕵️', 'font:900 16px system-ui;color:#ff7a29'); console.log('Max\' Spielhalle hat versteckte Trophäen. Tipp: Probier mal ein paar Wörter auf der Tastatur …'); } catch (e) {}
 setTimeout(() => blobi.say('Hallo! Tippe mich an 👆', 3400), 1300);
 requestAnimationFrame(frame);
