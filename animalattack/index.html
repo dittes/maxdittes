@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e8b579">
 <title>Animal Attack</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <!--
   Animal Attack — Milestone 1.6
   Three.js pinned to 0.186.0 (newest stable on npm at build time), ES module via import map.
@@ -19,7 +16,7 @@
 :root{
   --ink:#3a2418; --cream:#fff4dc; --butter:#ffd449; --leaf:#3dbb5b; --crust:#e8b579;
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
-  --font:"Fredoka",ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --font:ui-rounded,"Arial Rounded MT Bold","Varela Round","Trebuchet MS",system-ui,-apple-system,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--crust);color:var(--ink);font-family:var(--font);
@@ -45,7 +42,10 @@ html,body{height:100%;overflow:hidden;background:var(--crust);color:var(--ink);f
 #pips i.on{background:var(--butter);transform:scale(1.2)}
 #speed{min-width:64px}
 #speed.on{background:var(--butter)}
-#tip{position:absolute;left:50%;top:calc(var(--safe-t) + 78px);transform:translateX(-50%);width:min(92vw,420px);
+#prog{position:absolute;left:50%;top:calc(var(--safe-t) + 74px);transform:translateX(-50%);width:min(62vw,300px);height:8px;
+  border-radius:6px;background:rgba(58,36,24,.16);overflow:hidden;pointer-events:none}
+#prog i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--leaf),var(--butter));opacity:.85}
+#tip{position:absolute;left:50%;top:calc(var(--safe-t) + 92px);transform:translateX(-50%);width:min(92vw,420px);
   background:var(--cream);border:3px solid var(--ink);border-radius:16px;padding:8px 12px;font-weight:500;font-size:15px;
   line-height:1.3;text-align:center;box-shadow:0 3px 0 var(--ink);pointer-events:none;transition:opacity .3s}
 #tip.hide{opacity:0}
@@ -102,6 +102,7 @@ html,body{height:100%;overflow:hidden;background:var(--crust);color:var(--ink);f
     <div id="title"><span id="ttl"></span><div id="pips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
     <button class="st" id="speed" aria-label="Speed">1×</button>
   </div>
+  <div id="prog"><i></i></div>
   <div id="tip" class="hide"></div>
   <div id="hint" class="hide"></div>
   <div id="bar">
@@ -445,19 +446,19 @@ const PICS = [
 ];
 const PLAN = [
   [0,0],[1,0],[3,0],[5,0],[4,1],[16,3],[10,0],[4,0],
-  [11,0],[2,0],[6,1],[5,1],[9,0],[6,0],[8,0],[7,0],
-  [8,1],[10,1],[15,0],[14,0],[13,0],[13,1],[12,0],[13,2],
-  [8,2],[18,2],[11,1],[7,1],[14,1],[19,1],[15,1],[14,2],
-  [9,1],[18,1],[11,2],[23,2],[26,3],[16,1],[10,2],[17,1],
-  [12,1],[22,2],[18,3],[9,2],[16,2],[27,3],[20,3],[12,3],
-  [22,1],[12,2],[26,0],[21,2],[20,2],[19,2],[16,0],[19,0],
-  [13,3],[19,3],[24,3],[15,2],[32,1],[14,3],[17,3],[21,3],
-  [23,3],[31,0],[17,2],[22,3],[25,3],[26,2],[21,0],[32,2],
-  [33,2],[15,3],[28,0],[28,2],[28,1],[24,2],[20,0],[35,1],
-  [27,1],[20,1],[17,0],[18,0],[26,1],[24,0],[22,0],[29,0],
-  [24,1],[25,2],[25,0],[27,2],[31,2],[30,2],[27,0],[23,0],
-  [30,0],[21,1],[23,1],[29,1],[34,2],[30,1],[31,1],[38,2],
-  [34,1],[35,2],[39,2],[37,2],[36,2],[33,1],[25,1],[29,2],
+  [6,0],[15,0],[13,1],[13,0],[11,0],[2,0],[6,1],[8,0],
+  [7,0],[5,1],[14,0],[10,1],[13,2],[18,2],[9,0],[8,2],
+  [16,2],[8,1],[11,2],[16,1],[12,0],[11,1],[9,2],[9,1],
+  [18,1],[22,2],[19,0],[12,2],[21,2],[14,2],[7,1],[18,3],
+  [10,2],[16,0],[19,3],[12,1],[14,1],[19,1],[32,1],[23,2],
+  [27,3],[15,1],[17,1],[13,3],[21,3],[20,1],[15,2],[12,3],
+  [19,2],[17,2],[20,3],[26,0],[32,2],[14,3],[26,3],[22,1],
+  [15,3],[35,1],[27,1],[23,3],[34,2],[20,2],[24,3],[22,3],
+  [20,0],[31,2],[30,0],[17,3],[28,2],[26,2],[21,0],[17,0],
+  [27,0],[24,2],[30,1],[33,2],[24,0],[29,0],[31,0],[25,3],
+  [28,1],[24,1],[25,0],[29,1],[27,2],[22,0],[18,0],[28,0],
+  [30,2],[25,1],[25,2],[21,1],[26,1],[36,2],[31,1],[39,2],
+  [23,0],[23,1],[34,1],[35,2],[37,2],[38,2],[29,2],[33,1],
 ];
 // Generator difficulty per level: squad size range, how many squads the reference
 // solution may park, deal run-length (chunk), mystery share and seed.
@@ -465,115 +466,115 @@ const GEN = [
   { min:6, max:14, maxWait:0, mix:0.3, chunk:[1,2], mys:0, seed:1 }, // L1 rnd≈100%
   { min:6, max:14, maxWait:1, mix:0.31, chunk:[1,2], mys:0, seed:1 }, // L2 rnd≈100%
   { min:6, max:15, maxWait:2, mix:0.32, chunk:[1,2], mys:0, seed:1 }, // L3 rnd≈100%
-  { min:7, max:16, maxWait:3, mix:0.33, chunk:[1,3], mys:0, seed:1 }, // L4 rnd≈99%
+  { min:7, max:16, maxWait:3, mix:0.33, chunk:[1,3], mys:0, seed:1 }, // L4 rnd≈100%
   { min:8, max:19, maxWait:3, mix:0.4, chunk:[2,4], mys:0, seed:1 }, // L5 rnd≈100%
-  { min:7, max:18, maxWait:3, mix:0.63, chunk:[8,14], mys:0, seed:15 }, // L6 rnd≈100%
-  { min:7, max:17, maxWait:3, mix:0.36, chunk:[3,5], mys:0, seed:4 }, // L7 rnd≈99%
-  { min:6, max:15, maxWait:3, mix:0.33, chunk:[2,5], mys:0, seed:11 }, // L8 rnd≈99%
-  { min:7, max:17, maxWait:3, mix:0.37, chunk:[3,5], mys:0.12, seed:14 }, // L9 rnd≈98%
-  { min:6, max:15, maxWait:1, mix:0.31, chunk:[2,3], mys:0, seed:9 }, // L10 rnd≈98%
-  { min:5, max:12, maxWait:3, mix:0.41, chunk:[3,6], mys:0.14, seed:13 }, // L11 rnd≈98%
-  { min:8, max:19, maxWait:3, mix:0.41, chunk:[2,4], mys:0.13, seed:10 }, // L12 rnd≈98%
-  { min:4, max:10, maxWait:3, mix:0.36, chunk:[5,8], mys:0, seed:3 }, // L13 rnd≈96%
-  { min:4, max:6, maxWait:3, mix:0.34, chunk:[1,3], mys:0, seed:4 }, // L14 rnd≈96%
-  { min:4, max:8, maxWait:3, mix:0.35, chunk:[4,6], mys:0.1, seed:20 }, // L15 rnd≈96%
-  { min:7, max:16, maxWait:3, mix:0.34, chunk:[3,5], mys:0, seed:17 }, // L16 rnd≈96%
-  { min:5, max:12, maxWait:3, mix:0.43, chunk:[5,8], mys:0.15, seed:4 }, // L17 rnd≈95%
-  { min:4, max:11, maxWait:3, mix:0.44, chunk:[6,10], mys:0.15, seed:15 }, // L18 rnd≈94%
-  { min:8, max:19, maxWait:3, mix:0.39, chunk:[2,4], mys:0.13, seed:3 }, // L19 rnd≈91%
-  { min:8, max:18, maxWait:3, mix:0.39, chunk:[3,6], mys:0.12, seed:4 }, // L20 rnd≈91%
-  { min:7, max:18, maxWait:3, mix:0.38, chunk:[3,6], mys:0.12, seed:14 }, // L21 rnd≈91%
-  { min:9, max:22, maxWait:3, mix:0.46, chunk:[5,8], mys:0.17, seed:20 }, // L22 rnd≈89%
-  { min:4, max:11, maxWait:3, mix:0.38, chunk:[5,9], mys:0.12, seed:1 }, // L23 rnd≈86%
-  { min:5, max:13, maxWait:3, mix:0.53, chunk:[8,14], mys:0.21, seed:19 }, // L24 rnd≈82%
-  { min:5, max:14, maxWait:3, mix:0.5, chunk:[4,6], mys:0.19, seed:4 }, // L25 rnd≈82%
-  { min:11, max:27, maxWait:3, mix:0.56, chunk:[4,7], mys:0.23, seed:2 }, // L26 rnd≈82%
-  { min:4, max:11, maxWait:3, mix:0.45, chunk:[6,10], mys:0.16, seed:18 }, // L27 rnd≈81%
-  { min:4, max:6, maxWait:3, mix:0.42, chunk:[9,12], mys:0.14, seed:13 }, // L28 rnd≈81%
-  { min:9, max:22, maxWait:3, mix:0.46, chunk:[5,8], mys:0.17, seed:4 }, // L29 rnd≈79%
-  { min:9, max:23, maxWait:3, mix:0.5, chunk:[6,9], mys:0.19, seed:12 }, // L30 rnd≈78%
-  { min:5, max:11, maxWait:3, mix:0.47, chunk:[10,16], mys:0.17, seed:15 }, // L31 rnd≈76%
-  { min:6, max:16, maxWait:3, mix:0.54, chunk:[9,17], mys:0.22, seed:9 }, // L32 rnd≈76%
-  { min:8, max:20, maxWait:3, mix:0.43, chunk:[8,12], mys:0.15, seed:18 }, // L33 rnd≈75%
-  { min:9, max:23, maxWait:3, mix:0.49, chunk:[3,6], mys:0.19, seed:8 }, // L34 rnd≈75%
-  { min:6, max:15, maxWait:3, mix:0.52, chunk:[9,14], mys:0.2, seed:3 }, // L35 rnd≈75%
-  { min:7, max:17, maxWait:3, mix:0.6, chunk:[8,12], mys:0.25, seed:15 }, // L36 rnd≈75%
-  { min:13, max:33, maxWait:3, mix:0.69, chunk:[6,10], mys:0.31, seed:12 }, // L37 rnd≈75%
-  { min:5, max:12, maxWait:3, mix:0.48, chunk:[10,18], mys:0.18, seed:2 }, // L38 rnd≈71%
-  { min:5, max:12, maxWait:3, mix:0.51, chunk:[12,18], mys:0.2, seed:9 }, // L39 rnd≈71%
-  { min:5, max:14, maxWait:3, mix:0.48, chunk:[5,9], mys:0.18, seed:18 }, // L40 rnd≈70%
-  { min:5, max:13, maxWait:3, mix:0.45, chunk:[8,12], mys:0.16, seed:9 }, // L41 rnd≈68%
-  { min:7, max:17, maxWait:3, mix:0.59, chunk:[8,12], mys:0.25, seed:3 }, // L42 rnd≈68%
-  { min:6, max:16, maxWait:3, mix:0.64, chunk:[10,18], mys:0.28, seed:18 }, // L43 rnd≈68%
-  { min:5, max:12, maxWait:3, mix:0.51, chunk:[8,12], mys:0.2, seed:12 }, // L44 rnd≈66%
-  { min:4, max:8, maxWait:3, mix:0.55, chunk:[12,22], mys:0.22, seed:13 }, // L45 rnd≈64%
-  { min:4, max:9, maxWait:3, mix:0.7, chunk:[24,40], mys:0.31, seed:17 }, // L46 rnd≈64%
-  { min:12, max:31, maxWait:3, mix:0.65, chunk:[9,14], mys:0.29, seed:16 }, // L47 rnd≈62%
-  { min:6, max:15, maxWait:3, mix:0.6, chunk:[15,24], mys:0.26, seed:4 }, // L48 rnd≈62%
-  { min:9, max:23, maxWait:3, mix:0.82, chunk:[8,12], mys:0.39, seed:10 }, // L49 rnd≈62%
-  { min:10, max:25, maxWait:3, mix:0.53, chunk:[6,11], mys:0.21, seed:11 }, // L50 rnd≈61%
-  { min:7, max:19, maxWait:3, mix:0.77, chunk:[14,22], mys:0.36, seed:5 }, // L51 rnd≈60%
-  { min:11, max:28, maxWait:3, mix:0.58, chunk:[12,18], mys:0.24, seed:7 }, // L52 rnd≈59%
-  { min:7, max:16, maxWait:3, mix:0.58, chunk:[12,18], mys:0.24, seed:13 }, // L53 rnd≈59%
-  { min:6, max:14, maxWait:3, mix:0.57, chunk:[8,14], mys:0.24, seed:10 }, // L54 rnd≈56%
-  { min:4, max:10, maxWait:3, mix:0.7, chunk:[18,30], mys:0.32, seed:17 }, // L55 rnd≈56%
-  { min:13, max:35, maxWait:3, mix:0.72, chunk:[14,23], mys:0.33, seed:9 }, // L56 rnd≈56%
-  { min:4, max:9, maxWait:3, mix:0.61, chunk:[15,24], mys:0.26, seed:19 }, // L57 rnd≈55%
-  { min:4, max:10, maxWait:3, mix:0.65, chunk:[16,28], mys:0.28, seed:13 }, // L58 rnd≈54%
-  { min:12, max:32, maxWait:3, mix:0.68, chunk:[14,23], mys:0.3, seed:16 }, // L59 rnd≈54%
-  { min:10, max:26, maxWait:3, mix:0.55, chunk:[4,7], mys:0.22, seed:19 }, // L60 rnd≈52%
-  { min:16, max:42, maxWait:3, mix:0.88, chunk:[8,14], mys:0.43, seed:7 }, // L61 rnd≈50%
-  { min:6, max:15, maxWait:3, mix:0.62, chunk:[16,24], mys:0.26, seed:17 }, // L62 rnd≈49%
-  { min:6, max:15, maxWait:3, mix:0.63, chunk:[16,28], mys:0.27, seed:17 }, // L63 rnd≈48%
-  { min:4, max:10, maxWait:3, mix:0.66, chunk:[12,18], mys:0.29, seed:9 }, // L64 rnd≈46%
-  { min:12, max:32, maxWait:3, mix:0.67, chunk:[6,9], mys:0.3, seed:20 }, // L65 rnd≈46%
-  { min:15, max:38, maxWait:3, mix:0.8, chunk:[11,18], mys:0.38, seed:19 }, // L66 rnd≈45%
-  { min:10, max:27, maxWait:3, mix:0.56, chunk:[6,11], mys:0.23, seed:20 }, // L67 rnd≈44%
-  { min:7, max:19, maxWait:3, mix:0.67, chunk:[14,21], mys:0.29, seed:17 }, // L68 rnd≈44%
-  { min:8, max:20, maxWait:3, mix:0.68, chunk:[9,15], mys:0.31, seed:3 }, // L69 rnd≈40%
-  { min:5, max:13, maxWait:3, mix:0.92, chunk:[18,28], mys:0.45, seed:9 }, // L70 rnd≈40%
-  { min:4, max:11, maxWait:3, mix:0.74, chunk:[14,22], mys:0.34, seed:16 }, // L71 rnd≈39%
-  { min:17, max:46, maxWait:3, mix:0.96, chunk:[14,23], mys:0.47, seed:12 }, // L72 rnd≈39%
-  { min:9, max:23, maxWait:3, mix:0.96, chunk:[30,46], mys:0.48, seed:1 }, // L73 rnd≈39%
-  { min:12, max:30, maxWait:3, mix:0.62, chunk:[12,18], mys:0.27, seed:14 }, // L74 rnd≈38%
-  { min:14, max:37, maxWait:3, mix:0.78, chunk:[17,27], mys:0.36, seed:2 }, // L75 rnd≈38%
-  { min:17, max:45, maxWait:3, mix:0.93, chunk:[9,15], mys:0.46, seed:18 }, // L76 rnd≈38%
-  { min:8, max:21, maxWait:3, mix:0.85, chunk:[16,26], mys:0.41, seed:9 }, // L77 rnd≈35%
-  { min:6, max:16, maxWait:3, mix:0.91, chunk:[14,21], mys:0.44, seed:2 }, // L78 rnd≈35%
-  { min:13, max:35, maxWait:3, mix:0.73, chunk:[17,26], mys:0.33, seed:6 }, // L79 rnd≈34%
-  { min:10, max:26, maxWait:3, mix:0.9, chunk:[14,21], mys:0.44, seed:1 }, // L80 rnd≈34%
-  { min:15, max:41, maxWait:3, mix:0.85, chunk:[12,20], mys:0.41, seed:5 }, // L81 rnd≈32%
-  { min:8, max:20, maxWait:3, mix:0.8, chunk:[22,36], mys:0.38, seed:11 }, // L82 rnd≈32%
-  { min:8, max:20, maxWait:3, mix:0.71, chunk:[14,23], mys:0.32, seed:18 }, // L83 rnd≈30%
-  { min:8, max:20, maxWait:3, mix:0.72, chunk:[6,10], mys:0.33, seed:17 }, // L84 rnd≈30%
-  { min:15, max:40, maxWait:3, mix:0.84, chunk:[12,20], mys:0.4, seed:12 }, // L85 rnd≈28%
-  { min:4, max:11, maxWait:3, mix:0.75, chunk:[22,34], mys:0.35, seed:14 }, // L86 rnd≈26%
-  { min:8, max:21, maxWait:3, mix:0.74, chunk:[17,26], mys:0.34, seed:20 }, // L87 rnd≈26%
-  { min:8, max:23, maxWait:3, mix:0.79, chunk:[7,12], mys:0.37, seed:5 }, // L88 rnd≈25%
-  { min:9, max:24, maxWait:3, mix:0.83, chunk:[8,13], mys:0.4, seed:11 }, // L89 rnd≈25%
-  { min:10, max:26, maxWait:3, mix:0.91, chunk:[14,21], mys:0.45, seed:5 }, // L90 rnd≈25%
-  { min:8, max:22, maxWait:3, mix:0.76, chunk:[17,26], mys:0.35, seed:14 }, // L91 rnd≈24%
-  { min:5, max:11, maxWait:3, mix:0.92, chunk:[36,56], mys:0.45, seed:18 }, // L92 rnd≈22%
-  { min:5, max:12, maxWait:3, mix:0.95, chunk:[36,60], mys:0.47, seed:9 }, // L93 rnd≈22%
-  { min:5, max:12, maxWait:3, mix:0.94, chunk:[36,60], mys:0.47, seed:9 }, // L94 rnd≈22%
-  { min:14, max:37, maxWait:3, mix:0.77, chunk:[7,11], mys:0.36, seed:2 }, // L95 rnd≈21%
-  { min:4, max:11, maxWait:3, mix:0.75, chunk:[21,33], mys:0.34, seed:13 }, // L96 rnd≈21%
-  { min:8, max:23, maxWait:3, mix:0.79, chunk:[17,27], mys:0.37, seed:1 }, // L97 rnd≈21%
-  { min:4, max:10, maxWait:3, mix:0.81, chunk:[32,48], mys:0.38, seed:5 }, // L98 rnd≈21%
-  { min:9, max:23, maxWait:3, mix:0.82, chunk:[12,18], mys:0.39, seed:3 }, // L99 rnd≈20%
-  { min:16, max:41, maxWait:3, mix:0.86, chunk:[12,20], mys:0.41, seed:16 }, // L100 rnd≈19%
-  { min:10, max:28, maxWait:3, mix:0.97, chunk:[15,23], mys:0.48, seed:12 }, // L101 rnd≈19%
-  { min:16, max:42, maxWait:3, mix:0.87, chunk:[8,13], mys:0.42, seed:5 }, // L102 rnd≈18%
-  { min:16, max:42, maxWait:3, mix:0.87, chunk:[12,20], mys:0.42, seed:20 }, // L103 rnd≈18%
-  { min:9, max:24, maxWait:3, mix:0.99, chunk:[20,32], mys:0.5, seed:12 }, // L104 rnd≈18%
-  { min:8, max:22, maxWait:3, mix:0.89, chunk:[18,28], mys:0.43, seed:12 }, // L105 rnd≈16%
-  { min:18, max:47, maxWait:3, mix:0.97, chunk:[23,35], mys:0.48, seed:4 }, // L106 rnd≈12%
-  { min:5, max:14, maxWait:3, mix:1, chunk:[20,32], mys:0.5, seed:3 }, // L107 rnd≈12%
-  { min:9, max:24, maxWait:3, mix:0.99, chunk:[30,48], mys:0.49, seed:5 }, // L108 rnd≈11%
-  { min:11, max:28, maxWait:3, mix:0.98, chunk:[10,16], mys:0.49, seed:15 }, // L109 rnd≈11%
-  { min:16, max:42, maxWait:3, mix:0.89, chunk:[21,32], mys:0.43, seed:5 }, // L110 rnd≈10%
-  { min:8, max:20, maxWait:3, mix:0.84, chunk:[24,40], mys:0.4, seed:5 }, // L111 rnd≈10%
-  { min:5, max:12, maxWait:3, mix:0.94, chunk:[36,60], mys:0.46, seed:20 }, // L112 rnd≈1%
+  { min:7, max:18, maxWait:3, mix:0.63, chunk:[8,14], mys:0, seed:1 }, // L6 rnd≈100%
+  { min:7, max:17, maxWait:3, mix:0.36, chunk:[5,8], mys:0, seed:9 }, // L7 rnd≈100%
+  { min:6, max:15, maxWait:3, mix:0.33, chunk:[3,8], mys:0, seed:15 }, // L8 rnd≈99%
+  { min:4, max:6, maxWait:3, mix:0.34, chunk:[2,5], mys:0.12, seed:14 }, // L9 rnd≈98%
+  { min:8, max:19, maxWait:3, mix:0.39, chunk:[2,4], mys:0.13, seed:1 }, // L10 rnd≈94%
+  { min:5, max:11, maxWait:3, mix:0.46, chunk:[10,16], mys:0.17, seed:7 }, // L11 rnd≈92%
+  { min:4, max:9, maxWait:3, mix:0.38, chunk:[6,12], mys:0.12, seed:3 }, // L12 rnd≈91%
+  { min:4, max:10, maxWait:3, mix:0.37, chunk:[3,5], mys:0.12, seed:11 }, // L13 rnd≈90%
+  { min:6, max:15, maxWait:1, mix:0.31, chunk:[3,5], mys:0, seed:19 }, // L14 rnd≈90%
+  { min:4, max:7, maxWait:3, mix:0.41, chunk:[3,6], mys:0.14, seed:8 }, // L15 rnd≈90%
+  { min:4, max:6, maxWait:3, mix:0.35, chunk:[6,9], mys:0.1, seed:1 }, // L16 rnd≈90%
+  { min:7, max:16, maxWait:3, mix:0.34, chunk:[5,8], mys:0, seed:9 }, // L17 rnd≈90%
+  { min:8, max:19, maxWait:3, mix:0.41, chunk:[2,4], mys:0.13, seed:16 }, // L18 rnd≈88%
+  { min:8, max:18, maxWait:3, mix:0.39, chunk:[3,6], mys:0.12, seed:19 }, // L19 rnd≈85%
+  { min:4, max:7, maxWait:3, mix:0.44, chunk:[9,15], mys:0.15, seed:15 }, // L20 rnd≈84%
+  { min:4, max:8, maxWait:3, mix:0.53, chunk:[12,21], mys:0.21, seed:9 }, // L21 rnd≈84%
+  { min:11, max:27, maxWait:3, mix:0.56, chunk:[4,7], mys:0.23, seed:4 }, // L22 rnd≈84%
+  { min:4, max:10, maxWait:3, mix:0.36, chunk:[8,12], mys:0, seed:4 }, // L23 rnd≈81%
+  { min:5, max:14, maxWait:3, mix:0.5, chunk:[4,6], mys:0.19, seed:4 }, // L24 rnd≈81%
+  { min:4, max:8, maxWait:3, mix:0.55, chunk:[18,33], mys:0.22, seed:20 }, // L25 rnd≈81%
+  { min:4, max:7, maxWait:3, mix:0.43, chunk:[8,12], mys:0.15, seed:9 }, // L26 rnd≈80%
+  { min:6, max:15, maxWait:3, mix:0.52, chunk:[14,21], mys:0.2, seed:3 }, // L27 rnd≈79%
+  { min:4, max:7, maxWait:3, mix:0.48, chunk:[15,27], mys:0.18, seed:3 }, // L28 rnd≈79%
+  { min:4, max:11, maxWait:3, mix:0.38, chunk:[8,14], mys:0.12, seed:3 }, // L29 rnd≈78%
+  { min:4, max:6, maxWait:3, mix:0.45, chunk:[12,20], mys:0.16, seed:4 }, // L30 rnd≈78%
+  { min:4, max:7, maxWait:3, mix:0.51, chunk:[12,18], mys:0.2, seed:11 }, // L31 rnd≈78%
+  { min:4, max:10, maxWait:3, mix:0.43, chunk:[16,24], mys:0.15, seed:18 }, // L32 rnd≈76%
+  { min:9, max:23, maxWait:3, mix:0.49, chunk:[3,6], mys:0.19, seed:2 }, // L33 rnd≈74%
+  { min:4, max:10, maxWait:3, mix:0.59, chunk:[8,12], mys:0.25, seed:15 }, // L34 rnd≈71%
+  { min:13, max:35, maxWait:3, mix:0.72, chunk:[14,23], mys:0.33, seed:19 }, // L35 rnd≈71%
+  { min:10, max:25, maxWait:3, mix:0.53, chunk:[6,11], mys:0.21, seed:20 }, // L36 rnd≈70%
+  { min:11, max:28, maxWait:3, mix:0.58, chunk:[12,18], mys:0.24, seed:6 }, // L37 rnd≈70%
+  { min:4, max:10, maxWait:3, mix:0.54, chunk:[9,17], mys:0.22, seed:14 }, // L38 rnd≈69%
+  { min:4, max:6, maxWait:3, mix:0.42, chunk:[14,18], mys:0.14, seed:13 }, // L39 rnd≈68%
+  { min:6, max:16, maxWait:3, mix:0.64, chunk:[10,18], mys:0.28, seed:18 }, // L40 rnd≈68%
+  { min:5, max:12, maxWait:3, mix:0.51, chunk:[12,18], mys:0.2, seed:9 }, // L41 rnd≈66%
+  { min:4, max:10, maxWait:3, mix:0.7, chunk:[18,30], mys:0.32, seed:17 }, // L42 rnd≈65%
+  { min:4, max:6, maxWait:3, mix:0.65, chunk:[16,28], mys:0.28, seed:5 }, // L43 rnd≈65%
+  { min:5, max:13, maxWait:3, mix:0.45, chunk:[12,18], mys:0.16, seed:12 }, // L44 rnd≈64%
+  { min:9, max:22, maxWait:3, mix:0.46, chunk:[5,8], mys:0.17, seed:14 }, // L45 rnd≈62%
+  { min:9, max:23, maxWait:3, mix:0.5, chunk:[6,9], mys:0.19, seed:13 }, // L46 rnd≈62%
+  { min:8, max:21, maxWait:3, mix:0.88, chunk:[16,28], mys:0.43, seed:3 }, // L47 rnd≈60%
+  { min:7, max:17, maxWait:3, mix:0.6, chunk:[8,12], mys:0.25, seed:6 }, // L48 rnd≈57%
+  { min:4, max:9, maxWait:3, mix:0.7, chunk:[24,40], mys:0.31, seed:4 }, // L49 rnd≈57%
+  { min:5, max:11, maxWait:3, mix:0.47, chunk:[10,16], mys:0.17, seed:9 }, // L50 rnd≈55%
+  { min:5, max:14, maxWait:3, mix:0.48, chunk:[8,14], mys:0.18, seed:9 }, // L51 rnd≈55%
+  { min:4, max:6, maxWait:3, mix:0.61, chunk:[23,36], mys:0.26, seed:20 }, // L52 rnd≈55%
+  { min:4, max:10, maxWait:3, mix:0.66, chunk:[12,18], mys:0.29, seed:7 }, // L53 rnd≈52%
+  { min:8, max:20, maxWait:3, mix:0.8, chunk:[22,36], mys:0.38, seed:12 }, // L54 rnd≈52%
+  { min:10, max:26, maxWait:3, mix:0.55, chunk:[4,7], mys:0.22, seed:19 }, // L55 rnd≈51%
+  { min:6, max:15, maxWait:3, mix:0.6, chunk:[23,36], mys:0.26, seed:4 }, // L56 rnd≈50%
+  { min:6, max:14, maxWait:3, mix:0.57, chunk:[8,14], mys:0.24, seed:10 }, // L57 rnd≈50%
+  { min:10, max:27, maxWait:3, mix:0.56, chunk:[6,11], mys:0.23, seed:20 }, // L58 rnd≈50%
+  { min:12, max:31, maxWait:3, mix:0.65, chunk:[14,21], mys:0.29, seed:18 }, // L59 rnd≈49%
+  { min:7, max:19, maxWait:3, mix:0.77, chunk:[14,22], mys:0.36, seed:9 }, // L60 rnd≈49%
+  { min:17, max:46, maxWait:3, mix:0.96, chunk:[14,23], mys:0.47, seed:6 }, // L61 rnd≈49%
+  { min:6, max:15, maxWait:3, mix:0.62, chunk:[16,24], mys:0.26, seed:17 }, // L62 rnd≈45%
+  { min:13, max:33, maxWait:3, mix:0.69, chunk:[6,10], mys:0.31, seed:5 }, // L63 rnd≈44%
+  { min:5, max:14, maxWait:3, mix:0.82, chunk:[8,12], mys:0.39, seed:2 }, // L64 rnd≈44%
+  { min:12, max:30, maxWait:3, mix:0.62, chunk:[18,27], mys:0.27, seed:14 }, // L65 rnd≈44%
+  { min:6, max:16, maxWait:3, mix:0.9, chunk:[14,21], mys:0.44, seed:16 }, // L66 rnd≈44%
+  { min:15, max:41, maxWait:3, mix:0.85, chunk:[12,20], mys:0.41, seed:20 }, // L67 rnd≈42%
+  { min:6, max:16, maxWait:3, mix:0.67, chunk:[12,18], mys:0.3, seed:10 }, // L68 rnd≈40%
+  { min:6, max:17, maxWait:3, mix:0.97, chunk:[15,23], mys:0.48, seed:2 }, // L69 rnd≈40%
+  { min:7, max:16, maxWait:3, mix:0.58, chunk:[18,27], mys:0.24, seed:9 }, // L70 rnd≈39%
+  { min:6, max:16, maxWait:3, mix:0.68, chunk:[28,46], mys:0.3, seed:15 }, // L71 rnd≈38%
+  { min:7, max:19, maxWait:3, mix:0.67, chunk:[14,21], mys:0.29, seed:18 }, // L72 rnd≈38%
+  { min:13, max:35, maxWait:3, mix:0.73, chunk:[26,39], mys:0.33, seed:5 }, // L73 rnd≈38%
+  { min:5, max:12, maxWait:3, mix:0.95, chunk:[54,90], mys:0.47, seed:1 }, // L74 rnd≈38%
+  { min:8, max:23, maxWait:3, mix:0.79, chunk:[26,41], mys:0.37, seed:12 }, // L75 rnd≈38%
+  { min:6, max:15, maxWait:3, mix:0.63, chunk:[24,42], mys:0.27, seed:3 }, // L76 rnd≈36%
+  { min:17, max:45, maxWait:3, mix:0.93, chunk:[14,23], mys:0.46, seed:18 }, // L77 rnd≈36%
+  { min:5, max:13, maxWait:3, mix:0.92, chunk:[27,42], mys:0.45, seed:9 }, // L78 rnd≈35%
+  { min:4, max:7, maxWait:3, mix:0.74, chunk:[21,33], mys:0.34, seed:1 }, // L79 rnd≈35%
+  { min:8, max:20, maxWait:3, mix:0.71, chunk:[14,23], mys:0.32, seed:18 }, // L80 rnd≈35%
+  { min:14, max:37, maxWait:3, mix:0.77, chunk:[7,11], mys:0.36, seed:5 }, // L81 rnd≈35%
+  { min:4, max:10, maxWait:3, mix:0.91, chunk:[14,21], mys:0.44, seed:10 }, // L82 rnd≈34%
+  { min:16, max:42, maxWait:3, mix:0.87, chunk:[8,13], mys:0.42, seed:2 }, // L83 rnd≈34%
+  { min:9, max:23, maxWait:3, mix:0.96, chunk:[30,46], mys:0.48, seed:1 }, // L84 rnd≈32%
+  { min:4, max:11, maxWait:3, mix:0.75, chunk:[33,51], mys:0.35, seed:14 }, // L85 rnd≈32%
+  { min:8, max:23, maxWait:3, mix:0.79, chunk:[7,12], mys:0.37, seed:5 }, // L86 rnd≈32%
+  { min:9, max:23, maxWait:3, mix:0.8, chunk:[11,18], mys:0.38, seed:20 }, // L87 rnd≈31%
+  { min:4, max:10, maxWait:3, mix:0.68, chunk:[18,30], mys:0.31, seed:1 }, // L88 rnd≈31%
+  { min:8, max:21, maxWait:3, mix:0.85, chunk:[16,26], mys:0.41, seed:9 }, // L89 rnd≈31%
+  { min:5, max:14, maxWait:3, mix:0.83, chunk:[12,20], mys:0.4, seed:12 }, // L90 rnd≈31%
+  { min:8, max:22, maxWait:3, mix:0.76, chunk:[26,39], mys:0.35, seed:9 }, // L91 rnd≈31%
+  { min:16, max:41, maxWait:3, mix:0.86, chunk:[18,30], mys:0.41, seed:16 }, // L92 rnd≈31%
+  { min:5, max:11, maxWait:3, mix:0.92, chunk:[36,56], mys:0.45, seed:18 }, // L93 rnd≈30%
+  { min:8, max:21, maxWait:3, mix:0.74, chunk:[26,39], mys:0.34, seed:20 }, // L94 rnd≈29%
+  { min:4, max:10, maxWait:3, mix:0.72, chunk:[12,20], mys:0.33, seed:2 }, // L95 rnd≈25%
+  { min:14, max:37, maxWait:3, mix:0.78, chunk:[17,27], mys:0.36, seed:5 }, // L96 rnd≈22%
+  { min:4, max:7, maxWait:3, mix:0.94, chunk:[36,60], mys:0.47, seed:11 }, // L97 rnd≈21%
+  { min:8, max:20, maxWait:3, mix:0.84, chunk:[24,40], mys:0.4, seed:5 }, // L98 rnd≈21%
+  { min:6, max:16, maxWait:3, mix:0.91, chunk:[14,21], mys:0.45, seed:3 }, // L99 rnd≈20%
+  { min:4, max:10, maxWait:3, mix:0.81, chunk:[32,48], mys:0.38, seed:5 }, // L100 rnd≈20%
+  { min:15, max:40, maxWait:3, mix:0.84, chunk:[18,30], mys:0.4, seed:12 }, // L101 rnd≈19%
+  { min:11, max:28, maxWait:3, mix:0.98, chunk:[15,24], mys:0.49, seed:15 }, // L102 rnd≈16%
+  { min:16, max:42, maxWait:3, mix:0.87, chunk:[12,20], mys:0.42, seed:20 }, // L103 rnd≈15%
+  { min:5, max:14, maxWait:3, mix:1, chunk:[20,32], mys:0.5, seed:4 }, // L104 rnd≈15%
+  { min:4, max:11, maxWait:3, mix:0.75, chunk:[32,50], mys:0.34, seed:13 }, // L105 rnd≈14%
+  { min:5, max:14, maxWait:3, mix:0.82, chunk:[12,18], mys:0.39, seed:17 }, // L106 rnd≈14%
+  { min:8, max:22, maxWait:3, mix:0.89, chunk:[27,42], mys:0.43, seed:12 }, // L107 rnd≈12%
+  { min:11, max:28, maxWait:3, mix:0.97, chunk:[23,35], mys:0.48, seed:18 }, // L108 rnd≈11%
+  { min:9, max:24, maxWait:3, mix:0.99, chunk:[45,72], mys:0.49, seed:5 }, // L109 rnd≈11%
+  { min:5, max:14, maxWait:3, mix:0.99, chunk:[20,32], mys:0.5, seed:20 }, // L110 rnd≈9%
+  { min:5, max:12, maxWait:3, mix:0.94, chunk:[36,60], mys:0.46, seed:20 }, // L111 rnd≈9%
+  { min:10, max:25, maxWait:3, mix:0.89, chunk:[21,32], mys:0.43, seed:14 }, // L112 rnd≈8%
 ];
 // Each level = picture + variant + its own tuned nest queue.
 // Variants mirror / flip / recolour a picture so a world can revisit it fresh.
@@ -641,7 +642,7 @@ function makeContext(def){
   const nC = chars.length, perColor = new Int16Array(nC+1); let total = 0;
   for (let i=0;i<WH;i++) if (cells[i]) { perColor[cells[i]]++; total++; }
   const st = { cells, out: new Uint8Array(WH), exp: new Uint8Array(WH), exposed: new Int16Array(nC+1),
-               remaining: total, cols: null, slots: new Array(CONFIG.MAX_SLOTS).fill(null), cap: CONFIG.SLOTS, rc: {},
+               remaining: total, cols: null, slots: new Array(CONFIG.MAX_SLOTS).fill(null), cap: CONFIG.SLOTS, rc: {}, rn: {},
                round: 0, status: 'play' };
   const ctx = { def, W, H, WH, chars, nC, total, perColor, s: CONFIG.BOARD_WORLD / Math.max(W,H) };
   for (let i=0;i<WH;i++){
@@ -703,15 +704,21 @@ function generateNests(ctx, init, g){
     }
     cols[j].push(n.id); left--;
   }
+  // even out the columns so all four start with a comparable stack
+  for (let guard=0; guard<seq.length; guard++) {
+    let lo = 0, hi = 0;
+    for (let q=1;q<C;q++){ if (cols[q].length < cols[lo].length) lo = q; if (cols[q].length > cols[hi].length) hi = q; }
+    if (cols[hi].length - cols[lo].length <= 1) break;
+    cols[lo].push(cols[hi].pop());
+  }
   ctx.nests = seq; init.cols = cols;
-  rebalance(init); // every column starts with something to tap
 }
 
 // ============================ SIMULATION (pure) =============================
 function cloneState(s){
   return { cells: s.cells.slice(), out: s.out.slice(), exp: s.exp.slice(), exposed: s.exposed.slice(), remaining: s.remaining,
            cols: s.cols ? s.cols.map(c => c.slice()) : null, slots: s.slots.map(q => q ? {...q} : null),
-           cap: s.cap, rc: {...s.rc}, round: s.round, status: s.status };
+           cap: s.cap, rc: {...s.rc}, rn: {...s.rn}, round: s.round, status: s.status };
 }
 function findTarget(ctx, st, c){
   if (st.exposed[c] <= 0) return -1;
@@ -753,6 +760,7 @@ function rebalance(st){
 function freeSlot(st){ for (let i=0; i<st.cap; i++) if (!st.slots[i]) return i; return -1; }
 /** Effective colour of a nest (the colour-swap booster overrides the original). */
 function nestColor(ctx, st, id){ return st.rc[id] || ctx.nests[id].c; }
+function nestSize(ctx, st, id){ const v = st.rn[id]; return v === undefined ? ctx.nests[id].n : v; }
 function canTap(ctx, st, col){
   return st.status === 'play' && col >= 0 && col < st.cols.length && st.cols[col].length > 0 && freeSlot(st) >= 0;
 }
@@ -760,7 +768,8 @@ function canTap(ctx, st, col){
 function tap(ctx, st0, col, withEvents = true){
   if (!canTap(ctx, st0, col)) return null;
   const st = cloneState(st0), id = st.cols[col].shift(), nest = ctx.nests[id], free = freeSlot(st);
-  st.slots[free] = { c: nestColor(ctx, st, id), b: nest.n, n: nest.n, id };
+  const size = nestSize(ctx, st, id);
+  st.slots[free] = { c: nestColor(ctx, st, id), b: size, n: size, id };
   st.round++;
   const events = withEvents ? [{ t:'deploy', slot: free, col, id }] : null;
   resolve(ctx, st, events);
@@ -771,9 +780,39 @@ function tap(ctx, st0, col, withEvents = true){
 function setStatus(st){ st.status = st.remaining === 0 ? 'win' : (freeSlot(st) < 0 ? 'lose' : 'play'); }
 
 // ------------------------------- BOOSTERS -----------------------------------
+/**
+ * After a booster changed the board or a nest colour, re-balance the queue:
+ * every squad/nest keeps at most as many bites as its colour still has blocks,
+ * nests whose colour vanished are repainted to a colour that still needs eaters,
+ * and nests with nothing left to do drop out of the queue.
+ */
+function reconcile(ctx, st){
+  const left = new Int32Array(ctx.nC+1);
+  for (let i=0;i<ctx.WH;i++) if (st.cells[i]) left[st.cells[i]]++;
+  const surplus = () => { let best = 0, bv = 0; for (let k=1;k<=ctx.nC;k++) if (left[k] > bv) { bv = left[k]; best = k; } return best; };
+  for (let sIdx=0; sIdx<st.slots.length; sIdx++) {
+    const q = st.slots[sIdx]; if (!q) continue;
+    if (left[q.c] <= 0) { const alt = surplus(); if (alt) q.c = alt; }
+    const give = Math.min(q.b, left[q.c]); left[q.c] -= give;
+    if (give <= 0) st.slots[sIdx] = null; else { q.n -= (q.b - give); q.b = give; }
+  }
+  const ids = []; for (const col of st.cols) for (const id of col) ids.push(id);
+  ids.sort((a,b) => a-b);
+  const drop = new Set();
+  for (const id of ids) {
+    let c = nestColor(ctx, st, id);
+    if (left[c] <= 0) { const alt = surplus(); if (alt) { c = alt; st.rc[id] = c; } }
+    const give = Math.min(nestSize(ctx, st, id), left[c]); left[c] -= give;
+    if (give <= 0) drop.add(id); else st.rn[id] = give;
+  }
+  if (drop.size) st.cols = st.cols.map(col => col.filter(id => !drop.has(id)));
+}
 /** Colour swap: repaint a queued nest. */
 function applySwap(ctx, st0, id, color){
-  const st = cloneState(st0); st.rc[id] = color; return { st, events: [] };
+  const st = cloneState(st0); st.rc[id] = color;
+  reconcile(ctx, st);
+  const events = []; resolve(ctx, st, events); rebalance(st); setStatus(st);
+  return { st, events };
 }
 /** Extra slot: one more squad can be parked / work in parallel. */
 function applySlot(ctx, st0){
@@ -792,6 +831,7 @@ function applySuper(ctx, st0, line, vertical){
   }
   if (!cells.length) return null;
   recomputeReach(ctx, st);
+  reconcile(ctx, st);
   const events = [{ t:'zap', cells, lo, vertical }];
   resolve(ctx, st, events); rebalance(st); setStatus(st);
   return { st, events };
@@ -1381,7 +1421,7 @@ function drawBadge(hex, text){
   g.fillStyle = '#3a2418'; roundRectPath(g, 8, 14, 112, 104, 28); g.fill();
   g.fillStyle = hex; roundRectPath(g, 13, 13, 102, 92, 24); g.fill();
   g.fillStyle = 'rgba(255,255,255,0.28)'; roundRectPath(g, 22, 19, 84, 26, 13); g.fill();
-  g.font = `700 ${text.length >= 3 ? 50 : 62}px Fredoka, "Arial Rounded MT Bold", system-ui, sans-serif`;
+  g.font = `700 ${text.length >= 3 ? 50 : 62}px ui-rounded, "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif`;
   g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 11;
   g.strokeStyle = lum > 0.72 ? 'rgba(255,255,255,0.9)' : 'rgba(58,36,24,0.85)';
   g.strokeText(text, 64, 63); g.fillStyle = lum > 0.72 ? '#3a2418' : '#ffffff'; g.fillText(text, 64, 63);
@@ -1392,14 +1432,15 @@ let nestVis = [], slotPads = [];
 let padOwner = new Int32Array(CONFIG.MAX_SLOTS).fill(-1), padFreeAt = new Float32Array(CONFIG.MAX_SLOTS);
 const padWaiting = new Array(CONFIG.MAX_SLOTS).fill(false);
 const PAD_LOCK_MAT = toon('#bfae91');
-function slotPos(i){ return { x: ctx.layout.slotX[i], z: ctx.layout.slotZ }; }
+function slotSpan(cap){ return cap >= 5 ? 2.05 : 2.35; }
+function slotPos(i){ const cap = state ? state.cap : CONFIG.SLOTS, sp = slotSpan(cap); return { x: (i-(cap-1)/2)*sp, z: ctx.layout.slotZ }; }
 function rowZ(r){ return ctx.layout.rowZ0 + (r === 0 ? 0 : 1.45 + (r-1)*1.08); }
 function nestPos(col, row){ const C = CONFIG.COLUMNS; return { x: (col-(C-1)/2)*ctx.layout.colGap, z: rowZ(row) }; }
 function buildNests(){
   for (const nv of nestVis) { scene.remove(nv.group); nv.badgeMat.dispose(); }
   for (const p of slotPads) scene.remove(p);
   for (const t of badgeCache.values()) t.dispose(); badgeCache.clear();
-  slotPads = ctx.layout.slotX.map(x => { const m = new THREE.Mesh(PAD_GEO, PAD_MAT); m.position.set(x, 0.05, ctx.layout.slotZ); scene.add(m); return m; });
+  slotPads = Array.from({ length: CONFIG.MAX_SLOTS }, () => { const m = new THREE.Mesh(PAD_GEO, PAD_MAT); m.position.y = 0.05; scene.add(m); return m; });
   nestVis = ctx.nests.map(n => {
     const group = new THREE.Group();
     const mound = new THREE.Mesh(MOUND_GEO, MOUND_MAT); mound.scale.y = 0.62; group.add(mound);
@@ -1419,7 +1460,12 @@ function applyLook(nv){
   nv.badgeMat.needsUpdate = true;
   nv.ring.material = colorMat(nv.hidden ? MYSTERY_HEX : nestHex(nv));
 }
-function updatePads(){ slotPads.forEach((m, p) => { const on = p < state.cap; m.material = on ? PAD_MAT : PAD_LOCK_MAT; m.scale.setScalar(on ? 1 : 0.8); }); }
+function updatePads(){
+  slotPads.forEach((m, p) => { const on = p < state.cap, q = slotPos(p); m.visible = on; m.position.set(q.x, 0.05, q.z); });
+  for (const nv of nestVis) if (nv.place === 'pad' && nv.pad >= 0) { const q = slotPos(nv.pad); nv.tx = q.x; nv.tz = q.z; }
+}
+/** A pad only frees up once its squad has really finished eating. */
+function padAvailable(){ for (let p=0; p<state.cap; p++) if (padOwner[p] < 0 && padFreeAt[p] <= gt) return true; return false; }
 function setBadgeNum(nv, num){ if (nv.num !== num) { nv.num = num; nv.bump = 1; if (!nv.hidden && nv.flipT < 0) applyLook(nv); } }
 function reveal(nv){
   if (!nv.hidden) return;
@@ -1436,7 +1482,7 @@ function layoutNests(st, snap){
     nv.place = 'col'; nv.row = r; nv.col = j; nv.tx = p.x; nv.tz = p.z;
     nv.ts = r < CONFIG.VISIBLE_ROWS ? ROW_SCALE[r] : 0; nv.top = r < CONFIG.VISIBLE_ROWS ? ROW_OP[r] : 0;
     if (r === 0 && CONFIG.MYSTERY_REVEAL === 'front') { if (snap) { nv.hidden = false; applyLook(nv); } else reveal(nv); }
-    setBadgeNum(nv, nv.nest.n);
+    setBadgeNum(nv, nestSize(ctx, st, id));
   }));
   if (snap) for (const nv of nestVis) { nv.group.position.set(nv.tx, 0, nv.tz); nv.cur = nv.ts; nv.op = nv.top; }
 }
@@ -1493,14 +1539,14 @@ function loadLevel(n){
   applyCloth(LEVELS[levelIdx].cloth);
   buildBoard(); buildNests(); fullSync(); fitCamera(); updateHud();
   const tip = LEVELS[levelIdx].tip; tipEl.textContent = tip ? T(tip) : ''; tipEl.classList.toggle('hide', !tip); tipShown = !!tip; cancelMode(); lastPips = -1;
-  save.last = levelIdx; writeSave();
+  save.last = levelIdx; writeSave(); progDisp = 0; progShown = -1; progEl.style.width = '0%';
 }
 function fullSync(){
   for (const a of agents) { a.st = A_FREE; a.carry = false; }
   CR.n = 0; blockAnims.length = 0; timers.length = 0; blockHops.clear(); workUntil.clear(); remAt.fill(-1);
   padOwner.fill(-1); padFreeAt.fill(0); padWaiting.fill(false); animEnd = gt; settled = true;
   syncBoard(state);
-  for (const nv of nestVis) { nv.place = 'gone'; nv.pad = -1; nv.ts = 0; nv.hidden = nv.nest.m; nv.flipT = -1; nv.num = nv.nest.n; }
+  for (const nv of nestVis) { nv.place = 'gone'; nv.pad = -1; nv.ts = 0; nv.hidden = nv.nest.m; nv.flipT = -1; nv.num = nestSize(ctx, state, nv.nest.id); }
   layoutNests(state, true);
   state.slots.forEach(q => { if (!q) return; const nv = nestVis[q.id], pad = acquirePad(q.id), p = slotPos(pad);
     nv.pad = pad; nv.place = 'pad'; nv.hidden = false; nv.tx = p.x; nv.tz = p.z; nv.ts = 1.05; nv.top = 1; nv.num = q.b;
@@ -1511,7 +1557,7 @@ function fullSync(){
 function onColumn(col){
   if (modalOpen || partying) return;
   const c = state.cols[col];
-  if (activeCount() >= CONFIG.MAX_ACTIVE) { if (c && c.length) nestVis[c[0]].squash = 0.6; sfx.nope(); pulsePips(); return; }
+  if (activeCount() >= state.cap || !padAvailable()) { if (c && c.length) nestVis[c[0]].squash = 0.6; sfx.nope(); pulsePips(); return; }
   const res = tap(ctx, state, col);
   if (!res) { if (c && c.length) nestVis[c[0]].squash = 0.6; sfx.nope(); return; }
   const prev = state;
@@ -1585,8 +1631,8 @@ function playRound(prevSt, events){
       camKick = Math.max(camKick, 0.7);
       end = Math.max(end, t1 + span*step + 0.5);
     } else if (e.t === 'leave') {
-      const nv = nestVis[e.id], pad = nv.pad, tl = (lastStart[e.id] || 0) + 0.35;
-      padOwner[pad] = -1; padFreeAt[pad] = t0 + tl + 0.25;
+      const nv = nestVis[e.id], pad = nv.pad, tl = Math.max(lastEat[e.id] || 0, (lastStart[e.id] || 0) + 0.35) + 0.5;
+      padOwner[pad] = -1; padFreeAt[pad] = t0 + tl + 0.5;
       add(tl, () => { nv.place = 'gone'; nv.ts = 0; nv.squash = 0.8; syncIdle(pad, 0, 0, e.id); });
     }
   }
@@ -1630,7 +1676,7 @@ function startParty(){
   lastReward = 25 + 25*stars + (save.done[key] ? 0 : 50); save.done[key] = 1; save.coins += lastReward;
   writeSave(); updateButtons();
   for (const a of agents) if (a.st === A_PEEK) a.st = A_GONE;
-  const lay = ctx.layout, sources = [...lay.slotX.map((x) => [x, lay.slotZ]), ...[0,1,2,3].map(j => { const p = nestPos(j, 0); return [p.x, p.z]; })];
+  const lay = ctx.layout, sources = [...Array.from({length: state.cap}, (_, i) => { const q = slotPos(i); return [q.x, q.z]; }), ...[0,1,2,3].map(j => { const p = nestPos(j, 0); return [p.x, p.z]; })];
   const count = Math.min(REDUCED ? 30 : 90, freeAgents());
   for (let k=0; k<count; k++) {
     const a = allocAgent(); if (!a) break;
@@ -1706,7 +1752,7 @@ function fitCamera(){
   renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix();
   const tilt = THREE.MathUtils.degToRad(CONFIG.TILT); camDir.set(0, Math.sin(tilt), Math.cos(tilt));
   const lay = ctx.layout, P = CONFIG.TRAY_PAD, topH = CONFIG.TRAY_Y + BH;
-  const back = nestPos(0, CONFIG.VISIBLE_ROWS-1).z + 0.6, halfW = Math.max(lay.bw/2 + P, (CONFIG.COLUMNS-1)/2*lay.colGap + 0.8, lay.slotX[CONFIG.SLOTS-1] + 0.95);
+  const back = nestPos(0, CONFIG.VISIBLE_ROWS-1).z + 0.6, halfW = Math.max(lay.bw/2 + P, (CONFIG.COLUMNS-1)/2*lay.colGap + 0.8, (CONFIG.MAX_SLOTS-1)/2*slotSpan(CONFIG.MAX_SLOTS) + 0.95);
   const pts = [];
   for (const x of [-halfW, halfW]) pts.push([x, topH, -lay.bd/2 - P], [x, 0, -lay.bd/2 - P], [x, 0, back], [x, 1.1, back - 0.4]);
   const hudB = document.getElementById('hud').getBoundingClientRect().bottom + 6;
@@ -1782,7 +1828,7 @@ addEventListener('keydown', e => {
 
 // ================================ UI / HUD ==================================
 const $ = id => document.getElementById(id);
-const tipEl = $('tip'), hintEl = $('hint'), modal = $('modal'), pipEls = [...document.querySelectorAll('#pips i')];
+const tipEl = $('tip'), hintEl = $('hint'), progEl = $('prog').firstElementChild, modal = $('modal'), pipEls = [...document.querySelectorAll('#pips i')];
 let modalOpen = false, lastPips = -1;
 $('menuBtn').onclick = () => { ensureAudio(); showMenu(); };
 $('coinBtn').onclick = () => { ensureAudio(); showShop(); };
@@ -1797,6 +1843,13 @@ function updateHud(){
   $('speed').textContent = speedMul === 2 ? '2×' : '1×'; $('speed').classList.toggle('on', speedMul === 2);
   $('undoBtn').setAttribute('aria-label', T('undo')); $('retryBtn').setAttribute('aria-label', T('retry'));
   canvas.setAttribute('aria-label', T('board')); document.documentElement.lang = lang;
+}
+let progDisp = 0, progShown = -1;
+function updateProgress(dt){
+  const target = ctx ? 1 - state.remaining/ctx.total : 0;
+  progDisp += (target - progDisp) * (1 - Math.exp(-4*dt));
+  const pct = Math.round(progDisp*1000)/10;
+  if (Math.abs(pct - progShown) > 0.15) { progShown = pct; progEl.style.width = pct + '%'; }
 }
 function updatePips(){ const n = activeCount(); if (n === lastPips) return; lastPips = n; pipEls.forEach((p, i) => { p.classList.toggle('on', i < n); p.style.display = i < state.cap ? '' : 'none'; }); }
 function pulsePips(){ if (REDUCED) return; pipEls.forEach(p => p.animate([{ transform:'scale(1.6)' }, { transform:'scale(1.2)' }], { duration: 250 })); }
@@ -1892,11 +1945,13 @@ function noiseHit(when, dur, vol, freq){
 }
 const N = f => 440*Math.pow(2, (f-69)/12);
 const sfx = {
-  tap: () => tone(560, 0.07, 'sine', 0.05, 1.25),
-  land: () => tone(150, 0.08, 'sine', 0.05, 0.7),
+  tap: () => { tone(430, 0.07, 'sine', 0.03); tone(645, 0.09, 'sine', 0.025, 1, 0.05); },
+  land: () => { tone(160, 0.09, 'sine', 0.035, 0.75); noiseHit(0.02, 0.05, 0.008, 900); },
   nope: () => tone(210, 0.1, 'sine', 0.035, 0.85),
   reveal: () => { tone(N(76), 0.07, 'sine', 0.035); tone(N(83), 0.12, 'sine', 0.035, 1, 0.07); },
-  pop: () => { const now = performance.now(); if (now - lastPop < 70) return; lastPop = now; tone(320 + Math.random()*180, 0.06, 'sine', 0.022, 0.6); },
+  // eating: a tiny dry crackle instead of a blip
+  pop: () => { const now = performance.now(); if (now - lastPop < 55) return; lastPop = now;
+    noiseHit(0, 0.035 + Math.random()*0.02, 0.014, 2200 + Math.random()*1800); },
   lose: () => [392, 330, 262].forEach((f, i) => tone(f, 0.28, 'sine', 0.05, 0.97, i*0.16)),
   drumroll: () => { for (let i=0;i<14;i++) noiseHit(i*0.06, 0.05, 0.012 + i*0.0015, 1400); },
   fanfare: () => {
@@ -1926,7 +1981,7 @@ function frame(now){
   acc += dt; let steps = 0;
   while (acc >= STEP && steps < 6) { logic(STEP); acc -= STEP; steps++; }
   if (steps === 6) acc = 0;
-  updateCamera(dt); updatePips();
+  updateCamera(dt); updatePips(); updateProgress(dt);
   const antsDrawn = renderAnts(acc/STEP); renderCrumbs(); renderConfetti();
   renderer.render(scene, camera);
   ftAvg += (dt*1000 - ftAvg)*0.05;
@@ -1939,10 +1994,6 @@ document.addEventListener('visibilitychange', () => {
   else if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
 });
 addEventListener('resize', () => fitCamera());
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
-  for (const t of badgeCache.values()) t.dispose(); badgeCache.clear();
-  for (const nv of nestVis) applyLook(nv);
-});
 
 const qLevel = parseInt(URLP.get('level'), 10);
 loadLevel(Number.isFinite(qLevel) ? qLevel - 1 : Math.min(save.last || 0, save.unlocked - 1, LEVELS.length - 1));
