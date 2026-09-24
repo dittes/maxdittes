@@ -1,3 +1,87 @@
+
+Claude finished the response
+Ran 13 commands, read 2 files, shared files
+The game now has 112 levels in 7 worlds, a points system and a shop with three boosters. I tested it headless: bought all three boosters, ran the super ant, unlocked the 5th slot and played with four squads at once, with no console errors. All 112 levels are proven solvable.
+
+112 levels in 7 worlds of 16
+
+World Levels  Tier
+Sunny Meadow  1–16  Beginner
+Orchard 17–32 Easy
+Lakeside  33–48 Intermediate
+Forest Glade  49–64 Advanced
+Starlight Picnic  65–80 Expert
+Thunder Kitchen 81–96 Master
+Queen's Table 97–112  Legendary
+A level is now a picture plus its own tuned nest queue. The 40 pictures come back across worlds as mirrored, flipped or recoloured variants with a different tablecloth, so a familiar motif plays as a new puzzle.
+I measured every level with a random-tapping bot and sorted all of them into one rising curve. Win rates fall from about 100% in world 1 to 62% at the end of world 3, 34% at the end of world 5, and 1–20% in world 7.
+I also fixed the queue dealing so all four columns always start with something to tap.
+Points
+
+You earn 25 points per level, plus 25 per star, plus a 50-point first-clear bonus. That's up to 150 for a clean first run.
+Your balance sits in the top bar and opens the shop. It is saved along with your boosters.
+Shop and boosters
+
+Colour swap (60): arm it, tap any nest in the queue, then pick a new colour from the ones still on the board.
+Extra slot (100): unlocks a 5th slot for the current level, so five squads can park or work at once. The extra pad sits greyed out until you buy it.
+Super ant (150): arm it, tap a row, and a big golden ant races across and eats a 3-block lane regardless of colour or reach. Good for cracking open an enclosed area.
+Boosters are simulation-level moves, so Undo takes them back and refunds the item. Escape or tapping the button again cancels the targeting mode.
+One caveat worth repeating: difficulty is measured against random tapping. A player who always picks a reachable colour still gets through the middle worlds fairly comfortably, so the late worlds lean on big squads, long column runs and many "?" nests rather than on deep planning traps. The solver from milestone 3 would let me build those properly, and it would also power a hint button.
+
+
+Index
+Code·HTML 
+lasse die aktiven farben länger auf den 4 punkten, bis man einen neue farbe auswählen darf. in manchen leveln sieht man nicht alle 4 spalten mit farben, manchmal nur zwei. die farben sollten gleich verteilt sein auf den 4 spalten zum start. nutze keine externen google fonts. das extra farbenfeld sollte nur angezeigt werden, wenn es aktiviert ist. wenn ein bonus aus dem shop verwendet wird, muss das spiel angepasst sein, wenn beispielsweise  die super ant farben auffrisst, müssen diese bei den aktiven und folgenden farben entsprechend angepasst werden. ebenso bei farbtausch. ändere das geräusch wenn die ameisen die blöcke fresen und mache es etwas angenehmer, also leiser und eher wie ein kleines knistern und wenn man einen neue farbe/ameisenhaufen auswählt auch ein angenehmeres leises geräusch. füge einen fortschrittsbalken hinzu, wie viele der blöcke schon weg sind. der balken sollte animiert sein und zwischen der navigation und dem bild sein. dezent.
+
+Ran 7 commands, read 2 files
+Alles eingebaut und im Headless-Browser geprüft: Pads, Fortschrittsbalken, Extra-Slot und Superameise laufen fehlerfrei. Nach dem Superameisen-Einsatz stimmten die verbleibenden Blöcke exakt mit den verbleibenden Bissen überein (218 zu 218), die Warteschlange rechnet sich also sauber um. Alle 112 Level sind weiterhin lösbar.
+
+Aktive Farben bleiben länger auf den Plätzen
+
+Ein Platz wird erst frei, wenn sein Trupp wirklich fertig gefressen hat und die Ameisen zurücklaufen, statt schon beim Loslaufen der letzten Ameise.
+Solange kein Platz frei ist, wird ein Tipp abgelehnt: Das Nest wackelt, die Punkte oben pulsieren kurz.
+Gleichmäßige Spalten
+
+Die Warteschlange wird nach dem Austeilen ausgeglichen, bis sich die Spalten um höchstens ein Nest unterscheiden. Beispiel Level 112: 12/12/12/12 statt vorher teilweise 18/0/0/0.
+Weil das Austeilen die Schwierigkeit verschiebt, habe ich alle 112 Level neu vermessen und neu einsortiert. Die Kurve fällt jetzt gleichmäßig von 100 % auf 8 % Gewinnquote beim Zufallstippen.
+Keine externen Schriften
+
+Die Google-Fonts-Einbindung ist raus. Die Oberfläche und die Zahlen-Badges nutzen jetzt die runde System-Schrift. Damit läuft die Datei komplett offline, außer Three.js selbst.
+Fünfter Platz nur wenn gekauft
+
+Das fünfte Feld ist unsichtbar, bis du es im Shop freischaltest. Danach ordnen sich alle Plätze mittig neu an, und die vorhandenen Nester gleiten weich auf ihre neuen Positionen.
+Booster passen das Spiel an
+
+Neu ist ein Abgleich, der nach jedem Booster läuft: Jeder Trupp und jedes Nest behält höchstens so viele Bisse, wie seine Farbe noch Blöcke hat.
+Frisst die Superameise eine Farbe weg, werden die betroffenen Nester auf eine Farbe umgefärbt, die noch Esser braucht. Nester ohne Aufgabe verschwinden aus der Warteschlange.
+Beim Farbtausch passiert dasselbe, und wartende Trupps dürfen sofort weiterfressen, wenn die neue Farbe erreichbar ist.
+Nach jedem Booster bleiben die Summen gleich: verbleibende Blöcke gleich verbleibende Bisse. Das Level bleibt also schaffbar.
+Angenehmere Geräusche
+
+Fressen klingt jetzt nach einem leisen, trockenen Knistern statt nach einem Piepser, und die Lautstärke ist etwa halbiert.
+Die Nestauswahl ist ein weicher Zwei-Ton-Blip, die Landung eines Nests ein dumpfes Plumpsen.
+Fortschrittsbalken
+
+Ein schmaler Balken sitzt zwischen der Kopfzeile und dem Bild und zeigt, wie viel vom Bild schon weg ist.
+Er läuft weich nach, nicht sprunghaft, und ist mit Grünton nach Gelb dezent gehalten.
+Kleinigkeit fürs nächste Mal: Mit fünf Punkten wird die Kopfzeile auf schmalen Geräten manchmal zweizeilig. Das kann ich abfangen, indem der Weltname bei aktiviertem Extra-Slot wegfällt.
+
+gib mir die datei
+
+Presented file
+Presented file
+Hier ist die aktuelle index.html mit allen Änderungen. Einfach im Browser öffnen oder auf einen statischen Host legen. Beim ersten Laden braucht sie Internet für Three.js von jsDelivr, sonst nichts.
+
+
+Index
+Code·HTML 
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -116,10 +200,10 @@ html,body{height:100%;overflow:hidden;background:var(--crust);color:var(--ink);f
   <div id="dbg"></div>
   <div id="err"></div>
 </div>
-
+ 
 <script type="module">
 import * as THREE from 'three';
-
+ 
 // @@SIM-START ================================================================
 // =============================== CONFIG =====================================
 const CONFIG = {
@@ -143,12 +227,12 @@ const CONFIG = {
   IDLE_PER_SLOT: 4,
   WAVE_CHANCE: 0.07, DETOUR_CHANCE: 0.035,
 };
-
+ 
 const PALETTE = {
   R:'#ec4a3e', G:'#3fca5e', g:'#1f8f4a', B:'#8c5231', W:'#f6f1e6', K:'#3b3442', Y:'#ffd23f',
   P:'#ff8cc4', O:'#ff9230', C:'#57d4f0', U:'#3d7ef0', T:'#f3cf97', V:'#a474e2'
 };
-
+ 
 // ========================= PIXEL-ART PAINTER ================================
 // Later pictures are drawn with a tiny deterministic shape language.
 // '.' = empty (gets `fill` or a bg pattern), '_' = always empty.
@@ -186,7 +270,7 @@ function paint(art){
   return g.map(r => r.join(''));
 }
 function petals(cx,cy,d,r,n,c,rot=0){ const o=[]; for (let k=0;k<n;k++){ const a=rot+k/n*Math.PI*2; o.push(['ell',cx+Math.cos(a)*d,cy+Math.sin(a)*d,r,r,c]); } return o; }
-
+ 
 // ============================= LEVEL DATA ===================================
 // cloth = tablecloth pattern + colours. Levels 1-8 are hand-drawn strings,
 // 9-28 use the painter. Generator difficulty lives in GEN (index = level-1).
@@ -596,7 +680,7 @@ const LEVELS = PLAN.map(([p, m], i) => {
   return { name: pic.name, art: pic.art, layers: pic.layers, fill: pic.fill, mod: MODS[m],
            cloth: m === 0 ? pic.cloth : CLOTHS[(p + m*3) % CLOTHS.length], gen: GEN[i], tip: TIPS[i] || '' };
 });
-
+ 
 // ======================== GENERATOR (+ solver in M3) ========================
 function computeLayout(W, H, s){
   const bw = W*s, bd = H*s, slotZ = bd/2 + CONFIG.TRAY_PAD + 1.35, slotX = [];
@@ -713,7 +797,7 @@ function generateNests(ctx, init, g){
   }
   ctx.nests = seq; init.cols = cols;
 }
-
+ 
 // ============================ SIMULATION (pure) =============================
 function cloneState(s){
   return { cells: s.cells.slice(), out: s.out.slice(), exp: s.exp.slice(), exposed: s.exposed.slice(), remaining: s.remaining,
@@ -778,7 +862,7 @@ function tap(ctx, st0, col, withEvents = true){
   return { st, events };
 }
 function setStatus(st){ st.status = st.remaining === 0 ? 'win' : (freeSlot(st) < 0 ? 'lose' : 'play'); }
-
+ 
 // ------------------------------- BOOSTERS -----------------------------------
 /**
  * After a booster changed the board or a nest colour, re-balance the queue:
@@ -847,7 +931,7 @@ function recomputeReach(ctx, st){
   }
 }
 // @@SIM-END ==================================================================
-
+ 
 // =============================== I18N =======================================
 const I18N = {
   de: { level:'Level', undo:'Zurück', retry:'Neu', next:'Nächstes Level', replay:'Nochmal', levels:'Level wählen',
@@ -887,7 +971,7 @@ const I18N = {
     cancel:'Cancel',
     tip8:'The shop trades points for boosters: colour swap, extra slot and super ant.' },
 };
-
+ 
 // =============================== GROUPS =====================================
 const GROUPS = [
   { name:{de:'Sonnenwiese', en:'Sunny Meadow'},        tier:{de:'Einsteiger', en:'Beginner'},   n:16 },
@@ -899,7 +983,7 @@ const GROUPS = [
   { name:{de:'Ameisenkönigin', en:"Queen's Table"},    tier:{de:'Legende', en:'Legendary'},     n:16 },
 ];
 function groupOf(i){ let s = 0; for (let g=0; g<GROUPS.length; g++){ if (i < s + GROUPS[g].n) return { g, first: s, idx: i - s }; s += GROUPS[g].n; } return { g: GROUPS.length-1, first: s, idx: 0 }; }
-
+ 
 // =============================== SAVE =======================================
 const SAVE_KEY = 'animal-attack.v1';
 let memSave = null;
@@ -912,11 +996,11 @@ function writeSave(){ memSave = save; try { localStorage.setItem(SAVE_KEY, JSON.
 const save = loadSave();
 let lang = save.lang || ((navigator.language||'en').toLowerCase().startsWith('de') ? 'de' : 'en');
 const T = k => (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k;
-
+ 
 const URLP = new URLSearchParams(location.search);
 const DEBUG = URLP.has('debug');
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+ 
 // ============================ RENDERING: scene ==============================
 const canvas = document.getElementById('c');
 let renderer;
@@ -930,14 +1014,14 @@ const camera = new THREE.PerspectiveCamera(CONFIG.FOV, 1, 0.1, 200);
 scene.add(new THREE.HemisphereLight(0xfff3dd, 0xb98355, 1.35));
 const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.position.set(-5, 12, 7); scene.add(sun);
 const rim = new THREE.DirectionalLight(0xffe2b0, 0.6); rim.position.set(6, 4, -10); scene.add(rim);
-
+ 
 const gradTex = new THREE.DataTexture(new Uint8Array([120, 190, 255]), 3, 1, THREE.RedFormat);
 gradTex.minFilter = gradTex.magFilter = THREE.NearestFilter; gradTex.needsUpdate = true;
 const toon = (color, extra = {}) => new THREE.MeshToonMaterial({ color, gradientMap: gradTex, ...extra });
 const colorMatCache = new Map();
 const colorMat = hex => { if (!colorMatCache.has(hex)) colorMatCache.set(hex, toon(hex)); return colorMatCache.get(hex); };
 const MYSTERY_HEX = '#9d948c';
-
+ 
 function roundedBoxGeo(r = 0.16){
   const g = new THREE.BoxGeometry(1,1,1,3,3,3), p = g.attributes.position, n = g.attributes.normal, inner = 0.5 - r;
   const v = new THREE.Vector3(), c = new THREE.Vector3(), d = new THREE.Vector3();
@@ -955,7 +1039,7 @@ const SPHERE = new THREE.SphereGeometry(1, 14, 10);
 const SPHERE_LO = new THREE.SphereGeometry(1, 8, 6);
 const BOX = new THREE.BoxGeometry(1,1,1);
 const PLANE_FLAT = new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2);
-
+ 
 // ------------------------- tablecloths (canvas) -----------------------------
 function makeCloth(spec){
   const N = 128, c = document.createElement('canvas'); c.width = c.height = N; const g = c.getContext('2d');
@@ -1001,7 +1085,7 @@ function makeBlobTex(){
   g.fillStyle = gr; g.fillRect(0,0,64,64); return new THREE.CanvasTexture(c);
 }
 const blobMat = new THREE.MeshBasicMaterial({ map: makeBlobTex(), transparent: true, depthWrite: false });
-
+ 
 // ====================== RENDERING: board + tray =============================
 let tray = null, blockMesh = null, instOf = null, blockBase = null, remAt = null;
 const blockHops = new Map();
@@ -1043,7 +1127,7 @@ function groundAt(x, z){
   const hw = ctx.layout.bw/2 + CONFIG.TRAY_PAD, hd = ctx.layout.bd/2 + CONFIG.TRAY_PAD;
   return (x > -hw && x < hw && z > -hd && z < hd) ? CONFIG.TRAY_Y : 0;
 }
-
+ 
 // ============================ ANT PATHFINDING ===============================
 // Grid with a 1-cell walkable rim. Ants walk only through empty cells that are
 // connected to the outside — never over blocks. Cells still being eaten by an
@@ -1101,7 +1185,7 @@ function reversePath(a){
   for (let k=0; k<n; k++) { p[k*2] = a.path[(n-1-k)*2]; p[k*2+1] = a.path[(n-1-k)*2+1]; c[k] = L - a.cum[n-1-k]; }
   a.path = p; a.cum = c; a.pi = 0;
 }
-
+ 
 // ============================ RENDERING: ants ===============================
 const MAXA = CONFIG.MAX_ANTS;
 const antMat = toon('#ffffff');
@@ -1120,7 +1204,7 @@ const L_THORAX = new THREE.Matrix4().compose(new THREE.Vector3(0,0.2,0), new THR
 const EYE_P = [-1,1].map(sd => new THREE.Vector3(sd*0.075,0.305,0.285)), PUP_P = [-1,1].map(sd => new THREE.Vector3(sd*0.08,0.305,0.335));
 const LEG_Z = [0.075, 0, -0.075], LEG_FWD = [0.65, 0.05, -0.6];
 const TRIPOD = [0, Math.PI, 0, Math.PI, 0, Math.PI];
-
+ 
 const A_FREE=0, A_IDLE=1, A_OUT=2, A_WAIT=3, A_EAT=4, A_BACK=5, A_GONE=6, A_DANCE=7, A_PEEK=8;
 const agents = [];
 for (let i=0;i<MAXA;i++) agents.push({ st:A_FREE, x:0,y:0,z:0, px:0,py:0,pz:0, h:0, ph:Math.random()*6.28, move:0, sc:0,
@@ -1131,7 +1215,7 @@ function allocAgent(){ for (const a of agents) if (a.st === A_FREE) { a.big = 1;
 function freeAgents(){ let n = 0; for (const a of agents) if (a.st === A_FREE) n++; return n; }
 function setAgentColor(a, colorIdx){ TMP_C.set(PALETTE[ctx.chars[colorIdx-1]]); a.r = TMP_C.r; a.g = TMP_C.g; a.b = TMP_C.b; }
 let antScale = 0.6;
-
+ 
 function spawnIdle(pad, colorIdx, squad){
   const a = allocAgent(); if (!a) return;
   const sp = slotPos(pad), ang = Math.random()*Math.PI*2;
@@ -1164,7 +1248,7 @@ function walkPath(a, dist, gdt){
   if (seg > 1e-4) a.h = turn(a.h, Math.atan2(x1-x0, z1-z0), gdt*14);
   return false;
 }
-
+ 
 function stepAgents(gdt){
   const SP = CONFIG.ANT_SPEED;
   for (const a of agents) {
@@ -1226,7 +1310,7 @@ function stepAgents(gdt){
     a.ph += gdt * (4 + 24*a.move);
   }
 }
-
+ 
 const M_BASE = new THREE.Matrix4(), M_PART = new THREE.Matrix4(), Q_ID = new THREE.Quaternion(), V_S = new THREE.Vector3(), V_P = new THREE.Vector3();
 function writePart(mesh, idx, local){ M_PART.multiplyMatrices(M_BASE, local); mesh.setMatrixAt(idx, M_PART); }
 function limbMatrix(ax, ay, az, yaw, roll, len, th){
@@ -1300,7 +1384,7 @@ function renderAnts(alpha){
   carryMesh.count = nc; carryMesh.instanceMatrix.needsUpdate = true; if (carryMesh.instanceColor) carryMesh.instanceColor.needsUpdate = true;
   return n;
 }
-
+ 
 // ========================== RENDERING: crumbs ===============================
 const crumbMesh = mkInst(BOX, toon('#ffffff'), CONFIG.MAX_CRUMBS);
 const CR = { n: 0, p: new Float32Array(CONFIG.MAX_CRUMBS*3), v: new Float32Array(CONFIG.MAX_CRUMBS*3),
@@ -1336,7 +1420,7 @@ function renderCrumbs(){
   }
   crumbMesh.count = CR.n; crumbMesh.instanceMatrix.needsUpdate = true; if (crumbMesh.instanceColor) crumbMesh.instanceColor.needsUpdate = true;
 }
-
+ 
 // ========================= RENDERING: confetti ==============================
 const MAXCF = CONFIG.MAX_CONFETTI;
 const confMesh = mkInst(new THREE.PlaneGeometry(1, 0.55), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), MAXCF);
@@ -1388,7 +1472,7 @@ function renderConfetti(){
   }
   confMesh.count = CF.n; confMesh.instanceMatrix.needsUpdate = true; if (confMesh.instanceColor) confMesh.instanceColor.needsUpdate = true;
 }
-
+ 
 // ---------------------------- tap ripples -----------------------------------
 const RIPPLES = [];
 const RIPPLE_GEO = new THREE.RingGeometry(0.75, 0.9, 32).rotateX(-Math.PI/2);
@@ -1402,7 +1486,7 @@ function stepRipples(dt){
     if (u >= 1) { r.t = -1; r.m.visible = false; continue; }
     const s = 1 + u*1.4; r.m.scale.set(s, 1, s); r.m.material.opacity = 0.9*(1-u); }
 }
-
+ 
 // ====================== RENDERING: nests + slots ============================
 const MOUND_GEO = new THREE.SphereGeometry(0.7, 20, 10, 0, Math.PI*2, 0, Math.PI/2);
 const MOUND_MAT = toon('#a26e45');
@@ -1520,7 +1604,7 @@ function stepNests(dt){
     nv.badgeMat.opacity = nv.op;
   }
 }
-
+ 
 // ============================ GAME STATE / FLOW =============================
 let ctx = null, initState = null, state = null, undoStack = [], undos = 0, levelIdx = 0;
 let gt = 0, realT = 0, speedMul = 1, partying = false, timers = [], blockAnims = [], tipShown = false, camKick = 0;
@@ -1529,7 +1613,7 @@ const workUntil = new Map();
 const pending = [];
 function later(ms, fn){ const id = setTimeout(() => { pending.splice(pending.indexOf(id), 1); fn(); }, ms); pending.push(id); }
 function activeCount(){ let n = 0; for (const t of workUntil.values()) if (t > gt) n++; return n; }
-
+ 
 function loadLevel(n){
   for (const id of pending) clearTimeout(id); pending.length = 0;
   levelIdx = Math.max(0, Math.min(LEVELS.length-1, n));
@@ -1570,7 +1654,7 @@ function onColumn(col){
   layoutNests(state, false); syncPeekers();
   updateButtons();
 }
-
+ 
 /** Turn simulation events into a timed animation plan (game time). Rounds may overlap. */
 function playRound(prevSt, events){
   const t0 = gt, sim = cloneState(prevSt), cursor = {}, lastStart = {}, lastEat = {};
@@ -1667,7 +1751,7 @@ function settle(){
   if (state.status === 'win') startParty();
   else if (state.status === 'lose') { sfx.lose(); haptic([60, 40, 60]); for (const a of agents) if (a.st === A_IDLE) a.until = gt + 2; later(650, showLose); }
 }
-
+ 
 // ------------------------------ celebration ---------------------------------
 function startParty(){
   partying = true;
@@ -1693,7 +1777,7 @@ function startParty(){
   later(REDUCED ? 300 : 1100, () => { sfx.fanfare(); haptic([30, 40, 30, 40, 120]); confettiCannons(); rainUntil = realT + 4; camKick = 1; });
   later(REDUCED ? 1200 : 3600, () => showWin(stars));
 }
-
+ 
 // ------------------------------- BOOSTERS -----------------------------------
 const PRICES = { swap: 60, slot: 100, ant: 150 };
 let mode = null, swapNest = -1;
@@ -1743,7 +1827,7 @@ function doUndo(){
 }
 function doRetry(){ if (partying) return; state = initState; undoStack = []; undos = 0; closeModal(); cancelMode(); fullSync(); sfx.tap(); }
 function toggleSpeed(){ speedMul = speedMul === 1 ? 2 : 1; updateHud(); }
-
+ 
 // ================================ CAMERA ====================================
 const camTarget = new THREE.Vector3(), camDir = new THREE.Vector3();
 let camDist = 20;
@@ -1777,7 +1861,7 @@ function updateCamera(dt){
   camera.position.y += Math.sin(realT*0.27)*0.06*sway;
   camera.lookAt(camTarget);
 }
-
+ 
 // ================================= INPUT ====================================
 function frontNestAtScreen(px, py){
   let best = -1, bd = 1e9; const rect = canvas.getBoundingClientRect();
@@ -1825,7 +1909,7 @@ addEventListener('keydown', e => {
   else if (e.key === 'u' || e.key === 'U') doUndo();
   else if (e.key === 'f' || e.key === 'F') toggleSpeed();
 });
-
+ 
 // ================================ UI / HUD ==================================
 const $ = id => document.getElementById(id);
 const tipEl = $('tip'), hintEl = $('hint'), progEl = $('prog').firstElementChild, modal = $('modal'), pipEls = [...document.querySelectorAll('#pips i')];
@@ -1907,7 +1991,7 @@ const ACTIONS = {
   lang: () => { lang = lang === 'de' ? 'en' : 'de'; save.lang = lang; writeSave(); updateHud(); showMenu();
     const tip = LEVELS[levelIdx].tip; if (tip) tipEl.textContent = T(tip); },
 };
-
+ 
 // ================================= AUDIO ====================================
 let AC = null, OUT = null, lastPop = 0, noiseBuf = null;
 function ensureAudio(){
@@ -1964,7 +2048,7 @@ const sfx = {
   },
 };
 function haptic(p){ if (navigator.vibrate) try { navigator.vibrate(p); } catch(e) {} }
-
+ 
 // =============================== MAIN LOOP ==================================
 const STEP = 1/60, dbg = $('dbg');
 let acc = 0, last = performance.now(), running = true, ftAvg = 16, slowFor = 0, fpsAcc = 0, fpsN = 0, dbgT = 0;
@@ -1994,7 +2078,7 @@ document.addEventListener('visibilitychange', () => {
   else if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
 });
 addEventListener('resize', () => fitCamera());
-
+ 
 const qLevel = parseInt(URLP.get('level'), 10);
 loadLevel(Number.isFinite(qLevel) ? qLevel - 1 : Math.min(save.last || 0, save.unlocked - 1, LEVELS.length - 1));
 requestAnimationFrame(frame);
@@ -2003,3 +2087,8 @@ window.__AA = { get state(){ return state; }, get ctx(){ return ctx; }, onColumn
 </script>
 </body>
 </html>
+ 
+
+
+Downloaded index_2.html
+
