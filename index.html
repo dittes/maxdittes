@@ -206,6 +206,9 @@ h2 .hl{color:var(--butter)}
 .o2.cheese{background:radial-gradient(circle at 28% 42%,#c9950f 0 8%,transparent 9%),radial-gradient(circle at 62% 64%,#c9950f 0 11%,transparent 12%),radial-gradient(circle at 68% 24%,#c9950f 0 6%,transparent 7%),radial-gradient(circle at 35% 30%,#fff3a0,#ffd449 60%,#e0a91a)}
 
 .cart.mc{--c1:#7bc36a;--c2:#4a9a3b;--cd:#2c5e22}
+.cart.ms{--c1:#4a5a7a;--c2:#27324d;--cd:#121a2e}
+.cart.ms .art svg .msf{animation:msh 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes msh{50%{transform:translateX(8px) rotate(5deg)}}
 .cart.sh{--c1:#ffb347;--c2:#ff7a45;--cd:#a8431f}
 .subh{cursor:pointer}
 /* Challenges */
@@ -481,7 +484,31 @@ dialog p{margin:0 0 16px}
           </div>
         </a>
       </li>
-      <li class="rv" style="--dl:.54s">
+      <li class="rv" style="--dl:.5s">
+        <a class="cart ms" href="maxsmash/" data-game="Max Smash" data-color="#3d6fb8">
+          <div class="art">
+            <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="mssky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2540"/><stop offset="1" stop-color="#4a5f8f"/></linearGradient></defs>
+              <rect width="320" height="180" fill="url(#mssky)"/>
+              <g fill="#0f1730"><rect x="10" y="70" width="34" height="90"/><rect x="50" y="95" width="28" height="65"/><rect x="236" y="60" width="40" height="100"/><rect x="282" y="90" width="30" height="70"/></g>
+              <g fill="#ffd96a" opacity=".8"><rect x="18" y="80" width="5" height="6"/><rect x="30" y="96" width="5" height="6"/><rect x="246" y="72" width="5" height="6"/><rect x="260" y="90" width="5" height="6"/></g>
+              <rect y="150" width="320" height="30" fill="#0b1226"/>
+              <g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none">
+                <g class="msf"><circle cx="110" cy="92" r="9" fill="#fff"/><path d="M110 101 V128 M110 110 L132 100 M110 112 L92 124 M110 128 L98 150 M110 128 L124 150"/></g>
+                <g stroke="#ff6a5a"><circle cx="212" cy="96" r="9" fill="#ff6a5a"/><path d="M212 105 V130 M212 114 L192 108 M212 114 L226 126 M212 130 L204 150 M212 130 L222 150"/></g>
+              </g>
+              <g stroke="#ffd449" stroke-width="4" stroke-linecap="round"><path d="M160 96 l-10 -10 M160 96 l12 -12 M160 96 l0 -16 M160 96 l-14 4 M160 96 l16 5"/></g>
+            </svg>
+          </div>
+          <div class="info">
+            <h3>Max Smash</h3>
+            <p>Strichmännchen-Prügelspiel mit Kombos, Wellen von Gegnern und 10 Welten.</p>
+            <ul class="tags"><li>👊 Action</li><li>10 Welten</li><li>Handy &amp; PC</li></ul>
+            <span class="play">SPIELEN ▶</span>
+          </div>
+        </a>
+      </li>
+      <li class="rv" style="--dl:.56s">
         <a class="cart sh" href="superhunger/" data-game="Superhunger" data-color="#ff7a45">
           <div class="art">
             <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">

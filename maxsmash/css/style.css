@@ -1,0 +1,13 @@
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;overscroll-behavior:none;position:fixed;width:100%}
+canvas{position:fixed;left:0;top:0;width:100%;height:100%;display:block;touch-action:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+#imprint{position:fixed;right:calc(12px + env(safe-area-inset-right));bottom:calc(8px + env(safe-area-inset-bottom));z-index:5;display:none;
+  font:600 12px "Helvetica Neue",Helvetica,Arial,sans-serif;text-decoration:underline;padding:8px 10px;opacity:.7}
+#imprint:hover{opacity:1}
+#imprintBox{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:20px}
+#imprintBox[hidden]{display:none}
+#imprintBox .card{background:#fff;color:#111;border-radius:14px;padding:22px 28px;max-width:340px;font:15px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#imprintBox h2{margin:0 0 10px;font-size:20px}
+#imprintBox p{margin:0 0 10px}
+#imprintBox a{color:#1b4fb0}
+#imprintBox button{margin-top:6px;font:600 14px "Helvetica Neue",Helvetica,Arial,sans-serif;padding:9px 20px;border-radius:20px;border:2px solid #111;background:#111;color:#fff;cursor:pointer}
