@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2b3a8c">
+<title>Max Blast</title>
+<meta name="description" content="Max Blast – ziehe Blöcke aufs Brett, räume Reihen frei und jage Combos! Mit Abenteuer-Modus, Edelsteinen und Skins.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b3a8c'/%3E%3Crect x='8' y='8' width='22' height='22' rx='5' fill='%23ffd449'/%3E%3Crect x='34' y='8' width='22' height='22' rx='5' fill='%23ff5a4a'/%3E%3Crect x='8' y='34' width='22' height='22' rx='5' fill='%233dbb5b'/%3E%3Crect x='34' y='34' width='22' height='22' rx='5' fill='%233d8dff'/%3E%3C/svg%3E">
+<style>
+:root{--ink:#3a2418;--cream:#fff4dc;--butter:#ffd449;--leaf:#3dbb5b;--red:#ff5a4a;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px);
+  --font:ui-rounded,"Arial Rounded MT Bold","Varela Round","Trebuchet MS",system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#1a2255;color:var(--ink);font-family:var(--font);user-select:none;-webkit-user-select:none;touch-action:none;overscroll-behavior:none}
+#app{position:fixed;inset:0;height:100dvh;overflow:hidden}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hide{display:none!important}
+.st{pointer-events:auto;min-width:48px;min-height:48px;border:3px solid var(--ink);border-radius:18px;background:var(--cream);color:var(--ink);font:700 18px/1 var(--font);padding:0 16px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s;text-decoration:none}
+.st:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.st:focus-visible{outline:3px solid var(--butter);outline-offset:3px}
+.st.go{background:var(--leaf);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.st.warm{background:var(--butter)}
+.st.red{background:var(--red);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.st.big{min-height:62px;font-size:23px;padding:0 28px;border-radius:22px}
+#pauseBtn{position:absolute;left:calc(var(--safe-l) + 12px);top:calc(var(--safe-t) + 12px);z-index:5;min-height:46px;padding:0 14px}
+.screen{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;overflow:hidden;padding:calc(var(--safe-t) + 14px) 16px calc(var(--safe-b) + 14px)}
+#menu{justify-content:center;background:radial-gradient(circle at 50% 30%,#5b74f0,#2b3a8c 60%,#141b4d)}
+#menu h1{font-size:min(17vw,86px);line-height:.92;text-align:center;color:#fff;letter-spacing:-1px;text-shadow:0 6px 0 var(--ink),3px 3px 0 var(--ink),-3px -3px 0 var(--ink),3px -3px 0 var(--ink),-3px 3px 0 var(--ink);animation:bob 2.4s ease-in-out infinite}
+#menu h1 em{font-style:normal;color:var(--butter)}
+.logo{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:min(34vw,150px);margin-bottom:18px;animation:wob 2.4s ease-in-out infinite}
+.logo i{aspect-ratio:1;border-radius:22%;border:3px solid rgba(0,0,0,.35);box-shadow:inset 0 5px 0 rgba(255,255,255,.4),inset 0 -5px 0 rgba(0,0,0,.2);animation:blink 3s infinite}
+@keyframes blink{0%,80%,100%{transform:scale(1)}90%{transform:scale(.8)}}
+@keyframes bob{50%{transform:translateY(-8px)}}
+@keyframes wob{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+#menu .sub{margin:12px 0 22px;font-weight:700;color:#dfe5ff;font-size:16px;text-align:center}
+#menu .col{display:flex;flex-direction:column;gap:14px;width:min(80vw,320px)}
+.row{display:flex;gap:12px}.row .st{flex:1}
+.back{position:absolute;left:calc(var(--safe-l) + 12px);top:calc(var(--safe-t) + 12px);z-index:3;min-height:42px;font-size:15px;padding:0 12px;border-radius:14px}
+.badge{position:absolute;right:calc(var(--safe-r) + 12px);top:calc(var(--safe-t) + 12px);z-index:3;background:var(--cream);border:3px solid var(--ink);border-radius:14px;min-height:42px;padding:0 12px;display:flex;align-items:center;gap:6px;font-weight:800;font-size:16px;box-shadow:0 4px 0 var(--ink)}
+.sub-screen{background:linear-gradient(#3b4ec0,#1a2255)}
+.sub-screen h2{margin-top:46px;font-size:28px;color:#fff;text-shadow:0 3px 0 var(--ink),2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink)}
+.scroll{flex:1;width:100%;max-width:520px;overflow-y:auto;margin:12px 0;padding:6px 4px 14px;touch-action:pan-y}
+.themes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.th{border:4px solid var(--ink);border-radius:20px;background:var(--cream);padding:10px;text-align:center;font-weight:800;cursor:pointer;box-shadow:0 5px 0 var(--ink);position:relative}
+.th canvas{width:100%;aspect-ratio:2;display:block;border-radius:12px;margin-bottom:6px}
+.th.sel{background:var(--butter)}
+.th.lock{filter:grayscale(.8);opacity:.8;cursor:default}
+.th small{display:block;font-weight:700;font-size:12px;opacity:.8}
+.lvgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.lv{aspect-ratio:1;border:3px solid var(--ink);border-radius:16px;background:var(--cream);font:800 20px/1 var(--font);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.lv small{font-size:11px;color:#e8a30c;letter-spacing:-1px;height:12px}
+.lv.cur{background:var(--butter);animation:pulse 1s infinite}
+.lv.lock{background:#b8b9d6;color:#7f81a8;cursor:default;box-shadow:0 2px 0 var(--ink);transform:translateY(2px)}
+@keyframes pulse{50%{transform:scale(1.07)}}
+#end,#pause{background:rgba(20,27,77,.72);justify-content:center;gap:14px}
+#end .card{width:min(100%,380px);background:var(--cream);border:4px solid var(--ink);border-radius:26px;padding:18px 18px 20px;text-align:center;box-shadow:0 7px 0 var(--ink);animation:up .5s cubic-bezier(.2,1.3,.4,1) both}
+#end h3{font-size:30px}
+#end .big-n{font-size:56px;font-weight:900;line-height:1.1;color:#e8531f;text-shadow:0 3px 0 rgba(58,36,24,.2)}
+#end p{font-weight:700;margin:6px 0 14px;line-height:1.35}
+#end .btns{display:flex;flex-direction:column;gap:10px}
+#end .stars{font-size:44px;letter-spacing:4px;margin:4px 0;color:#d9c9a3}
+#end .stars i{font-style:normal;display:inline-block}
+#end .stars i.on{color:#ffc61a;animation:starpop .5s cubic-bezier(.2,1.8,.4,1) both}
+#end .stars i:nth-child(2){animation-delay:.25s}#end .stars i:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}100%{transform:none}}
+@keyframes up{from{transform:translateY(60px) scale(.8);opacity:0}}
+#pause h2{color:#fff;font-size:36px;text-shadow:0 4px 0 var(--ink);margin-bottom:6px}
+#pause .st{width:min(70vw,280px)}
+#fx{position:absolute;inset:0;pointer-events:none;z-index:40;width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="c"></canvas>
+  <button class="st" id="pauseBtn" aria-label="Pause">⏸</button>
+
+  <div id="menu" class="screen">
+    <a class="st back" href="../">← maxdittes.com</a>
+    <div class="badge">🏆 <span id="bestN">0</span></div>
+    <div class="logo" id="logo"></div>
+    <h1>MAX<br><em>BLAST</em></h1>
+    <p class="sub">Blöcke ziehen, Reihen räumen, Combos jagen!</p>
+    <div class="col">
+      <button class="st go big" id="classicBtn">▶ Klassisch</button>
+      <button class="st warm big" id="advBtn">💎 Abenteuer</button>
+      <div class="row">
+        <button class="st" id="skinBtn">🎨 Stile</button>
+        <button class="st" id="sndBtn">🔊 Ton</button>
+        <button class="st" id="howBtn">❓</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="levels" class="screen sub-screen hide">
+    <button class="st back" data-go="menu">← Zurück</button>
+    <h2>💎 Abenteuer</h2>
+    <div class="scroll"><div class="lvgrid" id="lvGrid"></div></div>
+  </div>
+
+  <div id="themes" class="screen sub-screen hide">
+    <button class="st back" data-go="menu">← Zurück</button>
+    <h2>Block-Stile</h2>
+    <div class="scroll"><div class="themes" id="thGrid"></div></div>
+  </div>
+
+  <div id="pause" class="screen hide">
+    <h2>⏸ Pause</h2>
+    <button class="st go big" id="resumeBtn">▶ Weiter</button>
+    <button class="st warm" id="restartBtn">↻ Neustart</button>
+    <button class="st" id="quitBtn">🏠 Menü</button>
+    <a class="st" href="../">← maxdittes.com</a>
+  </div>
+
+  <div id="end" class="screen hide"></div>
+  <canvas id="fx"></canvas>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const rnd = (a, b) => a + Math.random() * (b - a), ri = (a, b) => Math.floor(rnd(a, b + 1)), pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => 1 - Math.pow(1 - t, 3), back = t => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2);
+
+/* ------------------------------------------------ save */
+const KEY = 'maxblast.v1';
+const defSave = () => ({ best: 0, lines: 0, theme: 'classic', sound: true, unlocked: 1, stars: {} });
+let save = defSave();
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) save = Object.assign(defSave(), s); } catch (e) {}
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} };
+
+/* ------------------------------------------------ colours / themes */
+const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mixc = (h, t, k) => { const a = hexRgb(h), b = hexRgb(t); return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(',')})`; };
+const BASE = ['#ff5a4a', '#ff9a2e', '#ffd23f', '#3ec95e', '#22c5b8', '#3d8dff', '#9b5cf0', '#ff6fb5'];
+const PAL = BASE.map(m => ({ m, l: mixc(m, '#ffffff', .45), l2: mixc(m, '#ffffff', .2), d: mixc(m, '#000000', .38), pastel: mixc(m, '#ffffff', .62) }));
+const FOOD = ['🍎', '🍊', '🍋', '🍏', '🫐', '🍇', '🍓', '🍑'];
+const THEMES = {
+  classic: { name: 'Klassik', need: 0, bg: ['#3b4ec0', '#141b4d'], board: '#1b2358', cell: 'rgba(255,255,255,.07)', fg: '#fff', accent: '#ffd449' },
+  food:    { name: 'Lecker', need: 0, bg: ['#ffe9b8', '#ff9b6b'], board: '#7a3b2c', cell: 'rgba(255,230,200,.12)', fg: '#3a2418', accent: '#d8421c' },
+  candy:   { name: 'Bonbon', need: 800, bg: ['#ffb6e0', '#a96bff'], board: '#5a2d96', cell: 'rgba(255,255,255,.1)', fg: '#fff', accent: '#ffe14d' },
+  neon:    { name: 'Neon', need: 2500, bg: ['#12002e', '#000000'], board: '#0a0720', cell: 'rgba(120,120,255,.12)', fg: '#fff', accent: '#00f0ff' },
+};
+const emojiSpr = {};
+function emojiSprite(e) {
+  if (emojiSpr[e]) return emojiSpr[e];
+  const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d');
+  g.font = '70px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(e, 48, 52);
+  return emojiSpr[e] = c;
+}
+function drawTile(g, x, y, s, ci, style, a = 1) {
+  const p = PAL[ci], pad = s * .05; x += pad; y += pad; s -= pad * 2; const r = s * .2;
+  g.save(); g.globalAlpha *= a;
+  const rr = (rx, ry, w, h, rad) => { g.beginPath(); g.roundRect(rx, ry, w, h, rad); };
+  if (style === 'neon') {
+    rr(x, y, s, s, r); g.fillStyle = '#0b0b26'; g.fill();
+    g.shadowColor = p.m; g.shadowBlur = s * .35; g.lineWidth = s * .09; g.strokeStyle = p.m; rr(x + s * .06, y + s * .06, s * .88, s * .88, r); g.stroke(); g.shadowBlur = 0;
+    g.fillStyle = p.m; g.globalAlpha *= .85; rr(x + s * .3, y + s * .3, s * .4, s * .4, r * .5); g.fill();
+  } else if (style === 'candy') {
+    const gr = g.createRadialGradient(x + s * .35, y + s * .3, s * .05, x + s * .5, y + s * .5, s * .7); gr.addColorStop(0, p.l); gr.addColorStop(.5, p.m); gr.addColorStop(1, p.d);
+    rr(x, y, s, s, s * .36); g.fillStyle = gr; g.fill(); g.lineWidth = s * .05; g.strokeStyle = p.d; g.stroke();
+    g.fillStyle = 'rgba(255,255,255,.75)'; g.beginPath(); g.ellipse(x + s * .32, y + s * .26, s * .17, s * .09, -.6, 0, 6.3); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = s * .07; g.beginPath(); g.moveTo(x + s * .25, y + s * .78); g.lineTo(x + s * .78, y + s * .25); g.stroke();
+  } else if (style === 'food') {
+    rr(x, y + s * .06, s, s, r); g.fillStyle = p.d; g.fill();
+    rr(x, y, s, s * .96, r); g.fillStyle = p.pastel; g.fill();
+    g.lineWidth = s * .05; g.strokeStyle = p.m; g.stroke();
+    const e = emojiSprite(FOOD[ci]), q = s * .86; g.drawImage(e, x + (s - q) / 2, y + (s - q) / 2 - s * .02, q, q);
+  } else {
+    rr(x, y + s * .07, s, s * .93, r); g.fillStyle = p.d; g.fill();
+    const gr = g.createLinearGradient(0, y, 0, y + s); gr.addColorStop(0, p.l2); gr.addColorStop(1, p.m);
+    rr(x, y, s, s * .93, r); g.fillStyle = gr; g.fill();
+    g.fillStyle = 'rgba(255,255,255,.28)'; rr(x + s * .1, y + s * .08, s * .8, s * .16, r * .6); g.fill();
+    g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 1.5; rr(x, y, s, s * .93, r); g.stroke();
+  }
+  g.restore();
+}
+
+/* ------------------------------------------------ pieces */
+const BASE_SHAPES = [
+  ['1', [[0, 0]]],
+  ['i2', [[0, 0], [0, 1]]], ['i3', [[0, 0], [0, 1], [0, 2]]], ['i4', [[0, 0], [0, 1], [0, 2], [0, 3]]], ['i5', [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]],
+  ['o', [[0, 0], [0, 1], [1, 0], [1, 1]]], ['o3', [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]],
+  ['r23', [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]]],
+  ['l2', [[0, 0], [1, 0], [1, 1]]], ['l3', [[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]],
+  ['t', [[0, 0], [0, 1], [0, 2], [1, 1]]], ['s', [[0, 1], [0, 2], [1, 0], [1, 1]]], ['z', [[0, 0], [0, 1], [1, 1], [1, 2]]],
+  ['j', [[0, 0], [1, 0], [2, 0], [2, 1]]], ['l', [[0, 1], [1, 1], [2, 1], [2, 0]]],
+  ['plus', [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]]],
+];
+const norm = cells => { const mr = Math.min(...cells.map(c => c[0])), mc = Math.min(...cells.map(c => c[1])); return cells.map(([r, c]) => [r - mr, c - mc]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); };
+const rot = cells => norm(cells.map(([r, c]) => [c, -r]));
+const SHAPES = [];
+for (const [name, cells] of BASE_SHAPES) {
+  const seen = new Set(); let cur = norm(cells);
+  for (let k = 0; k < 4; k++) { const key = JSON.stringify(cur); if (!seen.has(key)) { seen.add(key); SHAPES.push({ name, cells: cur, n: cur.length, h: Math.max(...cur.map(c => c[0])) + 1, w: Math.max(...cur.map(c => c[1])) + 1 }); } cur = rot(cur); }
+}
+const WEIGHT = { '1': .5, i2: 1, i3: 1.1, i4: .9, i5: .7, o: 1.2, o3: .5, r23: .8, l2: 1.2, l3: .8, t: 1, s: .8, z: .8, j: 1, l: 1, plus: .5 };
+
+/* ------------------------------------------------ board logic */
+const G = 8;
+let grid, gems, pieces, score, combo, noClear, moves, mode, level, goal, collected, over = false, linesRun = 0, perfects = 0, bestCombo = 0;
+const fitsAt = (occ, sh, r, c) => { for (const [dr, dc] of sh.cells) { const y = r + dr, x = c + dc; if (y < 0 || x < 0 || y >= G || x >= G || occ[y * G + x]) return false; } return true; };
+function canPlaceAnywhere(occ, sh) { for (let r = 0; r <= G - sh.h; r++) for (let c = 0; c <= G - sh.w; c++) if (fitsAt(occ, sh, r, c)) return true; return false; }
+function simPlace(occ, sh, r, c) {
+  const o = occ.slice(); for (const [dr, dc] of sh.cells) o[(r + dr) * G + c + dc] = 1;
+  const rows = [], cols = [];
+  for (let i = 0; i < G; i++) { let f = true, h = true; for (let j = 0; j < G; j++) { if (!o[i * G + j]) f = false; if (!o[j * G + i]) h = false; } if (f) rows.push(i); if (h) cols.push(i); }
+  for (const i of rows) for (let j = 0; j < G; j++) o[i * G + j] = 0;
+  for (const i of cols) for (let j = 0; j < G; j++) o[j * G + i] = 0;
+  return o;
+}
+function solvable(occ, list) {
+  if (!list.length) return true;
+  for (let k = 0; k < list.length; k++) {
+    const sh = list[k], rest = list.filter((_, i) => i !== k);
+    for (let r = 0; r <= G - sh.h; r++) for (let c = 0; c <= G - sh.w; c++) if (fitsAt(occ, sh, r, c) && solvable(simPlace(occ, sh, r, c), rest)) return true;
+  }
+  return false;
+}
+const occOf = () => grid.map(v => v >= 0 ? 1 : 0);
+function rollShape(hard) {
+  let tot = 0; const w = SHAPES.map(s => { let x = WEIGHT[s.name] || 1; if (hard) x *= (s.n >= 5 ? 1 + hard * 1.5 : s.n <= 2 ? 1 - hard * .6 : 1); tot += x; return x; });
+  let r = Math.random() * tot; for (let i = 0; i < SHAPES.length; i++) { r -= w[i]; if (r <= 0) return SHAPES[i]; } return SHAPES[0];
+}
+function dealPieces() {
+  const occ = occOf(); const hard = mode === 'classic' ? clamp(score / 4000, 0, 1) : clamp(level / 30, 0, .9);
+  let best = null;
+  for (let t = 0; t < 60; t++) {
+    const tri = [rollShape(hard), rollShape(hard), rollShape(hard)];
+    if (!tri.every(s => canPlaceAnywhere(occ, s))) { if (!best && tri.some(s => canPlaceAnywhere(occ, s))) best = tri; continue; }
+    if (Math.random() < .1 || solvable(occ, tri)) { best = tri; break; }
+  }
+  if (!best) best = [SHAPES[0], SHAPES[1], SHAPES[0]];
+  const cols = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => Math.random() - .5);
+  pieces = best.map((sh, i) => ({ sh, color: cols[i], placed: false, sc: .72, x: 0, y: 0, drag: false, born: now() }));
+}
+const now = () => performance.now() / 1000;
+
+/* ------------------------------------------------ canvas layout */
+const cv = $('#c'), ctx = cv.getContext('2d'), fxc = $('#fx'), fx = fxc.getContext('2d');
+let W = 0, H = 0, dpr = 1, L = {};
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
+  for (const c of [cv, fxc]) { c.width = W * dpr; c.height = H * dpr; }
+  const top = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-t')) || 0);
+  const hdr = Math.max(124, H * .15) + top, bottomPad = 16 + 0;
+  const avail = H - hdr - bottomPad;
+  let bs = Math.min(W - 20, avail * .66); bs = Math.max(200, bs);
+  const cell = bs / G;
+  L = { hdr, bs, cell, bx: (W - bs) / 2, by: hdr, trayY: hdr + bs + 10, trayH: Math.max(cell * 3.2, H - hdr - bs - 18), slotW: W / 3 };
+}
+addEventListener('resize', layout);
+
+/* ------------------------------------------------ effects */
+let tilesAnim = [], fades = [], parts = [], floats = [], banners = [], shake = 0, confs = [], flyGems = [], overAnim = 0, lastClearT = 0;
+const cellXY = (r, c) => [L.bx + c * L.cell, L.by + r * L.cell];
+function burst(x, y, col, n, sp = 260) { for (let i = 0; i < n && parts.length < 500; i++) { const a = rnd(0, 6.283), s = rnd(.2, 1) * sp; parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 90, t: 0, max: rnd(.4, .9), sz: rnd(3, 8), col, rot: rnd(0, 6), vr: rnd(-12, 12) }); } }
+function banner(text, sub, col) { banners.push({ text, sub, col, t: 0, max: 1.3 }); }
+function floatText(x, y, text, col, size = 26) { floats.push({ x, y, text, col, size, t: 0 }); }
+function confetti(n) { const cols = BASE; for (let i = 0; i < n; i++) confs.push({ x: rnd(0, W), y: rnd(-H * .4, -10), vx: rnd(-60, 60), vy: rnd(120, 340), rot: rnd(0, 6), vr: rnd(-10, 10), w: rnd(7, 13), h: rnd(4, 8), col: pick(cols), t: 0, max: rnd(3, 5) }); }
+
+/* ------------------------------------------------ audio */
+let AC = null, beat = 0;
+function tone(f, d = .12, type = 'sine', v = .1, slide = 0, delay = 0) {
+  if (!save.sound) return; if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } } if (AC.state === 'suspended') AC.resume();
+  const t = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f + slide), t + d); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + .03);
+}
+const SC = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24];
+const sfx = {
+  pick() { tone(520, .06, 'triangle', .07); },
+  drop() { tone(220, .1, 'sine', .14, -80); tone(440, .05, 'triangle', .06); },
+  bad() { tone(160, .15, 'sawtooth', .07, -60); },
+  clear(n, c) { const base = 330 * Math.pow(2, SC[Math.min(c, 9)] / 12); for (let i = 0; i < 3 + n; i++) tone(base * Math.pow(2, SC[i % 8] / 12), .16, 'triangle', .09, 0, i * .05); },
+  gem() { tone(1200, .12, 'sine', .08, 600); tone(1800, .1, 'sine', .06, 0, .07); },
+  perfect() { [0, 4, 7, 12, 16, 19, 24].forEach((s, i) => tone(392 * Math.pow(2, s / 12), .22, 'square', .06, 0, i * .08)); },
+  over() { [7, 5, 2, 0].forEach((s, i) => tone(330 * Math.pow(2, s / 12), .25, 'triangle', .1, 0, i * .16)); },
+  win() { [0, 4, 7, 12, 7, 12, 16].forEach((s, i) => tone(392 * Math.pow(2, s / 12), .2, 'square', .07, 0, i * .1)); },
+  click() { tone(660, .05, 'square', .05); },
+};
+const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+
+/* ------------------------------------------------ game flow */
+let state = 'menu', gid = 0;
+function newGame(m, lv) {
+  gid++;
+  mode = m; level = lv || 1; grid = new Array(G * G).fill(-1); gems = new Array(G * G).fill(0);
+  score = 0; combo = 0; noClear = 0; moves = 0; over = false; collected = 0; goal = 0; linesRun = 0; perfects = 0; bestCombo = 0;
+  tilesAnim = []; fades = []; parts = []; floats = []; banners = []; flyGems = []; shake = 0; overAnim = 0; confs = [];
+  if (m === 'adv') {
+    const n = clamp(8 + level * 2, 8, 30), g = clamp(2 + Math.floor((level + 1) / 2), 3, 12), idxs = [...Array(G * G).keys()].sort(() => Math.random() - .5);
+    let placed = 0; for (const i of idxs) { if (placed >= n) break; const r = (i / G) | 0, c = i % G; grid[i] = ri(0, 7);
+      // never prefill a complete line
+      let rf = true, cf = true; for (let k = 0; k < G; k++) { if (grid[r * G + k] < 0) rf = false; if (grid[k * G + c] < 0) cf = false; } if (rf || cf) { grid[i] = -1; continue; } placed++; }
+    const filled = grid.map((v, i) => v >= 0 ? i : -1).filter(i => i >= 0).sort(() => Math.random() - .5);
+    goal = Math.min(g, filled.length); for (let k = 0; k < goal; k++) gems[filled[k]] = 1;
+  }
+  dispScore = 0; bestAtStart = save.best; chalDone = false; dealPieces(); state = 'play';
+  $$('.screen').forEach(s => s.classList.add('hide')); $('#pauseBtn').classList.remove('hide');
+  intro = now();
+}
+let intro = 0;
+
+function tryPlace(p, r, c) {
+  const occ = occOf(); if (!fitsAt(occ, p.sh, r, c)) return false;
+  const t = now(); sfx.drop(); buzz(8);
+  for (const [dr, dc] of p.sh.cells) { grid[(r + dr) * G + c + dc] = p.color; tilesAnim.push({ i: (r + dr) * G + c + dc, t0: t }); }
+  p.placed = true; moves++; score += p.sh.n;
+  // lines
+  const rows = [], cols = [];
+  for (let i = 0; i < G; i++) { let f = true, h = true; for (let j = 0; j < G; j++) { if (grid[i * G + j] < 0) f = false; if (grid[j * G + i] < 0) h = false; } if (f) rows.push(i); if (h) cols.push(i); }
+  const n = rows.length + cols.length, cr = r + p.sh.h / 2, cc = c + p.sh.w / 2;
+  if (n) {
+    const set = new Set(); for (const i of rows) for (let j = 0; j < G; j++) set.add(i * G + j); for (const i of cols) for (let j = 0; j < G; j++) set.add(j * G + i);
+    let gemHits = 0;
+    for (const i of set) {
+      const rr = (i / G) | 0, c2 = i % G, d = Math.hypot(rr + .5 - cr, c2 + .5 - cc);
+      fades.push({ i, color: grid[i], t0: t + d * .045, gem: gems[i] }); const [x, y] = cellXY(rr, c2);
+      burst(x + L.cell / 2, y + L.cell / 2, PAL[grid[i]].m, 3, 220);
+      if (gems[i]) { gemHits++; flyGems.push({ x: x + L.cell / 2, y: y + L.cell / 2, t0: t + d * .045 }); gems[i] = 0; }
+      grid[i] = -1;
+    }
+    combo++; noClear = 0; bestCombo = Math.max(bestCombo, combo); linesRun += n; save.lines += n;
+    const pts = 10 * n * n * Math.max(1, combo); score += pts; lastClearT = t;
+    sfx.clear(n, combo); buzz([15, 20, 25]); shake = Math.min(1, .25 + n * .18);
+    const [px, py] = [L.bx + cc * L.cell, L.by + cr * L.cell];
+    floatText(px, py, '+' + pts, '#fff', 20 + n * 6);
+    const words = ['', 'Gut!', 'Super!', 'Wow!', 'Mega!', 'Genial!', 'UNGLAUBLICH!'];
+    banner(words[Math.min(n, 6)], combo > 1 ? 'Combo x' + combo : '', null);
+    if (gemHits) { collected += gemHits; sfx.gem(); }
+  } else { noClear++; if (noClear >= 3) combo = 0; }
+  // perfect clear
+  if (grid.every(v => v < 0)) { const b = 200; score += b; perfects++; banner('PERFEKT!', '+' + b, '#ffd449'); sfx.perfect(); confetti(120); shake = 1; floatText(W / 2, L.by + L.bs / 2, '+' + b, '#ffd449', 44); }
+  if (score > save.best && mode === 'classic') save.best = score;
+  if (mode === 'classic' && chal && !chalDone && score > chal) { chalDone = true; banner('Freund geschlagen!', '🎯 ' + chal, '#7dff9a'); confetti(80); sfx.win(); }
+  if (pieces.every(q => q.placed)) { if (!(mode === 'adv' && collected >= goal)) dealPieces(); }
+  persist();
+  // end conditions
+  if (mode === 'adv' && collected >= goal && state === 'play') { state = 'busy'; { const id = gid; setTimeout(() => { if (id === gid) winLevel(); }, 900); } return true; }
+  const occ2 = occOf(); const left = pieces.filter(q => !q.placed);
+  if (left.length && !left.some(q => canPlaceAnywhere(occ2, q.sh)) && state === 'play') { state = 'busy'; over = true; overAnim = now(); sfx.over(); const id = gid; setTimeout(() => { if (id === gid) gameOver(); }, 1300); }
+  return true;
+}
+
+function gameOver() {
+  state = 'over'; persist(); const newBest = mode === 'classic' && score >= save.best && score > 0;
+  const el = $('#end'); el.classList.remove('hide');
+  el.innerHTML = `<div class="card"><h3>${mode === 'adv' ? '😵 Kein Platz mehr!' : 'Spiel vorbei!'}</h3>
+    ${mode === 'classic' ? `<div class="big-n">${score}</div><p>${newBest ? '🏆 NEUER REKORD!' : 'Rekord: ' + save.best}<br>${linesRun} Reihen · Bester Combo x${bestCombo}</p>` : `<p style="margin-top:8px">Level ${level} · ${collected}/${goal} 💎 gesammelt</p>`}
+    <div class="btns"><button class="st go big" id="eAgain">↻ Nochmal</button><button class="st warm" id="eShare">📣 Freunde herausfordern</button><button class="st" id="eMenu">🏠 Menü</button></div></div>`;
+  $('#eShare').onclick = shareResult; $('#eAgain').onclick = () => { sfx.click(); newGame(mode, level); }; $('#eMenu').onclick = () => { sfx.click(); toMenu(); };
+  if (newBest) confetti(100);
+}
+function winLevel() {
+  state = 'won'; sfx.win(); confetti(140); buzz([40, 40, 80]);
+  const stars = moves <= 8 + level ? 3 : moves <= 14 + level * 1.5 ? 2 : 1;
+  save.stars[level] = Math.max(save.stars[level] || 0, stars); if (level >= save.unlocked) save.unlocked = level + 1; persist();
+  const el = $('#end'); el.classList.remove('hide');
+  el.innerHTML = `<div class="card"><h3>🎉 Level ${level} geschafft!</h3><div class="stars"><i class="${stars > 0 ? 'on' : ''}">★</i><i class="${stars > 1 ? 'on' : ''}">★</i><i class="${stars > 2 ? 'on' : ''}">★</i></div>
+    <p>${collected} 💎 gesammelt · ${moves} Züge</p><div class="btns"><button class="st go big" id="eNext">Level ${level + 1} ▶</button><button class="st warm" id="eShare">📣 Freunde herausfordern</button><button class="st" id="eMenu">🏠 Menü</button></div></div>`;
+  $('#eShare').onclick = shareResult; $('#eNext').onclick = () => { sfx.click(); newGame('adv', level + 1); }; $('#eMenu').onclick = () => { sfx.click(); toMenu(); };
+}
+
+
+/* ------------------------------------------------ share / challenge */
+function baseUrl() { try { const u = new URL(location.href); u.search = ''; u.hash = ''; return u.href; } catch (e) { return 'https://maxdittes.com/maxblast/'; } }
+function shareCard() {
+  const c = document.createElement('canvas'); c.width = 800; c.height = 480; const g = c.getContext('2d');
+  const th = THEMES[save.theme] || THEMES.classic, gr = g.createLinearGradient(0, 0, 0, 480); gr.addColorStop(0, th.bg[0]); gr.addColorStop(1, th.bg[1]); g.fillStyle = gr; g.fillRect(0, 0, 800, 480);
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  const txt = (t, y, size, fill, w = 12) => { g.font = `900 ${size}px ui-rounded,"Arial Rounded MT Bold",sans-serif`; g.lineWidth = w; g.strokeStyle = '#3a2418'; g.strokeText(t, 400, y); g.fillStyle = fill; g.fillText(t, 400, y); };
+  // decorative tiles row
+  for (let i = 0; i < 8; i++) drawTile(g, 40 + i * 90, 392, 80, i, save.theme === 'neon' || save.theme === 'candy' || save.theme === 'food' ? save.theme : 'classic');
+  txt('MAX BLAST', 70, 76, '#ffd449');
+  if (mode === 'adv') { txt('Level ' + level + ' geschafft!', 200, 70, '#fff'); txt('⭐'.repeat(save.stars[level] || 1), 290, 56, '#fff', 0); }
+  else { txt(String(score), 210, 130, '#fff', 16); txt(score >= save.best && score > 0 ? '🏆 NEUER REKORD' : 'Rekord ' + save.best, 305, 42, th.accent, 8); }
+  txt('Schaffst du mehr?', 350, 36, '#fff', 8);
+  return c;
+}
+let toastT = 0;
+function toast(t) { let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.style.cssText = 'position:fixed;left:50%;bottom:calc(var(--safe-b) + 40px);transform:translateX(-50%);z-index:99;background:#3a2418;color:#fff;font:700 15px var(--font);padding:12px 18px;border-radius:16px;box-shadow:0 4px 0 #000;transition:opacity .3s;max-width:88vw;text-align:center'; document.body.appendChild(el); } el.textContent = t; el.style.opacity = 1; clearTimeout(toastT); toastT = setTimeout(() => el.style.opacity = 0, 2600); }
+async function shareResult() {
+  sfx.click();
+  const url = mode === 'adv' ? baseUrl() : baseUrl() + '?c=' + score;
+  const text = mode === 'adv' ? `Ich habe Level ${level} im Abenteuer von Max Blast geschafft! 💎 Schaffst du das auch?` : `Ich habe ${score} Punkte bei Max Blast geschafft! 🧩 Kannst du mich schlagen?`;
+  const full = text + ' ' + url;
+  try {
+    if (navigator.share) {
+      try {
+        const blob = await new Promise(r => shareCard().toBlob(r, 'image/png')); const file = new File([blob], 'max-blast.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Max Blast', text: full }); return; }
+      } catch (e) { if (e && e.name === 'AbortError') return; }
+      await navigator.share({ title: 'Max Blast', text, url }); return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(full); toast('📋 Herausforderung kopiert – schick sie deinen Freunden!'); }
+  catch (e) { prompt('Kopiere diesen Text und schick ihn deinen Freunden:', full); }
+}
+
+/* ------------------------------------------------ input (drag & drop) */
+let drag = null, hover = null, bestAtStart = 0, chal = 0, chalDone = false;
+try { const q = +new URLSearchParams(location.search).get('c'); if (q > 0) chal = Math.min(q, 1e7) | 0; } catch (e) {}
+function slotRect(i) { return { x: i * L.slotW, y: L.trayY - 10, w: L.slotW, h: L.trayH + 20 }; }
+function pieceHome(i, p) { const s = L.cell * p.sc; return { x: i * L.slotW + L.slotW / 2 - p.sh.w * s / 2, y: L.trayY + L.trayH / 2 - p.sh.h * s / 2 }; }
+cv.addEventListener('pointerdown', ev => {
+  if (state !== 'play' || drag) return; if (AC && AC.state === 'suspended') AC.resume();
+  const x = ev.clientX, y = ev.clientY;
+  for (let i = 0; i < 3; i++) { const p = pieces[i], rc = slotRect(i); if (p.placed) continue; if (x >= rc.x && x < rc.x + rc.w && y >= rc.y) {
+    drag = { i, p, id: ev.pointerId, px: x, py: y, t0: now() }; p.drag = true; sfx.pick(); try { cv.setPointerCapture(ev.pointerId); } catch (e) {} break; } }
+});
+cv.addEventListener('pointermove', ev => { if (drag && ev.pointerId === drag.id) { drag.px = ev.clientX; drag.py = ev.clientY; } });
+const endDrag = ev => {
+  if (!drag || ev.pointerId !== drag.id) return; const d = drag; drag = null; d.p.drag = false;
+  if (hover && ev.type === 'pointerup') { if (!tryPlace(d.p, hover.r, hover.c)) sfx.bad(); }
+  else if (ev.type === 'pointerup') sfx.bad();
+  hover = null;
+};
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+addEventListener('contextmenu', e => e.preventDefault());
+
+function dragGeom() {
+  const p = drag.p, s = L.cell, w = p.sh.w * s, h = p.sh.h * s;
+  const lift = Math.min(L.cell * 2.4, 120);
+  const x = drag.px - w / 2, y = drag.py - h / 2 - lift - (L.cell * .2);
+  return { x, y, w, h, s };
+}
+
+/* ------------------------------------------------ update/render */
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(.05, (t - last) / 1000); last = t;
+  try { update(dt); render(); drawFx(dt); } catch (e) { console.error(e); }
+  requestAnimationFrame(frame);
+}
+function update(dt) {
+  const tt = now();
+  for (const p of pieces || []) { if (p.placed) continue; const target = p.drag ? 1 : .72; p.sc += (target - p.sc) * Math.min(1, dt * 18); }
+  if (drag) {
+    const g = dragGeom(); const cx = Math.round((g.x - L.bx) / L.cell), cy = Math.round((g.y - L.by) / L.cell);
+    hover = fitsAt(occOf(), drag.p.sh, cy, cx) ? { r: cy, c: cx } : null;
+  } else hover = null;
+  tilesAnim = tilesAnim.filter(a => tt - a.t0 < .4); fades = fades.filter(f => tt - f.t0 < .5);
+  for (let i = parts.length - 1; i >= 0; i--) { const p = parts[i]; p.t += dt; if (p.t > p.max) { parts.splice(i, 1); continue; } p.vy += 700 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt; }
+  for (let i = floats.length - 1; i >= 0; i--) { const f = floats[i]; f.t += dt; f.y -= dt * 50; if (f.t > 1.1) floats.splice(i, 1); }
+  for (let i = banners.length - 1; i >= 0; i--) { banners[i].t += dt; if (banners[i].t > banners[i].max) banners.splice(i, 1); }
+  for (let i = confs.length - 1; i >= 0; i--) { const c = confs[i]; c.t += dt; if (c.t > c.max || c.y > H + 30) { confs.splice(i, 1); continue; } c.vy += 400 * dt; c.vx *= 1 - dt * .8; c.x += c.vx * dt; c.y += c.vy * dt; c.rot += c.vr * dt; }
+  flyGems = flyGems.filter(g => tt - g.t0 < .9);
+  shake = Math.max(0, shake - dt * 2.4);
+  if (state === 'won' && Math.random() < .3) confetti(2);
+}
+
+function bg() {
+  const th = THEMES[save.theme] || THEMES.classic;
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, th.bg[0]); g.addColorStop(1, th.bg[1]); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  return th;
+}
+function render() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const th = bg(); if (state === 'menu' || !grid) return;
+  const tt = now();
+  let ox = 0, oy = 0; if (shake > 0) { ox = rnd(-1, 1) * shake * 7; oy = rnd(-1, 1) * shake * 7; }
+  ctx.save(); ctx.translate(ox, oy);
+  // header
+  const top = L.hdr - 8; ctx.fillStyle = th.fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const sc = Math.round(dispScore = dispScore + (score - dispScore) * .25 + (Math.abs(score - dispScore) < 1 ? score - dispScore : 0));
+  const fs = Math.min(58, Math.max(34, W / 8), L.hdr * .4);
+  ctx.font = `900 ${fs}px ui-rounded,"Arial Rounded MT Bold",sans-serif`; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineJoin = 'round';
+  const pop = 1 + Math.max(0, .25 - (tt - lastClearT)) * .8, sy = top - 52 - fs / 2;
+  ctx.save(); ctx.translate(W / 2, sy); ctx.scale(pop, pop); ctx.strokeText(sc, 0, 0); ctx.fillText(sc, 0, 0); ctx.restore();
+  const sw = ctx.measureText(sc).width;
+  // info pills: record / challenge / level / gems
+  const items = [];
+  if (mode === 'classic') {
+    const nb = bestAtStart > 0 && score > bestAtStart;
+    items.push({ t: nb ? '🎉 NEUER REKORD!' : '🏆 Rekord ' + save.best, c: nb ? th.accent : th.fg, strong: nb });
+    if (chal) items.push({ t: score > chal ? '✅ Freund geschlagen!' : '🎯 Freund ' + chal, c: score > chal ? '#7dff9a' : th.fg });
+  } else { items.push({ t: 'Level ' + level, c: th.fg }); items.push({ t: `💎 ${collected}/${goal}`, c: th.accent, gem: true }); }
+  const pf = `800 ${clamp(W / 26, 14, 18)}px ui-rounded,sans-serif`; ctx.font = pf;
+  const pw = items.map(i => ctx.measureText(i.t).width + 22), gap = 8, tot = pw.reduce((a, b) => a + b, 0) + gap * (items.length - 1), ph = 30, py = L.hdr - 8 - 14 - ph / 2;
+  let px0 = W / 2 - tot / 2;
+  items.forEach((it, k) => {
+    const pulse = it.strong ? 1 + Math.sin(tt * 8) * .05 : 1; ctx.save(); ctx.translate(px0 + pw[k] / 2, py + 1); ctx.scale(pulse, pulse);
+    ctx.fillStyle = 'rgba(0,0,0,.32)'; ctx.beginPath(); ctx.roundRect(-pw[k] / 2, -ph / 2, pw[k], ph, 15); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = it.strong ? th.accent : 'rgba(255,255,255,.25)'; ctx.stroke();
+    ctx.font = pf; ctx.fillStyle = it.c; ctx.textAlign = 'center'; ctx.fillText(it.t, 0, 1); ctx.restore();
+    if (it.gem) { L.gemX = px0 + 22; L.gemY = py; } px0 += pw[k] + gap;
+  });
+  ctx.textAlign = 'center';
+  if (combo > 1) { const k = 1 + Math.sin(tt * 10) * .04; ctx.save(); ctx.translate(Math.min(W - 10, W / 2 + sw / 2 + 12), sy); ctx.textAlign = 'left'; ctx.scale(k, k); ctx.fillStyle = '#ffd449'; ctx.font = `900 ${clamp(W / 22, 16, 26)}px ui-rounded,sans-serif`; ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 4; ctx.strokeText('🔥x' + combo, 0, 0); ctx.fillText('🔥x' + combo, 0, 0); ctx.restore(); }
+  // board
+  const { bx, by, bs, cell } = L; ctx.fillStyle = th.board; ctx.beginPath(); ctx.roundRect(bx - 8, by - 8, bs + 16, bs + 16, 18); ctx.fill();
+  ctx.fillStyle = th.cell;
+  for (let r = 0; r < G; r++) for (let c = 0; c < G; c++) { ctx.beginPath(); ctx.roundRect(bx + c * cell + 2, by + r * cell + 2, cell - 4, cell - 4, cell * .16); ctx.fill(); }
+  // hover preview + lines that will clear
+  let previewLines = null;
+  if (drag && hover) {
+    const occ = occOf(); for (const [dr, dc] of drag.p.sh.cells) occ[(hover.r + dr) * G + hover.c + dc] = 1;
+    previewLines = new Set();
+    for (let i = 0; i < G; i++) { let f = true, h = true; for (let j = 0; j < G; j++) { if (!occ[i * G + j]) f = false; if (!occ[j * G + i]) h = false; } if (f) for (let j = 0; j < G; j++) previewLines.add(i * G + j); if (h) for (let j = 0; j < G; j++) previewLines.add(j * G + i); }
+    const pulse = .5 + Math.sin(tt * 12) * .15;
+    for (const i of previewLines) { const r = (i / G) | 0, c = i % G; ctx.fillStyle = `rgba(255,255,255,${pulse * .5})`; ctx.beginPath(); ctx.roundRect(bx + c * cell + 2, by + r * cell + 2, cell - 4, cell - 4, cell * .16); ctx.fill(); }
+    for (const [dr, dc] of drag.p.sh.cells) drawTile(ctx, bx + (hover.c + dc) * cell, by + (hover.r + dr) * cell, cell, drag.p.color, save.theme, .45);
+  }
+  // tiles
+  for (let r = 0; r < G; r++) for (let c = 0; c < G; c++) {
+    const i = r * G + c, v = grid[i]; if (v < 0) continue;
+    let s = cell, ox2 = 0, a = 1; const an = tilesAnim.find(q => q.i === i);
+    let wob = 0; if (an) { const k = clamp((tt - an.t0) / .3, 0, 1); s = cell * (1 + (1 - k) * .0) ; wob = Math.sin(k * Math.PI) * cell * .12; }
+    if (over) { const k = clamp((tt - overAnim) * 3 - (r + c) * .12, 0, 1); a = 1 - k * .0; }
+    ctx.save(); if (previewLines && previewLines.has(i)) { ctx.translate(0, 0); }
+    const px = bx + c * cell - wob / 2, py = by + r * cell - wob / 2; drawTile(ctx, px, py, cell + wob, v, save.theme, a);
+    if (over) { const k = clamp((tt - overAnim) * 3 - (r + c) * .12, 0, .6); ctx.fillStyle = `rgba(80,80,100,${k})`; ctx.beginPath(); ctx.roundRect(px + 3, py + 3, cell - 6, cell - 6, cell * .16); ctx.fill(); }
+    if (gems[i]) { const bob = Math.sin(tt * 4 + i) * 2; ctx.font = `${cell * .6}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.drawImage(emojiSprite('💎'), px + cell * .17, py + cell * .12 + bob, cell * .66, cell * .66); }
+    ctx.restore();
+  }
+  // fading (cleared) tiles
+  for (const f of fades) {
+    const k = (tt - f.t0) / .45; if (k < 0) { const r = (f.i / G) | 0, c = f.i % G; drawTile(ctx, bx + c * cell, by + r * cell, cell, f.color, save.theme, 1); continue; }
+    const r = (f.i / G) | 0, c = f.i % G, s = cell * (1 - ease(k) * .9) * (k < .15 ? 1 + k * 1.2 : 1); const cx = bx + c * cell + cell / 2, cy = by + r * cell + cell / 2;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(k * 1.2); ctx.globalAlpha = 1 - k; drawTile(ctx, -s / 2, -s / 2, s, f.color, save.theme, 1);
+    if (k < .3) { ctx.fillStyle = `rgba(255,255,255,${(.3 - k) * 3})`; ctx.fillRect(-s / 2, -s / 2, s, s); } ctx.restore();
+  }
+  ctx.restore();
+  // tray + dragged piece
+  for (let i = 0; i < 3; i++) {
+    const p = pieces[i]; if (p.placed) continue;
+    const age = clamp((tt - p.born - i * .08) / .4, 0, 1), sp = back(age);
+    let x, y, s = L.cell * p.sc;
+    if (p.drag && drag) { const g = dragGeom(); x = g.x; y = g.y; s = L.cell; }
+    else { const h = pieceHome(i, p); x = h.x; y = h.y + (1 - age) * 80; s = L.cell * p.sc; }
+    ctx.save(); ctx.globalAlpha = p.drag ? 1 : clamp(age * 2, 0, 1);
+    if (p.drag) { ctx.fillStyle = 'rgba(0,0,0,.25)'; for (const [dr, dc] of p.sh.cells) { ctx.beginPath(); ctx.roundRect(x + dc * s + 4, y + dr * s + 16, s - 2, s - 2, s * .2); ctx.fill(); } }
+    const cx = x + p.sh.w * s / 2, cy = y + p.sh.h * s / 2; ctx.translate(cx, cy); const sc2 = p.drag ? 1 : (sp || 0); ctx.scale(sc2, sc2); ctx.translate(-cx, -cy);
+    for (const [dr, dc] of p.sh.cells) drawTile(ctx, x + dc * s, y + dr * s, s, p.color, save.theme);
+    ctx.restore();
+  }
+  // gems flying to counter
+  for (const g of flyGems) { const k = clamp((tt - g.t0) / .8, 0, 1); if (k <= 0) continue; const tx = L.gemX || W - 40, ty = L.gemY || 40, e = ease(k); const x = g.x + (tx - g.x) * e, y = g.y + (ty - g.y) * e - Math.sin(k * Math.PI) * 60; ctx.globalAlpha = 1; ctx.drawImage(emojiSprite('💎'), x - 18, y - 18, 36, 36); }
+}
+let dispScore = 0;
+
+function drawFx(dt) {
+  fx.setTransform(dpr, 0, 0, dpr, 0, 0); fx.clearRect(0, 0, W, H);
+  for (const p of parts) { fx.save(); fx.globalAlpha = clamp(1 - p.t / p.max, 0, 1); fx.translate(p.x, p.y); fx.rotate(p.rot); fx.fillStyle = p.col; fx.fillRect(-p.sz / 2, -p.sz / 2, p.sz, p.sz); fx.restore(); }
+  for (const c of confs) { fx.save(); fx.translate(c.x, c.y); fx.rotate(c.rot); fx.fillStyle = c.col; fx.scale(1, Math.cos(c.t * 8 + c.rot)); fx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h); fx.restore(); }
+  fx.textAlign = 'center'; fx.textBaseline = 'middle'; fx.lineJoin = 'round';
+  for (const f of floats) { fx.globalAlpha = clamp(1.1 - f.t, 0, 1); fx.font = `900 ${f.size}px ui-rounded,sans-serif`; fx.lineWidth = 5; fx.strokeStyle = 'rgba(0,0,0,.55)'; fx.strokeText(f.text, f.x, f.y); fx.fillStyle = f.col; fx.fillText(f.text, f.x, f.y); }
+  for (const b of banners) {
+    const k = b.t / b.max, sc = k < .15 ? back(k / .15) : 1 + (k - .15) * .1, a = k > .75 ? (1 - k) * 4 : 1;
+    fx.save(); fx.globalAlpha = clamp(a, 0, 1); fx.translate(W / 2, L.by + L.bs * .42); fx.rotate(Math.sin(b.t * 8) * .03); fx.scale(sc, sc);
+    const sz = Math.min(W / 7.5, 64); fx.font = `900 ${sz}px ui-rounded,"Arial Rounded MT Bold",sans-serif`; fx.lineWidth = sz * .22; fx.strokeStyle = '#3a2418';
+    fx.strokeText(b.text, 0, 0); const gr = fx.createLinearGradient(0, -sz / 2, 0, sz / 2); gr.addColorStop(0, '#fff6a8'); gr.addColorStop(1, b.col || '#ffb62e'); fx.fillStyle = gr; fx.fillText(b.text, 0, 0);
+    if (b.sub) { fx.font = `900 ${sz * .5}px ui-rounded,sans-serif`; fx.lineWidth = sz * .12; fx.strokeText(b.sub, 0, sz * .75); fx.fillStyle = '#fff'; fx.fillText(b.sub, 0, sz * .75); }
+    fx.restore();
+  }
+  fx.globalAlpha = 1;
+}
+
+/* ------------------------------------------------ menus */
+const SCREENS = ['menu', 'levels', 'themes', 'pause', 'end'];
+const hideAll = () => SCREENS.forEach(s => $('#' + s).classList.add('hide'));
+function show(id) { hideAll(); $('#' + id).classList.remove('hide'); }
+function toMenu() { state = 'menu'; $('#menu .sub').textContent = chal ? `🎯 Ein Freund fordert dich heraus: schlage ${chal} Punkte!` : 'Blöcke ziehen, Reihen räumen, Combos jagen!'; confs = []; $('#pauseBtn').classList.add('hide'); show('menu'); $('#bestN').textContent = save.best; $('#sndBtn').textContent = save.sound ? '🔊 Ton' : '🔇 Ton'; }
+$$('[data-go]').forEach(b => b.onclick = () => { sfx.click(); toMenu(); });
+$('#classicBtn').onclick = () => { sfx.click(); newGame('classic'); };
+$('#advBtn').onclick = () => { sfx.click(); buildLevels(); show('levels'); };
+$('#skinBtn').onclick = () => { sfx.click(); buildThemes(); show('themes'); };
+$('#sndBtn').onclick = () => { save.sound = !save.sound; persist(); toMenu(); sfx.click(); };
+$('#howBtn').onclick = () => alert('SO GEHT\'S\n\n• Zieh die Blöcke vom unteren Rand aufs 8×8-Brett.\n• Volle Reihen und Spalten verschwinden und geben Punkte.\n• Räumst du mehrere Zeilen auf einmal oder hintereinander, gibt es Combos.\n• Ein komplett leeres Brett bringt einen PERFEKT-Bonus!\n• Abenteuer: Sammle alle 💎, indem du die Reihen räumst, in denen sie liegen.\n• Blöcke drehen geht nicht – plane voraus!\n• Kein Platz mehr für die Blöcke = Spiel vorbei.');
+function buildLevels() {
+  const total = Math.max(30, save.unlocked + 10);
+  $('#lvGrid').innerHTML = Array.from({ length: total }, (_, i) => { const n = i + 1, lock = n > save.unlocked, s = save.stars[n] || 0;
+    return `<button class="lv ${lock ? 'lock' : ''} ${n === save.unlocked ? 'cur' : ''}" data-l="${n}">${lock ? '🔒' : n}<small>${lock ? '' : '★'.repeat(s) + '☆'.repeat(3 - s)}</small></button>`; }).join('');
+  $$('.lv:not(.lock)').forEach(b => b.onclick = () => { sfx.click(); newGame('adv', +b.dataset.l); });
+  const cur = $('.lv.cur'); if (cur) cur.scrollIntoView({ block: 'center' });
+}
+function buildThemes() {
+  $('#thGrid').innerHTML = Object.entries(THEMES).map(([k, t]) => { const lock = save.best < t.need;
+    return `<div class="th ${save.theme === k ? 'sel' : ''} ${lock ? 'lock' : ''}" data-k="${k}"><canvas width="200" height="100"></canvas>${t.name}<small>${lock ? '🔒 ab ' + t.need + ' Punkten (Rekord ' + save.best + ')' : save.theme === k ? '✓ Aktiv' : 'Tippen zum Wählen'}</small></div>`; }).join('');
+  $$('.th').forEach(el => {
+    const k = el.dataset.k, t = THEMES[k], g = el.querySelector('canvas').getContext('2d');
+    const gr = g.createLinearGradient(0, 0, 0, 100); gr.addColorStop(0, t.bg[0]); gr.addColorStop(1, t.bg[1]); g.fillStyle = gr; g.fillRect(0, 0, 200, 100);
+    for (let i = 0; i < 6; i++) drawTile(g, 10 + i * 30, 35, 30, i, k);
+    if (!el.classList.contains('lock')) el.onclick = () => { save.theme = k; persist(); sfx.click(); buildThemes(); };
+  });
+}
+(function logo() { const l = $('#logo'), order = [0, 2, 5, 3, 7, 1, 6, 4, 0]; l.innerHTML = order.map((c, i) => `<i style="background:${PAL[c].m};animation-delay:${-i * .3}s"></i>`).join(''); })();
+
+$('#pauseBtn').onclick = () => { if (state === 'play') { sfx.click(); state = 'paused'; $('#pause').classList.remove('hide'); } };
+$('#resumeBtn').onclick = () => { sfx.click(); state = 'play'; $('#pause').classList.add('hide'); };
+$('#restartBtn').onclick = () => { sfx.click(); newGame(mode, level); };
+$('#quitBtn').onclick = () => { sfx.click(); toMenu(); };
+addEventListener('keydown', e => { if ((e.key === 'Escape' || e.key === 'p') && state === 'play') $('#pauseBtn').click(); else if ((e.key === 'Escape') && state === 'paused') $('#resumeBtn').click(); });
+
+layout(); pieces = []; toMenu(); requestAnimationFrame(t => { last = t; requestAnimationFrame(frame); });
+window.MB = { get state() { return state; }, get grid() { return grid; }, get pieces() { return pieces; }, newGame, tryPlace, get score() { return score; }, get L() { return L; }, SHAPES, solvable, occOf, gems: () => gems };
+})();
+</script>
+</body>
+</html>
