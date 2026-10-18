@@ -1,0 +1,9 @@
+/* MAX GAMES — the canvas fills the whole window; only the link back to the site floats on top. */
+:root{--ink:#16213a;--sun:#ffc933;--cream:#fff3d6}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:#fff;font-family:"Courier New",ui-monospace,monospace;font-weight:700;user-select:none;-webkit-user-select:none;touch-action:none;overscroll-behavior:none}
+#screen{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;background:#000}
+#back{position:fixed;z-index:5;top:max(5px,env(safe-area-inset-top));left:max(6px,env(safe-area-inset-left));font-size:11px;letter-spacing:1px;color:var(--ink);background:var(--sun);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink),0 0 0 2px var(--cream);padding:3px 7px;text-decoration:none;touch-action:manipulation}
+#back:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink),0 0 0 2px var(--cream)}
+@media (max-width:420px){#back{font-size:10px;padding:3px 6px;letter-spacing:0}}
+body.play #back{display:none}
